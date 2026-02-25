@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Madness Light</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="login-page">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="logo-icon">ML</div>
+                <h1>Madness Light</h1>
+                <p>Panel de Administración</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="admin@madnesslight.com"
+                        required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="••••••••"
+                        required>
+                </div>
+
+                <button type="submit" class="btn btn-primary login-btn">
+                    Acceder al Panel
+                </button>
+            </form>
+
+            <p
+                style="text-align:center;margin-top:28px;font-size:11px;color:var(--text-tertiary);display:flex;align-items:center;justify-content:center;gap:6px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
+                </svg>
+                Powered by <span
+                    style="font-weight:800;background:linear-gradient(135deg,#06b6d4,#39FF14);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">NodexAI</span>
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

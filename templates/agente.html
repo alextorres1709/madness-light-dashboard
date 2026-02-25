@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Agente de IA{% endblock %}
+{% block header_title %}Agente de IA{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Agente de IA</h1>
+        <p class="page-subtitle">Estado del agente inteligente que responde automáticamente a los clientes de Madness
+            Light</p>
+    </div>
+</div>
+
+<!-- Agent Status Card -->
+<div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:28px">
+    <div class="kpi-card kpi-accent-green animate-in">
+        <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                    d="M12 2a4 4 0 014 4v1a1 1 0 001 1h1a4 4 0 010 8h-1a1 1 0 00-1 1v1a4 4 0 01-8 0v-1a1 1 0 00-1-1H6a4 4 0 010-8h1a1 1 0 001-1V6a4 4 0 014-4z" />
+            </svg>
+        </div>
+        <div class="kpi-label">Estado</div>
+        <div class="kpi-value"
+            style="font-size:24px;background:linear-gradient(135deg,#22c55e,#39FF14);-webkit-background-clip:text;background-clip:text">
+            ● Activo</div>
+        <div class="kpi-subtitle">Respondiendo mensajes</div>
+    </div>
+
+    <div class="kpi-card kpi-accent-cyan animate-in">
+        <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+        </div>
+        <div class="kpi-label">Conversaciones</div>
+        <div class="kpi-value">{{ messages_total }}</div>
+        <div class="kpi-subtitle">mensajes procesados</div>
+    </div>
+
+    <div class="kpi-card kpi-accent-purple animate-in">
+        <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+            </svg>
+        </div>
+        <div class="kpi-label">Tiempo de Respuesta</div>
+        <div class="kpi-value" style="font-size:24px">
+            < 5 seg</div>
+                <div class="kpi-subtitle">respuesta instantánea</div>
+        </div>
+    </div>
+
+    <!-- Agent Info Cards -->
+    <div class="section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+        </svg>
+        <h2>Configuración del Agente</h2>
+    </div>
+
+    <div class="grid-2">
+        <!-- What the agent knows -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
+                    </svg>
+                    Lo que sabe el Agente
+                </h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+                <div class="agent-info-item">
+                    <div class="agent-info-label">📋 Descripción</div>
+                    <div class="agent-info-value">{{ company.description if company else 'No configurada' }}</div>
+                </div>
+                <div class="agent-info-item">
+                    <div class="agent-info-label">📍 Ubicación</div>
+                    <div class="agent-info-value">{{ company.address if company else '—' }}</div>
+                </div>
+                <div class="agent-info-item">
+                    <div class="agent-info-label">📧 Email</div>
+                    <div class="agent-info-value">{{ company.email if company else '—' }}</div>
+                </div>
+                <div class="agent-info-item">
+                    <div class="agent-info-label">🕐 Frecuencia</div>
+                    <div class="agent-info-value">{{ company.hours if company else '—' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Capabilities -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    Capacidades
+                </h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="capability-item">
+                    <span class="capability-icon">🎉</span>
+                    <div>
+                        <div class="capability-name">Info de Fiestas</div>
+                        <div class="capability-desc">Responde sobre próximos eventos, salas, temáticas y precios</div>
+                    </div>
+                </div>
+                <div class="capability-item">
+                    <span class="capability-icon">🎟️</span>
+                    <div>
+                        <div class="capability-name">Entradas</div>
+                        <div class="capability-desc">Guía a los usuarios a comprar entradas en Elite Events</div>
+                    </div>
+                </div>
+                <div class="capability-item">
+                    <span class="capability-icon">📍</span>
+                    <div>
+                        <div class="capability-name">Salas y Ubicaciones</div>
+                        <div class="capability-desc">Informa sobre las salas activas en Madrid</div>
+                    </div>
+                </div>
+                <div class="capability-item">
+                    <span class="capability-icon">🤝</span>
+                    <div>
+                        <div class="capability-name">Programa RRPP</div>
+                        <div class="capability-desc">Explica el programa de relaciones públicas cuando se pregunta</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Extra -->
+    {% if company and company.extra_info %}
+    <div class="card" style="margin-top:20px">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+                Base de Conocimiento del Agente
+            </h3>
+        </div>
+        <pre
+            style="white-space:pre-wrap;font-family:inherit;font-size:13px;color:var(--text-secondary);line-height:1.8;background:rgba(255,255,255,0.02);padding:16px;border-radius:var(--radius-sm);border:1px solid var(--border-color)">{{ company.extra_info }}</pre>
+    </div>
+    {% endif %}
+
+    <!-- Recent Conversations -->
+    <div class="card" style="margin-top:20px">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                </svg>
+                Últimas Conversaciones
+            </h3>
+            <span class="badge badge-platform">{{ messages_total }} total</span>
+        </div>
+
+        {% if recent_messages %}
+        <div class="messages-list">
+            {% for msg in recent_messages[:8] %}
+            <div class="message-item">
+                <div class="message-avatar">{{ msg.user_name[0] | upper }}</div>
+                <div class="message-body">
+                    <div class="message-header">
+                        <span class="message-user">{{ msg.user_name }}</span>
+                        <span class="badge badge-platform">{{ msg.platform }}</span>
+                        <span class="message-time">{{ msg.timestamp.strftime('%d/%m %H:%M') if msg.timestamp else ''
+                            }}</span>
+                    </div>
+                    <div class="message-text">{{ msg.message }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+            <h3>Sin conversaciones todavía</h3>
+            <p>Las conversaciones del agente aparecerán aquí cuando empiece a funcionar</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <style>
+        .agent-info-item {
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+        }
+
+        .agent-info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .agent-info-value {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .capability-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .capability-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: var(--border-hover);
+        }
+
+        .capability-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .capability-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .capability-desc {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+    </style>
+    {% endblock %}
