@@ -637,28 +637,25 @@
         },
         {
             "parameters": {
-                "operation": "get",
-                "documentId": {
-                    "__rl": true,
-                    "value": "TU_GOOGLE_DOC_ID_AQUI",
-                    "mode": "id"
-                }
+                "operation": "executeQuery",
+                "query": "SELECT name, description, phone, email, address, hours, extra_info FROM company_info LIMIT 1;",
+                "options": {}
             },
             "id": "read-company-doc",
-            "name": "📄 Leer Info Empresa (Google Docs)",
-            "type": "n8n-nodes-base.googleDocs",
-            "typeVersion": 2,
+            "name": "📄 Leer Info Empresa (Supabase)",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.5,
             "position": [
                 2780,
                 300
             ],
             "credentials": {
-                "googleDocsOAuth2Api": {
-                    "id": "GOOGLE_CREDENTIAL_ID",
-                    "name": "Google Docs"
+                "postgres": {
+                    "id": "SUPABASE_POSTGRES_ID",
+                    "name": "Supabase PostgreSQL"
                 }
             },
-            "notes": "📄 Cambia TU_GOOGLE_DOC_ID_AQUI por el ID de tu documento con info de Madness Light (rangos, normas, RRPP, etc.)"
+            "notes": "📄 Lee la info de la empresa desde Supabase (company_info.extra_info)"
         },
         {
             "parameters": {
@@ -667,7 +664,7 @@
                         {
                             "id": "empresa-result",
                             "name": "toolResult",
-                            "value": "={{ $json.body.content ? $json.body.content.map(b => b.paragraph?.elements?.map(e => e.textRun?.content || '').join('') || '').join('') : 'No se encontró información.' }}",
+                            "value": "={{ $json.extra_info || $json.description || 'No se encontró información.' }}",
                             "type": "string"
                         }
                     ]
