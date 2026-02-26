@@ -31,8 +31,7 @@
                         {
                             "conditions": {
                                 "options": {
-                                    "caseSensitive": false,
-                                    "leftValue": ""
+                                    "caseSensitive": false
                                 },
                                 "conditions": [
                                     {
@@ -50,8 +49,7 @@
                         {
                             "conditions": {
                                 "options": {
-                                    "caseSensitive": false,
-                                    "leftValue": ""
+                                    "caseSensitive": false
                                 },
                                 "conditions": [
                                     {
@@ -65,29 +63,12 @@
                                 ]
                             },
                             "renameOutput": "Foto recibida"
-                        },
-                        {
-                            "conditions": {
-                                "options": {
-                                    "caseSensitive": false,
-                                    "leftValue": ""
-                                },
-                                "conditions": [
-                                    {
-                                        "leftValue": "={{ $json.message.text }}",
-                                        "rightValue": "",
-                                        "operator": {
-                                            "type": "string",
-                                            "operation": "isNotEmpty"
-                                        }
-                                    }
-                                ]
-                            },
-                            "renameOutput": "Texto"
                         }
                     ]
                 },
-                "options": {}
+                "options": {
+                    "fallbackOutput": "extra"
+                }
             },
             "id": "switch-msg-type",
             "name": "Tipo de Mensaje",
