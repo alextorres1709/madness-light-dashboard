@@ -335,20 +335,6 @@
         },
         {
             "parameters": {
-                "mode": "chooseBranch",
-                "output": "wait"
-            },
-            "id": "merge-inputs",
-            "name": "Merge Texto + Foto",
-            "type": "n8n-nodes-base.merge",
-            "typeVersion": 3,
-            "position": [
-                1560,
-                560
-            ]
-        },
-        {
-            "parameters": {
                 "operation": "select",
                 "schema": {
                     "__rl": true,
@@ -408,25 +394,25 @@
                         {
                             "id": "forward-msg",
                             "name": "userMessage",
-                            "value": "={{ $('Merge Texto + Foto').item.json.userMessage }}",
+                            "value": "={{ $input.item.json.userMessage }}",
                             "type": "string"
                         },
                         {
                             "id": "forward-userid",
                             "name": "userId",
-                            "value": "={{ $('Merge Texto + Foto').item.json.userId }}",
+                            "value": "={{ $input.item.json.userId }}",
                             "type": "number"
                         },
                         {
                             "id": "forward-username",
                             "name": "userName",
-                            "value": "={{ $('Merge Texto + Foto').item.json.userName }}",
+                            "value": "={{ $input.item.json.userName }}",
                             "type": "string"
                         },
                         {
                             "id": "forward-chatid",
                             "name": "chatId",
-                            "value": "={{ $('Merge Texto + Foto').item.json.chatId }}",
+                            "value": "={{ $input.item.json.chatId }}",
                             "type": "number"
                         }
                     ]
@@ -820,20 +806,6 @@
         },
         {
             "parameters": {
-                "mode": "chooseBranch",
-                "output": "wait"
-            },
-            "id": "merge-tool-results",
-            "name": "Merge Tool Results",
-            "type": "n8n-nodes-base.merge",
-            "typeVersion": 3,
-            "position": [
-                3440,
-                540
-            ]
-        },
-        {
-            "parameters": {
                 "modelId": {
                     "__rl": true,
                     "value": "gpt-4o-mini",
@@ -870,20 +842,6 @@
                     "name": "OpenAI API Key"
                 }
             }
-        },
-        {
-            "parameters": {
-                "mode": "chooseBranch",
-                "output": "wait"
-            },
-            "id": "merge-final",
-            "name": "Merge Respuestas",
-            "type": "n8n-nodes-base.merge",
-            "typeVersion": 3,
-            "position": [
-                3880,
-                560
-            ]
         },
         {
             "parameters": {
@@ -1107,25 +1065,14 @@
             "main": [
                 [
                     {
-                        "node": "Merge Texto + Foto",
-                        "type": "main",
-                        "index": 1
-                    }
-                ]
-            ]
-        },
-        "Preparar Texto": {
-            "main": [
-                [
-                    {
-                        "node": "Merge Texto + Foto",
+                        "node": "Cargar Historial Chat",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Merge Texto + Foto": {
+        "Preparar Texto": {
             "main": [
                 [
                     {
@@ -1194,14 +1141,14 @@
                 ],
                 [
                     {
-                        "node": "Merge Respuestas",
+                        "node": "Preparar Respuesta Final",
                         "type": "main",
-                        "index": 1
+                        "index": 0
                     }
                 ]
             ]
         },
-        "📄 Leer Info Empresa (Google Docs)": {
+        "📄 Leer Info Empresa (Supabase)": {
             "main": [
                 [
                     {
@@ -1216,7 +1163,7 @@
             "main": [
                 [
                     {
-                        "node": "Merge Tool Results",
+                        "node": "🤖 Formatear Respuesta Tool",
                         "type": "main",
                         "index": 0
                     }
@@ -1238,9 +1185,9 @@
             "main": [
                 [
                     {
-                        "node": "Merge Tool Results",
+                        "node": "🤖 Formatear Respuesta Tool",
                         "type": "main",
-                        "index": 1
+                        "index": 0
                     }
                 ]
             ]
@@ -1271,17 +1218,6 @@
             "main": [
                 [
                     {
-                        "node": "Merge Tool Results",
-                        "type": "main",
-                        "index": 2
-                    }
-                ]
-            ]
-        },
-        "Merge Tool Results": {
-            "main": [
-                [
-                    {
                         "node": "🤖 Formatear Respuesta Tool",
                         "type": "main",
                         "index": 0
@@ -1290,17 +1226,6 @@
             ]
         },
         "🤖 Formatear Respuesta Tool": {
-            "main": [
-                [
-                    {
-                        "node": "Merge Respuestas",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Merge Respuestas": {
             "main": [
                 [
                     {
