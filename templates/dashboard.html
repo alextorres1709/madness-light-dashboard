@@ -166,15 +166,15 @@
         <div class="messages-list">
             {% for msg in recent_messages[:10] %}
             <div class="message-item">
-                <div class="message-avatar">{{ msg.user_name[0] | upper }}</div>
+                <div class="message-avatar">{{ msg.user_id[:1] | upper }}</div>
                 <div class="message-body">
                     <div class="message-header">
-                        <span class="message-user">{{ msg.user_name }}</span>
-                        <span class="badge badge-platform">{{ msg.platform }}</span>
-                        <span class="message-time">{{ msg.timestamp.strftime('%d/%m %H:%M') if msg.timestamp else ''
+                        <span class="message-user">Usuario {{ msg.user_id[-4:] }}</span>
+                        <span class="badge badge-platform">Telegram</span>
+                        <span class="message-time">{{ msg.created_at.strftime('%d/%m %H:%M') if msg.created_at else ''
                             }}</span>
                     </div>
-                    <div class="message-text">{{ msg.message }}</div>
+                    <div class="message-text">{{ msg.content[:150] }}{{ '...' if msg.content|length > 150 else '' }}</div>
                 </div>
             </div>
             {% endfor %}

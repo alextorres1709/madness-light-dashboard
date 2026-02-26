@@ -157,7 +157,7 @@
     </div>
     {% endif %}
 
-    <!-- Recent Conversations -->
+    <!-- Recent Conversations — Chat View -->
     <div class="card" style="margin-top:20px">
         <div class="card-header">
             <h3 class="card-title">
@@ -166,23 +166,18 @@
                 </svg>
                 Últimas Conversaciones
             </h3>
-            <span class="badge badge-platform">{{ messages_total }} total</span>
+            <span class="badge badge-platform">{{ messages_total }} mensajes de usuarios</span>
         </div>
 
         {% if recent_messages %}
-        <div class="messages-list">
-            {% for msg in recent_messages[:8] %}
-            <div class="message-item">
-                <div class="message-avatar">{{ msg.user_name[0] | upper }}</div>
-                <div class="message-body">
-                    <div class="message-header">
-                        <span class="message-user">{{ msg.user_name }}</span>
-                        <span class="badge badge-platform">{{ msg.platform }}</span>
-                        <span class="message-time">{{ msg.timestamp.strftime('%d/%m %H:%M') if msg.timestamp else ''
-                            }}</span>
-                    </div>
-                    <div class="message-text">{{ msg.message }}</div>
+        <div class="chat-view">
+            {% for msg in recent_messages %}
+            <div class="chat-bubble {{ 'chat-user' if msg.role == 'user' else 'chat-bot' }}">
+                <div class="chat-bubble-header">
+                    <span class="chat-role">{{ 'Usuario ' + msg.user_id[-4:] if msg.role == 'user' else 'Bot Madness' }}</span>
+                    <span class="chat-time">{{ msg.created_at.strftime('%d/%m %H:%M') if msg.created_at else '' }}</span>
                 </div>
+                <div class="chat-bubble-text">{{ msg.content }}</div>
             </div>
             {% endfor %}
         </div>

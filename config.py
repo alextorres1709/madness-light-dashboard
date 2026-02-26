@@ -15,3 +15,4 @@ class Config:
     ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@madnesslight.com")
     ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
     API_KEY = os.getenv("API_KEY", "ml-api-key-change-me")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")

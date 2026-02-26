@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template
-from models import db, Event, Message
+from models import db, Event, Conversation
 from routes.auth import login_required
 
 dashboard_bp = Blueprint("dashboard", __name__)
@@ -14,39 +14,56 @@ def index():
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     week_start = today_start - timedelta(days=now.weekday())
     month_start = today_start.replace(day=1)
+    thirty_days_ago = today_start - timedelta(days=30)
 
-    # KPI counts
-    messages_today = Message.query.filter(Message.timestamp >= today_start).count()
-    messages_week = Message.query.filter(Message.timestamp >= week_start).count()
-    messages_month = Message.query.filter(Message.timestamp >= month_start).count()
-    messages_total = Message.query.count()
+    # All KPIs in ONE query
+    row = db.session.query(
+        db.func.count(Conversation.id).filter(Conversation.created_at >= today_start),
+        db.func.count(Conversation.id).filter(Conversation.created_at >= week_start),
+        db.func.count(Conversation.id).filter(Conversation.created_at >= month_start),
+        db.func.count(Conversation.id),
+    ).filter(Conversation.role == "user").one()
+
+    messages_today, messages_week, messages_month, messages_total = row
     active_events = Event.query.filter_by(active=True).count()
 
-    # Recent messages
+    # Recent conversations (last 20 user messages)
     recent_messages = (
-        Message.query.order_by(Message.timestamp.desc()).limit(20).all()
+        Conversation.query.filter_by(role="user")
+        .order_by(Conversation.created_at.desc())
+        .limit(20)
+        .all()
     )
 
-    # Messages per day (last 30 days) for chart
-    thirty_days_ago = today_start - timedelta(days=30)
+    # Daily messages — 1 query with GROUP BY
+    daily_rows = (
+        db.session.query(
+            db.func.date(Conversation.created_at).label("day"),
+            db.func.count(Conversation.id),
+        )
+        .filter(Conversation.role == "user", Conversation.created_at >= thirty_days_ago)
+        .group_by("day")
+        .all()
+    )
+    daily_map = {str(r[0]): r[1] for r in daily_rows}
     daily_messages = []
     for i in range(30):
         day = thirty_days_ago + timedelta(days=i)
-        next_day = day + timedelta(days=1)
-        count = Message.query.filter(
-            Message.timestamp >= day, Message.timestamp < next_day
-        ).count()
-        daily_messages.append(
-            {"date": day.strftime("%d/%m"), "count": count}
-        )
+        key = day.strftime("%Y-%m-%d")
+        daily_messages.append({"date": day.strftime("%d/%m"), "count": daily_map.get(key, 0)})
 
-    # Messages per hour for chart
-    hourly_messages = []
-    for h in range(24):
-        count = Message.query.filter(
-            db.extract("hour", Message.timestamp) == h
-        ).count()
-        hourly_messages.append({"hour": f"{h:02d}:00", "count": count})
+    # Hourly messages — 1 query with GROUP BY
+    hourly_rows = (
+        db.session.query(
+            db.extract("hour", Conversation.created_at).label("h"),
+            db.func.count(Conversation.id),
+        )
+        .filter(Conversation.role == "user")
+        .group_by("h")
+        .all()
+    )
+    hourly_map = {int(r[0]): r[1] for r in hourly_rows}
+    hourly_messages = [{"hour": f"{h:02d}:00", "count": hourly_map.get(h, 0)} for h in range(24)]
 
     # Upcoming active events (next 5)
     upcoming_events = (

@@ -105,31 +105,8 @@
     </div>
 </div>
 
-<!-- Bottom section: Platforms + Top Users -->
+<!-- Top Users -->
 <div class="grid-2">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="3" width="20" height="14" rx="2" />
-                    <line x1="8" y1="21" x2="16" y2="21" />
-                    <line x1="12" y1="17" x2="12" y2="21" />
-                </svg>
-                Plataformas
-            </h3>
-        </div>
-        {% if platform_data %}
-        <div class="chart-container" style="height:200px">
-            <canvas id="platformChart"></canvas>
-        </div>
-        {% else %}
-        <div class="empty-state" style="padding:30px">
-            <h3>Sin datos de plataformas</h3>
-            <p>Aparecerán cuando el agente de IA empiece a recibir mensajes</p>
-        </div>
-        {% endif %}
-    </div>
-
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
@@ -156,7 +133,7 @@
                     {% for user in top_users_data %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td>{{ user.name }}</td>
+                        <td>Usuario {{ user.name[-4:] }}</td>
                         <td><span class="badge badge-platform">{{ user.count }}</span></td>
                     </tr>
                     {% endfor %}
@@ -169,6 +146,37 @@
             <p>Los usuarios aparecerán cuando empiecen a interactuar</p>
         </div>
         {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                    <line x1="8" y1="21" x2="16" y2="21" />
+                    <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+                Plataforma
+            </h3>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:24px">
+            <span class="badge badge-platform" style="font-size:14px;padding:8px 16px">Telegram</span>
+            <span style="color:var(--text-secondary);font-size:13px">{{ messages_total }} mensajes totales</span>
+        </div>
+    </div>
+</div>
+
+<!-- AI Insights Section -->
+<div class="section-header">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2a4 4 0 014 4v1a1 1 0 001 1h1a4 4 0 010 8h-1a1 1 0 00-1 1v1a4 4 0 01-8 0v-1a1 1 0 00-1-1H6a4 4 0 010-8h1a1 1 0 001-1V6a4 4 0 014-4z" />
+    </svg>
+    <h2>Análisis IA</h2>
+</div>
+<div id="ai-insights-container">
+    <div class="ai-loading">
+        <div class="ai-loading-spinner"></div>
+        <p>Analizando conversaciones con IA...</p>
     </div>
 </div>
 {% endblock %}
@@ -239,26 +247,43 @@
         }
     });
 
-    // Platform chart
-    {% if platform_data %}
-    const platformData = {{ platform_data | tojson }};
-    new Chart(document.getElementById('platformChart'), {
-        type: 'doughnut',
-        data: {
-            labels: platformData.map(d => d.platform),
-            datasets: [{
-                data: platformData.map(d => d.count),
-                backgroundColor: ['rgba(57,255,20,0.6)', 'rgba(6,182,212,0.6)', 'rgba(168,85,247,0.6)', 'rgba(245,158,11,0.6)'],
-                borderColor: 'rgba(10,10,15,0.8)',
-                borderWidth: 2,
-            }]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } } },
-            cutout: '65%',
-        }
-    });
-    {% endif %}
+    // AI Insights
+    fetch('/estadisticas/insights')
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('ai-insights-container');
+            if (data.error) {
+                container.innerHTML = '<div class="ai-error"><p>No se pudo generar el análisis: ' + data.error + '</p></div>';
+                return;
+            }
+            container.innerHTML = `
+                <div class="ai-insights-grid">
+                    <div class="ai-insight-card ai-accent-green">
+                        <div class="ai-insight-icon">💬</div>
+                        <h3>Preguntas Frecuentes</h3>
+                        <div class="ai-insight-content">${data.preguntas_frecuentes || 'Sin datos suficientes'}</div>
+                    </div>
+                    <div class="ai-insight-card ai-accent-cyan">
+                        <div class="ai-insight-icon">📍</div>
+                        <h3>Salas Populares</h3>
+                        <div class="ai-insight-content">${data.salas_populares || 'Sin datos suficientes'}</div>
+                    </div>
+                    <div class="ai-insight-card ai-accent-purple">
+                        <div class="ai-insight-icon">😊</div>
+                        <h3>Sentimiento General</h3>
+                        <div class="ai-insight-content">${data.sentimiento || 'Sin datos suficientes'}</div>
+                    </div>
+                    <div class="ai-insight-card ai-accent-amber">
+                        <div class="ai-insight-icon">💡</div>
+                        <h3>Sugerencias de Mejora</h3>
+                        <div class="ai-insight-content">${data.sugerencias || 'Sin datos suficientes'}</div>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(() => {
+            document.getElementById('ai-insights-container').innerHTML =
+                '<div class="ai-error"><p>Error al conectar con el servicio de IA</p></div>';
+        });
 </script>
 {% endblock %}
