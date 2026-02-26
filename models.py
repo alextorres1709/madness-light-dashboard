@@ -114,3 +114,27 @@ class CompanyInfo(db.Model):
             "hours": self.hours,
             "extra_info": self.extra_info,
         }
+
+
+class Conversation(db.Model):
+    """Bot chat history — shared with Telegram bot (n8n)."""
+
+    __tablename__ = "conversations"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(20), nullable=False)  # 'user' or 'assistant'
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "role": self.role,
+            "content": self.content,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+

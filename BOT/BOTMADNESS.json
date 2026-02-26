@@ -686,7 +686,7 @@
         {
             "parameters": {
                 "operation": "executeQuery",
-                "query": "=SELECT id, nombre, fecha, sala, direccion, hora_apertura, precio_anticipada, precio_taquilla, djs, descripcion, cartel_url, link_entradas, estado FROM eventos WHERE estado = 'activo' AND fecha >= CURRENT_DATE ORDER BY fecha ASC LIMIT 10;",
+                "query": "=SELECT id, name, date, venue, theme, description, dj_info, capacity, entry_price, entry_link, image_url, active FROM events WHERE active = true AND date >= CURRENT_DATE ORDER BY date ASC LIMIT 10;",
                 "options": {}
             },
             "id": "query-eventos",
@@ -712,7 +712,7 @@
                         {
                             "id": "eventos-result",
                             "name": "toolResult",
-                            "value": "={{ $json.length > 0 ? JSON.stringify($json.map(e => ({ nombre: e.nombre, fecha: e.fecha, sala: e.sala, precio_anticipada: e.precio_anticipada + '€', precio_taquilla: e.precio_taquilla + '€', djs: e.djs, hora: e.hora_apertura, link: e.link_entradas, tiene_cartel: !!e.cartel_url })), null, 2) : 'No hay eventos programados próximamente.' }}",
+                            "value": "={{ $json.length > 0 ? JSON.stringify($json.map(e => ({ nombre: e.name, fecha: e.date, sala: e.venue, tematica: e.theme, precio: e.entry_price, djs: e.dj_info, link: e.entry_link, tiene_cartel: !!e.image_url })), null, 2) : 'No hay eventos programados próximamente.' }}",
                             "type": "string"
                         }
                     ]
@@ -738,19 +738,19 @@
                 },
                 "table": {
                     "__rl": true,
-                    "value": "eventos",
+                    "value": "events",
                     "mode": "list"
                 },
                 "limit": 1,
                 "where": {
                     "values": [
                         {
-                            "column": "nombre",
+                            "column": "name",
                             "condition": "ILIKE",
                             "value": "={{ '%' + (JSON.parse($('🤖 Agente IA — Colega Virtual').item.json.message.function_call.arguments).nombre_evento || '') + '%' }}"
                         },
                         {
-                            "column": "cartel_url",
+                            "column": "image_url",
                             "condition": "IS NOT NULL"
                         }
                     ]
@@ -777,9 +777,9 @@
             "parameters": {
                 "chatId": "={{ $('Preparar Contexto').item.json.chatId }}",
                 "operation": "sendPhoto",
-                "file": "={{ $json.cartel_url || '' }}",
+                "file": "={{ $json.image_url || '' }}",
                 "additionalFields": {
-                    "caption": "=🎉 Cartel de **{{ $json.nombre || 'Evento' }}** — ¡No te lo pierdas!",
+                    "caption": "=🎉 Cartel de **{{ $json.name || 'Evento' }}** — ¡No te lo pierdas!",
                     "parse_mode": "Markdown"
                 }
             },
@@ -805,7 +805,7 @@
                         {
                             "id": "cartel-result",
                             "name": "toolResult",
-                            "value": "={{ $json.cartel_url ? 'Cartel enviado correctamente al usuario.' : 'No se encontró cartel para ese evento.' }}",
+                            "value": "={{ $json.image_url ? 'Cartel enviado correctamente al usuario.' : 'No se encontró cartel para ese evento.' }}",
                             "type": "string"
                         }
                     ]
