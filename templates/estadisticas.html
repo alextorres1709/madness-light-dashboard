@@ -7,7 +7,7 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Estadísticas</h1>
-        <p class="page-subtitle">Análisis completo del rendimiento del agente de IA y el engagement de los usuarios</p>
+        <p class="page-subtitle">Métricas de usuarios, eventos y rendimiento del agente</p>
     </div>
 </div>
 
@@ -16,76 +16,97 @@
     <div class="kpi-card kpi-accent-green animate-in">
         <div class="kpi-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                <path d="M16 3.13a4 4 0 010 7.75" />
             </svg>
         </div>
-        <div class="kpi-label">Mensajes Hoy</div>
-        <div class="kpi-value">{{ messages_today }}</div>
+        <div class="kpi-label">Usuarios Este Mes</div>
+        <div class="kpi-value">{{ users_this_month }}</div>
+        <div class="kpi-subtitle">
+            {% if user_growth > 0 %}
+            <span style="color:#39FF14">+{{ user_growth }}%</span> vs mes anterior
+            {% elif user_growth < 0 %}
+            <span style="color:#ef4444">{{ user_growth }}%</span> vs mes anterior
+            {% else %}
+            sin cambio vs mes anterior
+            {% endif %}
+        </div>
     </div>
 
     <div class="kpi-card kpi-accent-cyan animate-in">
         <div class="kpi-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <path d="M16 2v4M8 2v4M3 10h18" />
+                <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
             </svg>
         </div>
-        <div class="kpi-label">Esta Semana</div>
-        <div class="kpi-value">{{ messages_week }}</div>
+        <div class="kpi-label">Usuarios Totales</div>
+        <div class="kpi-value">{{ total_users }}</div>
+        <div class="kpi-subtitle">desde siempre</div>
     </div>
 
     <div class="kpi-card kpi-accent-purple animate-in">
         <div class="kpi-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 20V10M18 20V4M6 20v-4" />
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
             </svg>
         </div>
-        <div class="kpi-label">Este Mes</div>
-        <div class="kpi-value">{{ messages_month }}</div>
+        <div class="kpi-label">Media Msg/Usuario</div>
+        <div class="kpi-value">{{ avg_per_user }}</div>
+        <div class="kpi-subtitle">{{ total_messages }} mensajes totales</div>
     </div>
 
     <div class="kpi-card kpi-accent-amber animate-in">
         <div class="kpi-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
             </svg>
         </div>
-        <div class="kpi-label">Usuarios Únicos</div>
-        <div class="kpi-value">{{ unique_users }}</div>
+        <div class="kpi-label">Hora Pico</div>
+        <div class="kpi-value" style="font-size:28px">{{ peak_hour }}</div>
+        <div class="kpi-subtitle">mayor actividad de usuarios</div>
     </div>
 
     <div class="kpi-card animate-in">
         <div class="kpi-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                <line x1="4" y1="22" x2="4" y2="15" />
+                <path d="M8 2v4M16 2v4" />
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <path d="M3 10h18" />
             </svg>
         </div>
-        <div class="kpi-label">Total Mensajes</div>
-        <div class="kpi-value">{{ messages_total }}</div>
+        <div class="kpi-label">Eventos</div>
+        <div class="kpi-value">{{ total_events }}</div>
+        <div class="kpi-subtitle">{{ upcoming_events }} próximamente</div>
     </div>
 </div>
 
-<!-- Charts -->
+<!-- Charts Row 1: Users + Hourly -->
 <div class="section-header">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M18 20V10M12 20V4M6 20v-6" />
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+        <path d="M16 3.13a4 4 0 010 7.75" />
     </svg>
-    <h2>Tendencias</h2>
+    <h2>Usuarios y Actividad</h2>
 </div>
 <div class="grid-2">
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                    <polyline points="17 6 23 6 23 12" />
                 </svg>
-                Mensajes por Día (30 días)
+                Usuarios Activos por Semana
             </h3>
         </div>
         <div class="chart-container">
-            <canvas id="dailyChart"></canvas>
+            <canvas id="weeklyUsersChart"></canvas>
         </div>
     </div>
 
@@ -105,7 +126,61 @@
     </div>
 </div>
 
-<!-- Top Users -->
+<!-- Charts Row 2: Venues + Themes -->
+{% if venues_data or themes_data %}
+<div class="section-header">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 2v4M16 2v4" />
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <path d="M3 10h18" />
+    </svg>
+    <h2>Eventos</h2>
+</div>
+<div class="grid-2">
+    {% if venues_data %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                </svg>
+                Eventos por Sala
+            </h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="venuesChart"></canvas>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if themes_data %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 2a14.5 14.5 0 000 20 14.5 14.5 0 000-20" />
+                    <path d="M2 12h20" />
+                </svg>
+                Distribución por Temática
+            </h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="themesChart"></canvas>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Bottom: Top Users + Upcoming Events -->
+<div class="section-header">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 20V10M12 20V4M6 20v-6" />
+    </svg>
+    <h2>Detalle</h2>
+</div>
 <div class="grid-2">
     <div class="card">
         <div class="card-header">
@@ -116,7 +191,7 @@
                     <path d="M23 21v-2a4 4 0 00-3-3.87" />
                     <path d="M16 3.13a4 4 0 010 7.75" />
                 </svg>
-                Top Usuarios
+                Usuarios Más Activos
             </h3>
         </div>
         {% if top_users_data %}
@@ -127,6 +202,7 @@
                         <th>#</th>
                         <th>Usuario</th>
                         <th>Mensajes</th>
+                        <th>Días activo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -134,7 +210,8 @@
                     <tr>
                         <td>{{ loop.index }}</td>
                         <td>Usuario {{ user.name[-4:] }}</td>
-                        <td><span class="badge badge-platform">{{ user.count }}</span></td>
+                        <td><span class="badge badge-platform">{{ user.messages }}</span></td>
+                        <td>{{ user.days }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -152,17 +229,37 @@
         <div class="card-header">
             <h3 class="card-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="3" width="20" height="14" rx="2" />
-                    <line x1="8" y1="21" x2="16" y2="21" />
-                    <line x1="12" y1="17" x2="12" y2="21" />
+                    <path d="M8 2v4M16 2v4" />
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <path d="M3 10h18" />
                 </svg>
-                Plataforma
+                Próximos Eventos
             </h3>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;padding:24px">
-            <span class="badge badge-platform" style="font-size:14px;padding:8px 16px">Telegram</span>
-            <span style="color:var(--text-secondary);font-size:13px">{{ messages_total }} mensajes totales</span>
+        {% if next_events %}
+        <div class="upcoming-events">
+            {% for event in next_events %}
+            <div class="upcoming-event-card">
+                <div class="upcoming-event-date">
+                    <div class="day">{{ event.date.strftime('%d') }}</div>
+                    <div class="month">{{ event.date.strftime('%b') }}</div>
+                </div>
+                <div class="upcoming-event-info">
+                    <div class="upcoming-event-name">{{ event.name }}</div>
+                    <div class="upcoming-event-meta">
+                        {{ event.venue }} · <span class="badge badge-theme"
+                            style="padding:2px 6px;font-size:10px">{{ event.theme }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
+        {% else %}
+        <div class="empty-state" style="padding:30px">
+            <h3>Sin eventos próximos</h3>
+            <p>Crea nuevas fiestas desde la sección Fiestas</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -191,39 +288,43 @@
         Chart.defaults.color = 'rgba(255,255,255,0.35)';
         Chart.defaults.font.family = 'Inter';
 
-        // Daily chart
-        const dailyData = {{ daily_messages | tojson }};
-        new Chart(document.getElementById('dailyChart'), {
-            type: 'line',
+        const chartScales = (opts = {}) => ({
+            x: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)', ...opts.xGrid }, ticks: { font: { size: 11 }, ...opts.xTicks } },
+            y: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
+        });
+        const chartTooltip = (color) => ({
+            backgroundColor: 'rgba(10,10,15,0.95)',
+            borderColor: color, borderWidth: 1,
+            padding: 12, cornerRadius: 8
+        });
+
+        // Weekly users chart
+        const weeklyData = {{ weekly_users | tojson }};
+        new Chart(document.getElementById('weeklyUsersChart'), {
+            type: 'bar',
             data: {
-                labels: dailyData.map(d => d.date),
+                labels: weeklyData.map(d => d.week),
                 datasets: [{
-                    label: 'Mensajes',
-                    data: dailyData.map(d => d.count),
-                    borderColor: '#39FF14',
+                    label: 'Usuarios',
+                    data: weeklyData.map(d => d.count),
                     backgroundColor: (ctx) => {
-                        const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 280);
-                        g.addColorStop(0, 'rgba(57, 255, 20, 0.15)');
-                        g.addColorStop(1, 'rgba(57, 255, 20, 0.0)');
+                        const g = ctx.chart.ctx.createLinearGradient(0, 280, 0, 0);
+                        g.addColorStop(0, 'rgba(57, 255, 20, 0.05)');
+                        g.addColorStop(1, 'rgba(57, 255, 20, 0.35)');
                         return g;
                     },
-                    fill: true, tension: 0.4, borderWidth: 2,
-                    pointRadius: 0, pointHoverRadius: 6,
-                    pointHoverBackgroundColor: '#39FF14',
+                    borderColor: 'rgba(57, 255, 20, 0.5)',
+                    borderWidth: 1, borderRadius: 6,
                 }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(10,10,15,0.95)', borderColor: 'rgba(57,255,20,0.2)', borderWidth: 1, padding: 12, cornerRadius: 8 } },
-                scales: {
-                    x: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { maxTicksLimit: 10, font: { size: 11 } } },
-                    y: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
-                }
+                plugins: { legend: { display: false }, tooltip: chartTooltip('rgba(57,255,20,0.2)') },
+                scales: chartScales()
             }
         });
 
-        // Hourly chart
+        // Hourly activity chart
         const hourlyData = {{ hourly_messages | tojson }};
         new Chart(document.getElementById('hourlyChart'), {
             type: 'bar',
@@ -244,13 +345,68 @@
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(10,10,15,0.95)', borderColor: 'rgba(168,85,247,0.2)', borderWidth: 1, padding: 12, cornerRadius: 8 } },
+                plugins: { legend: { display: false }, tooltip: chartTooltip('rgba(168,85,247,0.2)') },
+                scales: chartScales({ xGrid: { display: false }, xTicks: { maxTicksLimit: 12 } })
+            }
+        });
+
+        {% if venues_data %}
+        // Venues chart
+        const venuesData = {{ venues_data | tojson }};
+        new Chart(document.getElementById('venuesChart'), {
+            type: 'bar',
+            data: {
+                labels: venuesData.map(d => d.venue.split('(')[0].trim()),
+                datasets: [{
+                    label: 'Eventos',
+                    data: venuesData.map(d => d.count),
+                    backgroundColor: (ctx) => {
+                        const g = ctx.chart.ctx.createLinearGradient(0, 280, 0, 0);
+                        g.addColorStop(0, 'rgba(6, 182, 212, 0.05)');
+                        g.addColorStop(1, 'rgba(6, 182, 212, 0.35)');
+                        return g;
+                    },
+                    borderColor: 'rgba(6, 182, 212, 0.5)',
+                    borderWidth: 1, borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: { legend: { display: false }, tooltip: chartTooltip('rgba(6,182,212,0.2)') },
                 scales: {
-                    x: { border: { display: false }, grid: { display: false }, ticks: { maxTicksLimit: 12, font: { size: 11 } } },
-                    y: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
+                    x: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
+                    y: { border: { display: false }, grid: { display: false }, ticks: { font: { size: 11 } } }
                 }
             }
         });
+        {% endif %}
+
+        {% if themes_data %}
+        // Themes doughnut chart
+        const themesData = {{ themes_data | tojson }};
+        const themeColors = ['rgba(57,255,20,0.6)', 'rgba(6,182,212,0.6)', 'rgba(168,85,247,0.6)', 'rgba(245,158,11,0.6)', 'rgba(239,68,68,0.6)', 'rgba(99,102,241,0.6)', 'rgba(236,72,153,0.6)', 'rgba(107,114,128,0.6)'];
+        new Chart(document.getElementById('themesChart'), {
+            type: 'doughnut',
+            data: {
+                labels: themesData.map(d => d.theme),
+                datasets: [{
+                    data: themesData.map(d => d.count),
+                    backgroundColor: themeColors.slice(0, themesData.length),
+                    borderColor: 'rgba(10,10,15,0.8)',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: { position: 'right', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } },
+                    tooltip: chartTooltip('rgba(168,85,247,0.2)')
+                }
+            }
+        });
+        {% endif %}
     }
 
     // AI Insights
