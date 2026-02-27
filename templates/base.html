@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=4">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=5">
 </head>
 
 <body>
@@ -85,8 +85,17 @@
                     Agente de IA
                 </a>
 
+                <a href="{{ url_for('conversations.index') }}"
+                    class="nav-link {% if '/conversaciones' in request.path %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                        <path d="M8 9h8M8 13h6" />
+                    </svg>
+                    Conversaciones
+                </a>
+
                 {% if current_user and current_user.can_manage_users %}
-                <span class="nav-label" style="margin-top:12px">Administración</span>
+                <span class="nav-label" style="margin-top:12px">Administracion</span>
 
                 <a href="{{ url_for('users.index') }}"
                     class="nav-link {% if '/usuarios' in request.path %}active{% endif %}">
@@ -97,6 +106,35 @@
                         <path d="M16 3.13a4 4 0 010 7.75" />
                     </svg>
                     Usuarios
+                </a>
+
+                <a href="{{ url_for('activity.index') }}"
+                    class="nav-link {% if '/actividad' in request.path %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                    </svg>
+                    Actividad
+                </a>
+
+                <a href="{{ url_for('venues.index') }}"
+                    class="nav-link {% if '/salas' in request.path %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    Salas
+                </a>
+
+                <a href="{{ url_for('broadcast.index') }}"
+                    class="nav-link {% if '/mensajes' in request.path %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13" />
+                        <path d="M22 2L15 22l-4-9-9-4z" />
+                    </svg>
+                    Mensajes
                 </a>
 
                 <a href="{{ url_for('settings.index') }}"
@@ -160,7 +198,7 @@
         <span class="nodex">NodexAI</span>
     </a>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}?v=4"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=5"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     {% block scripts %}{% endblock %}
 </body>

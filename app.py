@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, g
 from config import Config
-from models import db, CompanyInfo, User
+from models import db, CompanyInfo, User, Venue, VENUES
 
 
 def create_app():
@@ -61,6 +61,12 @@ def create_app():
                 admin.set_password(app.config["ADMIN_PASSWORD"])
                 db.session.add(admin)
                 db.session.commit()
+
+            # Seed venues from hardcoded list if empty
+            if not Venue.query.first():
+                for v_name in VENUES:
+                    db.session.add(Venue(name=v_name, active=True))
+                db.session.commit()
         except Exception as e:
             print(f"[WARNING] Database init skipped: {e}")
 
@@ -84,6 +90,10 @@ def create_app():
     from routes.stats import stats_bp
     from routes.agent import agent_bp
     from routes.users import users_bp
+    from routes.activity import activity_bp
+    from routes.venues import venues_bp
+    from routes.conversations import conversations_bp
+    from routes.broadcast import broadcast_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -93,6 +103,10 @@ def create_app():
     app.register_blueprint(stats_bp)
     app.register_blueprint(agent_bp)
     app.register_blueprint(users_bp)
+    app.register_blueprint(activity_bp)
+    app.register_blueprint(venues_bp)
+    app.register_blueprint(conversations_bp)
+    app.register_blueprint(broadcast_bp)
 
     return app
 

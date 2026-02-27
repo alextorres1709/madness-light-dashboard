@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Conversaciones{% endblock %}
+{% block header_title %}Historial de Conversaciones{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Conversaciones del Bot</h1>
+        <p class="page-subtitle">Historial de chats entre el agente de IA y los usuarios de Telegram</p>
+    </div>
+</div>
+
+<form method="GET" action="{{ url_for('conversations.index') }}" class="toolbar">
+    <div class="search-input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" name="search" placeholder="Buscar por ID de usuario o contenido..." value="{{ search }}">
+    </div>
+</form>
+
+<div class="card">
+    {% if users %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Mensajes</th>
+                    <th>Primera vez</th>
+                    <th>Ultimo mensaje</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr style="cursor:pointer" onclick="window.location='{{ url_for('conversations.detail', user_id=user.user_id) }}'">
+                    <td>Usuario ...{{ user.user_id[-4:] }}</td>
+                    <td><span class="badge badge-platform">{{ user.msg_count }}</span></td>
+                    <td>{{ user.first_seen.strftime('%d/%m/%Y %H:%M') if user.first_seen else '—' }}</td>
+                    <td>{{ user.last_active.strftime('%d/%m/%Y %H:%M') if user.last_active else '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+        </svg>
+        <h3>Sin conversaciones</h3>
+        <p>Las conversaciones del bot de Telegram aparecerán aquí</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

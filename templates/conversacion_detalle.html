@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Conversacion{% endblock %}
+{% block header_title %}Conversacion con Usuario ...{{ user_id[-4:] }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Usuario ...{{ user_id[-4:] }}</h1>
+        <p class="page-subtitle">
+            <span class="badge badge-platform">{{ msg_count }} mensajes</span>
+            <span style="margin-left:8px;color:var(--text-tertiary)">ID: {{ user_id }}</span>
+        </p>
+    </div>
+    <a href="{{ url_for('conversations.index') }}" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Volver
+    </a>
+</div>
+
+<form method="GET" action="{{ url_for('conversations.detail', user_id=user_id) }}" class="toolbar">
+    <input type="date" name="from" class="form-input" value="{{ date_from }}" style="max-width:180px">
+    <input type="date" name="to" class="form-input" value="{{ date_to }}" style="max-width:180px">
+    <button type="submit" class="btn btn-secondary btn-sm">Filtrar</button>
+</form>
+
+<div class="card" style="padding:24px">
+    {% if messages %}
+    <div class="chat-view">
+        {% for msg in messages %}
+        <div class="chat-bubble {% if msg.role == 'user' %}chat-user{% else %}chat-bot{% endif %}">
+            <div class="chat-meta">
+                <strong>{% if msg.role == 'user' %}Usuario{% else %}Bot{% endif %}</strong>
+                <span>{{ msg.created_at.strftime('%d/%m %H:%M') if msg.created_at else '' }}</span>
+            </div>
+            <div class="chat-text">{{ msg.content }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Sin mensajes</h3>
+        <p>No hay mensajes para el rango seleccionado</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

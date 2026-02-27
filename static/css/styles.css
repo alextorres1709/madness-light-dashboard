@@ -934,6 +934,22 @@ tbody td:first-child {
     border: 1px solid rgba(6, 182, 212, 0.12);
 }
 
+/* ─── Calendar ──────────────────────────────────── */
+.calendar-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.calendar-nav h3 { font-size:18px; font-weight:700; color:var(--text-primary); }
+.calendar-grid table { width:100%; border-collapse:collapse; table-layout:fixed; }
+.calendar-grid th { padding:12px 8px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-tertiary); text-align:center; border-bottom:1px solid var(--border-color); }
+.calendar-grid td { padding:8px; height:80px; vertical-align:top; border:1px solid rgba(255,255,255,0.03); text-align:center; cursor:default; }
+.calendar-grid td.has-events { cursor:pointer; background:rgba(57,255,20,0.02); }
+.calendar-grid td.has-events:hover { background:rgba(57,255,20,0.06); }
+.calendar-grid td.today { border-color:rgba(57,255,20,0.3); }
+.calendar-grid .day-number { font-size:14px; font-weight:600; color:var(--text-secondary); margin-bottom:4px; }
+.calendar-grid td.today .day-number { color:var(--brand-green); font-weight:800; }
+.calendar-grid .event-dots { display:flex; gap:3px; justify-content:center; flex-wrap:wrap; }
+.calendar-grid .event-dot { width:8px; height:8px; border-radius:50%; background:var(--brand-green); }
+.calendar-grid .event-dot.inactive { background:var(--text-tertiary); }
+.calendar-day-detail { margin-top:20px; }
+
 /* ─── Buttons ───────────────────────────────────── */
 .btn {
     display: inline-flex;

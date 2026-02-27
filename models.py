@@ -165,6 +165,32 @@ class CompanyInfo(db.Model):
         }
 
 
+class Venue(db.Model):
+    """Managed venue (sala) for events."""
+    __tablename__ = "venues"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False, unique=True)
+    address = db.Column(db.String(300), default="")
+    capacity = db.Column(db.Integer, default=0)
+    image_url = db.Column(db.String(500), default="")
+    active = db.Column(db.Boolean, default=True, index=True)
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "address": self.address,
+            "capacity": self.capacity,
+            "image_url": self.image_url,
+            "active": self.active,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
 class Conversation(db.Model):
     """Bot chat history — shared with Telegram bot (n8n)."""
 
@@ -186,4 +212,21 @@ class Conversation(db.Model):
             "content": self.content,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
+
+
+class ActivityLog(db.Model):
+    """Audit trail for admin-visible actions."""
+    __tablename__ = "activity_log"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True, index=True)
+    action = db.Column(db.String(50), nullable=False, index=True)
+    target_type = db.Column(db.String(50), nullable=False)
+    target_id = db.Column(db.Integer, nullable=True)
+    details = db.Column(db.Text, default="")
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc), index=True
+    )
+
+    user = db.relationship("User", backref=db.backref("activity_logs", lazy="dynamic"))
 

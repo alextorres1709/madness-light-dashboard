@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from models import db, CompanyInfo
 from routes.auth import admin_required
+from services.activity import log_activity
 
 settings_bp = Blueprint("settings", __name__)
 
@@ -34,6 +35,7 @@ def update():
         company.address = request.form.get("address", company.address).strip()
         company.hours = request.form.get("hours", company.hours).strip()
         company.extra_info = request.form.get("extra_info", company.extra_info).strip()
+        log_activity("update", "settings", company.id, "Updated company info")
         db.session.commit()
         flash("Información actualizada correctamente", "success")
     except Exception as e:

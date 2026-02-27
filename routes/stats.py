@@ -1,5 +1,7 @@
+import csv
+import io
 from datetime import datetime, timedelta, timezone
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, Response
 from models import db, Conversation, Event
 from routes.auth import login_required
 
@@ -176,3 +178,41 @@ def insights():
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@stats_bp.route("/estadisticas/export/csv")
+@login_required
+def export_csv():
+    users_data = (
+        db.session.query(
+            Conversation.user_id,
+            db.func.count(Conversation.id).label("msg_count"),
+            db.func.min(Conversation.created_at).label("first_seen"),
+            db.func.max(Conversation.created_at).label("last_seen"),
+            db.func.count(db.func.distinct(db.func.date(Conversation.created_at))).label("days_active"),
+        )
+        .filter(Conversation.role == "user")
+        .group_by(Conversation.user_id)
+        .order_by(db.text("msg_count DESC"))
+        .all()
+    )
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["User ID", "Mensajes", "Primera Vez", "Ultimo Mensaje", "Dias Activo"])
+
+    for u in users_data:
+        writer.writerow([
+            u.user_id,
+            u.msg_count,
+            u.first_seen.strftime("%Y-%m-%d %H:%M") if u.first_seen else "",
+            u.last_seen.strftime("%Y-%m-%d %H:%M") if u.last_seen else "",
+            u.days_active,
+        ])
+
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=estadisticas_usuarios_export.csv"},
+    )

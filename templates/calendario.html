@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Calendario{% endblock %}
+{% block header_title %}Calendario de Fiestas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Calendario de Fiestas</h1>
+        <p class="page-subtitle">Vista mensual de todos los eventos programados</p>
+    </div>
+    <a href="{{ url_for('events.index') }}" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+        </svg>
+        Vista Lista
+    </a>
+</div>
+
+<div class="card" style="padding:24px">
+    <!-- Navigation -->
+    <div class="calendar-nav">
+        <a href="{{ url_for('events.calendario', year=prev_year, month=prev_month) }}" class="btn btn-secondary btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </a>
+        <h3>{{ month_name }} {{ year }}</h3>
+        <a href="{{ url_for('events.calendario', year=next_year, month=next_month) }}" class="btn btn-secondary btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <polyline points="9 18 15 12 9 6" />
+            </svg>
+        </a>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar-grid">
+        <table>
+            <thead>
+                <tr>
+                    <th>Lun</th><th>Mar</th><th>Mie</th><th>Jue</th><th>Vie</th><th>Sab</th><th>Dom</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for week in month_cal %}
+                <tr>
+                    {% for day in week %}
+                    {% if day == 0 %}
+                    <td></td>
+                    {% else %}
+                    <td class="{% if events_by_day.get(day) %}has-events{% endif %} {% if day == today %}today{% endif %}"
+                        {% if events_by_day.get(day) %}onclick="showDayEvents({{ day }})"{% endif %}>
+                        <div class="day-number">{{ day }}</div>
+                        {% if events_by_day.get(day) %}
+                        <div class="event-dots">
+                            {% for ev in events_by_day[day] %}
+                            <div class="event-dot {% if not ev.active %}inactive{% endif %}" title="{{ ev.name }}"></div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Day Detail -->
+    <div id="day-detail" class="calendar-day-detail" style="display:none">
+        <div class="section-header" style="margin-bottom:12px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <path d="M8 2v4M16 2v4" /><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M3 10h18" />
+            </svg>
+            <h3 id="day-detail-title">Eventos</h3>
+        </div>
+        <div id="day-detail-content"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var eventsByDay = {{ events_by_day | tojson if events_by_day else '{}' | safe }};
+
+    // Convert event objects for JS
+    var eventDataByDay = {};
+    {% for day, evts in events_by_day.items() %}
+    eventDataByDay[{{ day }}] = [
+        {% for ev in evts %}
+        {name: {{ ev.name | tojson }}, venue: {{ ev.venue | tojson }}, theme: {{ ev.theme | tojson }},
+         date: {{ ev.date.strftime('%H:%M') | tojson }}, active: {{ 'true' if ev.active else 'false' }},
+         entry_price: {{ (ev.entry_price or '') | tojson }}},
+        {% endfor %}
+    ];
+    {% endfor %}
+
+    function showDayEvents(day) {
+        var events = eventDataByDay[day] || [];
+        var detail = document.getElementById('day-detail');
+        document.getElementById('day-detail-title').textContent = 'Eventos del dia ' + day;
+
+        var html = '';
+        events.forEach(function(ev) {
+            html += '<div class="card" style="padding:14px;margin-bottom:8px;border-left:3px solid ' +
+                (ev.active ? 'var(--brand-green)' : 'var(--text-tertiary)') + '">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center">' +
+                '<div><strong>' + ev.name + '</strong>' +
+                '<span style="color:var(--text-tertiary);margin-left:8px;font-size:13px">' + ev.date + '</span></div>' +
+                '<span class="badge badge-category">' + ev.venue + '</span>' +
+                '</div>' +
+                (ev.entry_price ? '<div style="font-size:13px;color:var(--text-secondary);margin-top:4px">' + ev.entry_price + '</div>' : '') +
+                '</div>';
+        });
+
+        document.getElementById('day-detail-content').innerHTML = html;
+        detail.style.display = 'block';
+    }
+</script>
+{% endblock %}

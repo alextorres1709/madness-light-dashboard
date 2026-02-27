@@ -73,6 +73,10 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and user.active and user.check_password(password):
             session["user_id"] = user.id
+            g.user = user
+            from services.activity import log_activity
+            log_activity("login", "session", user.id, f"{user.email} logged in")
+            db.session.commit()
             return redirect(url_for("dashboard.index"))
         else:
             flash("Credenciales incorrectas", "error")

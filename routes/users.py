@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g
 from models import db, User, ROLES
 from routes.auth import admin_required
+from services.activity import log_activity
 
 users_bp = Blueprint("users", __name__)
 
@@ -58,6 +59,7 @@ def create():
         user = User(email=email, name=name, role=role, active=True)
         user.set_password(password)
         db.session.add(user)
+        log_activity("create", "user", details=f"Created user: {email} ({role})")
         db.session.commit()
         flash(f"Usuario {email} creado correctamente", "success")
     except Exception as e:
@@ -82,6 +84,7 @@ def update(user_id):
         if password:
             user.set_password(password)
 
+        log_activity("update", "user", user.id, f"Updated user: {user.email}")
         db.session.commit()
         flash("Usuario actualizado correctamente", "success")
     except Exception as e:
@@ -101,6 +104,7 @@ def toggle(user_id):
         return redirect(url_for("users.index"))
 
     user.active = not user.active
+    log_activity("toggle", "user", user.id, f"Toggled user: {user.email}")
     db.session.commit()
     status = "activado" if user.active else "desactivado"
     flash(f"Usuario {status}", "success")
@@ -117,6 +121,7 @@ def delete(user_id):
         return redirect(url_for("users.index"))
 
     try:
+        log_activity("delete", "user", user_id, f"Deleted user: {user.email}")
         db.session.delete(user)
         db.session.commit()
         flash("Usuario eliminado", "success")

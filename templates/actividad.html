@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Actividad{% endblock %}
+{% block header_title %}Log de Actividad{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Log de Actividad</h1>
+        <p class="page-subtitle">Registro de acciones realizadas en el panel</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<form method="GET" action="{{ url_for('activity.index') }}" class="toolbar">
+    <select name="action" class="filter-select" onchange="this.form.submit()">
+        <option value="">Todas las acciones</option>
+        <option value="login" {% if action_filter=='login' %}selected{% endif %}>Login</option>
+        <option value="create" {% if action_filter=='create' %}selected{% endif %}>Crear</option>
+        <option value="update" {% if action_filter=='update' %}selected{% endif %}>Actualizar</option>
+        <option value="delete" {% if action_filter=='delete' %}selected{% endif %}>Eliminar</option>
+        <option value="toggle" {% if action_filter=='toggle' %}selected{% endif %}>Toggle</option>
+        <option value="broadcast" {% if action_filter=='broadcast' %}selected{% endif %}>Broadcast</option>
+    </select>
+    <select name="target_type" class="filter-select" onchange="this.form.submit()">
+        <option value="">Todos los tipos</option>
+        <option value="event" {% if target_filter=='event' %}selected{% endif %}>Evento</option>
+        <option value="user" {% if target_filter=='user' %}selected{% endif %}>Usuario</option>
+        <option value="venue" {% if target_filter=='venue' %}selected{% endif %}>Sala</option>
+        <option value="settings" {% if target_filter=='settings' %}selected{% endif %}>Ajustes</option>
+        <option value="session" {% if target_filter=='session' %}selected{% endif %}>Sesion</option>
+        <option value="broadcast" {% if target_filter=='broadcast' %}selected{% endif %}>Broadcast</option>
+    </select>
+</form>
+
+<div class="card">
+    {% if logs %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Accion</th>
+                    <th>Tipo</th>
+                    <th>Detalle</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.created_at.strftime('%d/%m/%Y %H:%M') if log.created_at else '—' }}</td>
+                    <td>{{ log.user.name if log.user else '—' }}</td>
+                    <td>
+                        <span class="badge {% if log.action == 'create' %}badge-active{% elif log.action == 'delete' %}badge-inactive{% elif log.action == 'login' %}badge-platform{% elif log.action == 'broadcast' %}badge-theme{% else %}badge-category{% endif %}">
+                            {{ log.action }}
+                        </span>
+                    </td>
+                    <td>{{ log.target_type }}</td>
+                    <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ log.details }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if total_pages > 1 %}
+    <div style="display:flex;justify-content:center;gap:8px;padding:16px">
+        {% if page > 1 %}
+        <a href="{{ url_for('activity.index', page=page-1, action=action_filter, target_type=target_filter) }}" class="btn btn-secondary btn-sm">Anterior</a>
+        {% endif %}
+        <span style="padding:8px 12px;color:var(--text-secondary);font-size:13px">Pagina {{ page }} de {{ total_pages }}</span>
+        {% if page < total_pages %}
+        <a href="{{ url_for('activity.index', page=page+1, action=action_filter, target_type=target_filter) }}" class="btn btn-secondary btn-sm">Siguiente</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+        </svg>
+        <h3>Sin actividad registrada</h3>
+        <p>Las acciones del panel se registraran aqui</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

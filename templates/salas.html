@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Salas{% endblock %}
+{% block header_title %}Gestion de Salas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Salas y Locales</h1>
+        <p class="page-subtitle">Gestiona las salas donde se organizan las fiestas</p>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('createModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Anadir Sala
+    </button>
+</div>
+
+<form method="GET" action="{{ url_for('venues.index') }}" class="toolbar">
+    <div class="search-input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" name="search" placeholder="Buscar salas..." value="{{ search }}">
+    </div>
+    <select name="status" class="filter-select" onchange="this.form.submit()">
+        <option value="">Todos los estados</option>
+        <option value="active" {% if selected_status=='active' %}selected{% endif %}>Activas</option>
+        <option value="inactive" {% if selected_status=='inactive' %}selected{% endif %}>Inactivas</option>
+    </select>
+</form>
+
+<div class="card">
+    {% if venues %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Direccion</th>
+                    <th>Aforo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for venue in venues %}
+                <tr>
+                    <td>{{ venue.name }}</td>
+                    <td>{{ venue.address or '—' }}</td>
+                    <td>{{ venue.capacity or '—' }}</td>
+                    <td>
+                        <span class="badge {% if venue.active %}badge-active{% else %}badge-inactive{% endif %}">
+                            {{ 'Activa' if venue.active else 'Inactiva' }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary btn-sm"
+                                onclick='openEditVenueModal({{ venue.to_dict() | tojson }})'>Editar</button>
+                            <form method="POST" action="{{ url_for('venues.toggle', venue_id=venue.id) }}" style="display:inline">
+                                <button type="submit" class="btn btn-secondary btn-sm">
+                                    {{ 'Desactivar' if venue.active else 'Activar' }}
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('venues.delete', venue_id=venue.id) }}" style="display:inline"
+                                onsubmit="return confirm('¿Eliminar esta sala?')">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+            <circle cx="12" cy="10" r="3" />
+        </svg>
+        <h3>No hay salas</h3>
+        <p>Crea salas para asignarlas a las fiestas</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Create Modal -->
+<div class="modal-overlay" id="createModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Nueva Sala</h3>
+            <button class="modal-close" onclick="closeModal('createModal')">&#10005;</button>
+        </div>
+        <form method="POST" action="{{ url_for('venues.create') }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" name="name" class="form-input" placeholder="Nombre de la sala" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Direccion</label>
+                    <input type="text" name="address" class="form-input" placeholder="Calle, Ciudad">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Aforo</label>
+                    <input type="number" name="capacity" class="form-input" placeholder="500" min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Imagen URL</label>
+                    <input type="text" name="image_url" class="form-input" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Activa</label>
+                    <div class="toggle-container">
+                        <div class="toggle active" onclick="toggleSwitch(this)">
+                            <input type="checkbox" name="active" checked style="display:none">
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('createModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Crear Sala</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Editar Sala</h3>
+            <button class="modal-close" onclick="closeModal('editModal')">&#10005;</button>
+        </div>
+        <form method="POST" id="editVenueForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" name="name" id="edit-venue-name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Direccion</label>
+                    <input type="text" name="address" id="edit-venue-address" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Aforo</label>
+                    <input type="number" name="capacity" id="edit-venue-capacity" class="form-input" min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Imagen URL</label>
+                    <input type="text" name="image_url" id="edit-venue-image" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Activa</label>
+                    <div class="toggle-container">
+                        <div class="toggle" id="edit-venue-toggle" onclick="toggleSwitch(this)">
+                            <input type="checkbox" name="active" id="edit-venue-active" style="display:none">
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleSwitch(el) {
+        const cb = el.querySelector('input[type=checkbox]');
+        cb.checked = !cb.checked;
+        el.classList.toggle('active');
+    }
+
+    function openEditVenueModal(venue) {
+        document.getElementById('editVenueForm').action = '/salas/' + venue.id + '/update';
+        document.getElementById('edit-venue-name').value = venue.name || '';
+        document.getElementById('edit-venue-address').value = venue.address || '';
+        document.getElementById('edit-venue-capacity').value = venue.capacity || 0;
+        document.getElementById('edit-venue-image').value = venue.image_url || '';
+
+        const toggle = document.getElementById('edit-venue-toggle');
+        const checkbox = document.getElementById('edit-venue-active');
+        if (venue.active) {
+            toggle.classList.add('active');
+            checkbox.checked = true;
+        } else {
+            toggle.classList.remove('active');
+            checkbox.checked = false;
+        }
+        openModal('editModal');
+    }
+</script>
+{% endblock %}
