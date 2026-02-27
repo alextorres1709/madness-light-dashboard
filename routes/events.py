@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from models import db, Event, VENUES, THEMES
-from routes.auth import login_required
+from routes.auth import login_required, editor_required
 
 events_bp = Blueprint("events", __name__)
 
@@ -51,7 +51,7 @@ def index():
 
 
 @events_bp.route("/events/create", methods=["POST"])
-@login_required
+@editor_required
 def create():
     try:
         event = Event(
@@ -78,7 +78,7 @@ def create():
 
 
 @events_bp.route("/events/<int:event_id>/update", methods=["POST"])
-@login_required
+@editor_required
 def update(event_id):
     event = Event.query.get_or_404(event_id)
     try:
@@ -103,7 +103,7 @@ def update(event_id):
 
 
 @events_bp.route("/events/<int:event_id>/delete", methods=["POST"])
-@login_required
+@editor_required
 def delete(event_id):
     event = Event.query.get_or_404(event_id)
     try:
@@ -118,7 +118,7 @@ def delete(event_id):
 
 
 @events_bp.route("/events/<int:event_id>/toggle", methods=["POST"])
-@login_required
+@editor_required
 def toggle(event_id):
     event = Event.query.get_or_404(event_id)
     event.active = not event.active

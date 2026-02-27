@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from models import db, CompanyInfo
-from routes.auth import login_required
+from routes.auth import admin_required
 
 settings_bp = Blueprint("settings", __name__)
 
 
 @settings_bp.route("/settings")
-@login_required
+@admin_required
 def index():
     company = CompanyInfo.query.first()
     if not company:
@@ -19,7 +19,7 @@ def index():
 
 
 @settings_bp.route("/settings/update", methods=["POST"])
-@login_required
+@admin_required
 def update():
     company = CompanyInfo.query.first()
     if not company:

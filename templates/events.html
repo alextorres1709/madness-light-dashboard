@@ -10,6 +10,7 @@
         <p class="page-subtitle">Gestiona las fiestas que el chatbot muestra a los clientes · Entradas vía <strong
                 style="color:var(--brand-green)">Elite Events App</strong></p>
     </div>
+    {% if current_user and current_user.can_manage_events %}
     <button class="btn btn-primary" onclick="openModal('createModal')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
             <line x1="12" y1="5" x2="12" y2="19" />
@@ -17,6 +18,7 @@
         </svg>
         Añadir Fiesta
     </button>
+    {% endif %}
 </div>
 
 <!-- Filters -->
@@ -60,7 +62,7 @@
                     <th>Temática</th>
                     <th>Entrada</th>
                     <th>Estado</th>
-                    <th>Acciones</th>
+                    {% if current_user and current_user.can_manage_events %}<th>Acciones</th>{% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -76,6 +78,7 @@
                             {{ 'Activa' if event.active else 'Inactiva' }}
                         </span>
                     </td>
+                    {% if current_user and current_user.can_manage_events %}
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-secondary btn-sm"
@@ -92,6 +95,7 @@
                             </form>
                         </div>
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

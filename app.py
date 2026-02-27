@@ -1,6 +1,6 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, g
 from config import Config
-from models import db, CompanyInfo
+from models import db, CompanyInfo, User
 
 
 def create_app():
@@ -49,8 +49,31 @@ def create_app():
                 )
                 db.session.add(company)
                 db.session.commit()
+
+            # Seed admin user if no users exist
+            if not User.query.first():
+                admin = User(
+                    email=app.config["ADMIN_EMAIL"].lower(),
+                    name="Administrador",
+                    role="admin",
+                    active=True,
+                )
+                admin.set_password(app.config["ADMIN_PASSWORD"])
+                db.session.add(admin)
+                db.session.commit()
         except Exception as e:
             print(f"[WARNING] Database init skipped: {e}")
+
+    # Load current user before each request
+    @app.before_request
+    def before_request():
+        from routes.auth import _load_current_user
+        _load_current_user()
+
+    # Inject current_user into all templates
+    @app.context_processor
+    def inject_user():
+        return {"current_user": g.get("user")}
 
     # Register blueprints
     from routes.auth import auth_bp
@@ -60,6 +83,7 @@ def create_app():
     from routes.api import api_bp
     from routes.stats import stats_bp
     from routes.agent import agent_bp
+    from routes.users import users_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -68,6 +92,7 @@ def create_app():
     app.register_blueprint(api_bp)
     app.register_blueprint(stats_bp)
     app.register_blueprint(agent_bp)
+    app.register_blueprint(users_bp)
 
     return app
 

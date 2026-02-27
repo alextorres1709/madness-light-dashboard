@@ -916,6 +916,24 @@ tbody td:first-child {
     border: 1px solid rgba(168, 85, 247, 0.12);
 }
 
+.badge-admin {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.badge-editor {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.badge-viewer {
+    background: rgba(6, 182, 212, 0.08);
+    color: var(--brand-cyan);
+    border: 1px solid rgba(6, 182, 212, 0.12);
+}
+
 /* ─── Buttons ───────────────────────────────────── */
 .btn {
     display: inline-flex;

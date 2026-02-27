@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=3">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=4">
 </head>
 
 <body>
@@ -85,7 +85,19 @@
                     Agente de IA
                 </a>
 
-                <span class="nav-label" style="margin-top:12px">Configuración</span>
+                {% if current_user and current_user.can_manage_users %}
+                <span class="nav-label" style="margin-top:12px">Administración</span>
+
+                <a href="{{ url_for('users.index') }}"
+                    class="nav-link {% if '/usuarios' in request.path %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                        <path d="M16 3.13a4 4 0 010 7.75" />
+                    </svg>
+                    Usuarios
+                </a>
 
                 <a href="{{ url_for('settings.index') }}"
                     class="nav-link {% if '/settings' in request.path %}active{% endif %}">
@@ -96,6 +108,7 @@
                     </svg>
                     Ajustes
                 </a>
+                {% endif %}
             </nav>
 
             <div class="sidebar-footer">
@@ -147,7 +160,7 @@
         <span class="nodex">NodexAI</span>
     </a>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}?v=3"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=4"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     {% block scripts %}{% endblock %}
 </body>

@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios{% endblock %}
+{% block header_title %}Gestión de Usuarios{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Usuarios del Panel</h1>
+        <p class="page-subtitle">Administra los usuarios que acceden al panel de gestión</p>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('createModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Añadir Usuario
+    </button>
+</div>
+
+<!-- Filters -->
+<form method="GET" action="{{ url_for('users.index') }}" class="toolbar">
+    <div class="search-input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" name="search" placeholder="Buscar por nombre o email..." value="{{ search }}">
+    </div>
+    <select name="role" class="filter-select" onchange="this.form.submit()">
+        <option value="">Todos los roles</option>
+        <option value="admin" {% if selected_role=='admin' %}selected{% endif %}>Admin</option>
+        <option value="editor" {% if selected_role=='editor' %}selected{% endif %}>Editor</option>
+        <option value="viewer" {% if selected_role=='viewer' %}selected{% endif %}>Viewer</option>
+    </select>
+</form>
+
+<!-- Users Table -->
+<div class="card">
+    {% if users %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Creado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.name or '—' }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span class="badge {% if user.role == 'admin' %}badge-admin{% elif user.role == 'editor' %}badge-editor{% else %}badge-viewer{% endif %}">
+                            {{ user.role | capitalize }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge {% if user.active %}badge-active{% else %}badge-inactive{% endif %}">
+                            {{ 'Activo' if user.active else 'Inactivo' }}
+                        </span>
+                    </td>
+                    <td>{{ user.created_at.strftime('%d/%m/%Y') if user.created_at else '—' }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary btn-sm"
+                                onclick='openEditUserModal({{ user.to_dict() | tojson }})'>Editar</button>
+                            {% if user.id != current_user.id %}
+                            <form method="POST" action="{{ url_for('users.toggle', user_id=user.id) }}"
+                                style="display:inline">
+                                <button type="submit" class="btn btn-secondary btn-sm">
+                                    {{ 'Desactivar' if user.active else 'Activar' }}
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('users.delete', user_id=user.id) }}"
+                                style="display:inline" onsubmit="return confirm('¿Eliminar este usuario?')">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 00-3-3.87" />
+            <path d="M16 3.13a4 4 0 010 7.75" />
+        </svg>
+        <h3>No hay usuarios</h3>
+        <p>Crea usuarios para gestionar el acceso al panel</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Create Modal -->
+<div class="modal-overlay" id="createModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Nuevo Usuario</h3>
+            <button class="modal-close" onclick="closeModal('createModal')">&#10005;</button>
+        </div>
+        <form method="POST" action="{{ url_for('users.create') }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" name="name" class="form-input" placeholder="Nombre completo">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-input" placeholder="usuario@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" name="password" class="form-input" placeholder="Min. 6 caracteres" required
+                        minlength="6">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rol</label>
+                    <select name="role" class="form-input">
+                        <option value="viewer">Viewer — Solo lectura</option>
+                        <option value="editor">Editor — Gestionar fiestas</option>
+                        <option value="admin">Admin — Acceso completo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('createModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Crear Usuario</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Editar Usuario</h3>
+            <button class="modal-close" onclick="closeModal('editModal')">&#10005;</button>
+        </div>
+        <form method="POST" id="editUserForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" name="name" id="edit-user-name" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" id="edit-user-email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nueva Contraseña</label>
+                    <input type="password" name="password" id="edit-user-password" class="form-input"
+                        placeholder="Dejar vacío para no cambiar" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rol</label>
+                    <select name="role" id="edit-user-role" class="form-input">
+                        <option value="viewer">Viewer — Solo lectura</option>
+                        <option value="editor">Editor — Gestionar fiestas</option>
+                        <option value="admin">Admin — Acceso completo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function openEditUserModal(user) {
+        document.getElementById('editUserForm').action = '/usuarios/' + user.id + '/update';
+        document.getElementById('edit-user-name').value = user.name || '';
+        document.getElementById('edit-user-email').value = user.email || '';
+        document.getElementById('edit-user-password').value = '';
+        document.getElementById('edit-user-role').value = user.role || 'viewer';
+        openModal('editModal');
+    }
+</script>
+{% endblock %}
