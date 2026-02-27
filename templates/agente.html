@@ -72,25 +72,56 @@
                         <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
                         <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
                     </svg>
-                    Lo que sabe el Agente
+                    Fuentes de Información
                 </h3>
             </div>
-            <div style="display:flex;flex-direction:column;gap:12px">
-                <div class="agent-info-item">
-                    <div class="agent-info-label">📋 Descripción</div>
-                    <div class="agent-info-value">{{ company.description if company else 'No configurada' }}</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="capability-item">
+                    <span class="capability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M8 2v4M16 2v4" /><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M3 10h18" />
+                        </svg>
+                    </span>
+                    <div>
+                        <div class="capability-name">Calendario de eventos</div>
+                        <div class="capability-desc">Acceso a todas las fiestas programadas: fechas, salas, temáticas, DJs y precios</div>
+                    </div>
                 </div>
-                <div class="agent-info-item">
-                    <div class="agent-info-label">📍 Ubicación</div>
-                    <div class="agent-info-value">{{ company.address if company else '—' }}</div>
+                <div class="capability-item">
+                    <span class="capability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M3 21h18M3 7v1a3 3 0 006 0V7m0 1a3 3 0 006 0V7m0 1a3 3 0 006 0V7H3l2-4h14l2 4" />
+                            <path d="M5 21V10.85M19 21V10.85" />
+                        </svg>
+                    </span>
+                    <div>
+                        <div class="capability-name">Perfil de la empresa</div>
+                        <div class="capability-desc">Datos de Madness Light: descripción, ubicación, contacto y horarios de eventos</div>
+                    </div>
                 </div>
-                <div class="agent-info-item">
-                    <div class="agent-info-label">📧 Email</div>
-                    <div class="agent-info-value">{{ company.email if company else '—' }}</div>
+                <div class="capability-item">
+                    <span class="capability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                    </span>
+                    <div>
+                        <div class="capability-name">Base de conocimiento</div>
+                        <div class="capability-desc">Documentación interna sobre entradas, salas activas en Madrid, y programa de RRPP</div>
+                    </div>
                 </div>
-                <div class="agent-info-item">
-                    <div class="agent-info-label">🕐 Frecuencia</div>
-                    <div class="agent-info-value">{{ company.hours if company else '—' }}</div>
+                <div class="capability-item">
+                    <span class="capability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                        </svg>
+                    </span>
+                    <div>
+                        <div class="capability-name">Historial de conversaciones</div>
+                        <div class="capability-desc">Contexto de mensajes previos de cada usuario para respuestas personalizadas</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,28 +138,45 @@
             </div>
             <div style="display:flex;flex-direction:column;gap:10px">
                 <div class="capability-item">
-                    <span class="capability-icon">🎉</span>
+                    <span class="capability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                    </span>
                     <div>
                         <div class="capability-name">Info de Fiestas</div>
                         <div class="capability-desc">Responde sobre próximos eventos, salas, temáticas y precios</div>
                     </div>
                 </div>
                 <div class="capability-item">
-                    <span class="capability-icon">🎟️</span>
+                    <span class="capability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
+                        </svg>
+                    </span>
                     <div>
                         <div class="capability-name">Entradas</div>
                         <div class="capability-desc">Guía a los usuarios a comprar entradas en Elite Events</div>
                     </div>
                 </div>
                 <div class="capability-item">
-                    <span class="capability-icon">📍</span>
+                    <span class="capability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
+                        </svg>
+                    </span>
                     <div>
                         <div class="capability-name">Salas y Ubicaciones</div>
                         <div class="capability-desc">Informa sobre las salas activas en Madrid</div>
                     </div>
                 </div>
                 <div class="capability-item">
-                    <span class="capability-icon">🤝</span>
+                    <span class="capability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" />
+                        </svg>
+                    </span>
                     <div>
                         <div class="capability-name">Programa RRPP</div>
                         <div class="capability-desc">Explica el programa de relaciones públicas cuando se pregunta</div>

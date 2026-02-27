@@ -265,22 +265,22 @@
             container.innerHTML = `
                 <div class="ai-insights-grid">
                     <div class="ai-insight-card ai-accent-green">
-                        <div class="ai-insight-icon">💬</div>
+                        <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
                         <h3>Preguntas Frecuentes</h3>
                         <div class="ai-insight-content">${data.preguntas_frecuentes || 'Sin datos suficientes'}</div>
                     </div>
                     <div class="ai-insight-card ai-accent-cyan">
-                        <div class="ai-insight-icon">📍</div>
+                        <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
                         <h3>Salas Populares</h3>
                         <div class="ai-insight-content">${data.salas_populares || 'Sin datos suficientes'}</div>
                     </div>
                     <div class="ai-insight-card ai-accent-purple">
-                        <div class="ai-insight-icon">😊</div>
+                        <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
                         <h3>Sentimiento General</h3>
                         <div class="ai-insight-content">${data.sentimiento || 'Sin datos suficientes'}</div>
                     </div>
                     <div class="ai-insight-card ai-accent-amber">
-                        <div class="ai-insight-icon">💡</div>
+                        <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
                         <h3>Sugerencias de Mejora</h3>
                         <div class="ai-insight-content">${data.sugerencias || 'Sin datos suficientes'}</div>
                     </div>
