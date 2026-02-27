@@ -13,7 +13,7 @@
 </div>
 
 <!-- Agent Status Card -->
-<div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:28px">
+<div class="kpi-grid" style="grid-template-columns:repeat(3, 1fr)">
     <div class="kpi-card kpi-accent-green animate-in">
         <div class="kpi-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -152,8 +152,7 @@
                 Base de Conocimiento del Agente
             </h3>
         </div>
-        <pre
-            style="white-space:pre-wrap;font-family:inherit;font-size:13px;color:var(--text-secondary);line-height:1.8;background:rgba(255,255,255,0.02);padding:16px;border-radius:var(--radius-sm);border:1px solid var(--border-color)">{{ company.extra_info }}</pre>
+        <pre class="knowledge-base-content">{{ company.extra_info }}</pre>
     </div>
     {% endif %}
 
@@ -192,59 +191,4 @@
         {% endif %}
     </div>
 
-    <style>
-        .agent-info-item {
-            padding: 12px 14px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-        }
-
-        .agent-info-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .agent-info-value {
-            font-size: 13px;
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
-
-        .capability-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 14px;
-            background: rgba(255, 255, 255, 0.015);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            transition: var(--transition);
-        }
-
-        .capability-item:hover {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: var(--border-hover);
-        }
-
-        .capability-icon {
-            font-size: 20px;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .capability-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .capability-desc {
-            font-size: 12px;
-            color: var(--text-tertiary);
-            margin-top: 2px;
-        }
-    </style>
     {% endblock %}

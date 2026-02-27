@@ -6,7 +6,7 @@
 {% block content %}
 <!-- Welcome Banner -->
 <div class="welcome-banner animate-in">
-    <div class="welcome-title">Bienvenido a <span>Madness Light</span> 🎉</div>
+    <div class="welcome-title">Bienvenido a <span>Madness Light</span></div>
     <div class="welcome-subtitle">Panel de control del agente de IA y gestión de fiestas. Aquí puedes ver las
         estadísticas de uso y gestionar los eventos.</div>
 </div>
@@ -82,7 +82,7 @@
     </svg>
     <h2>Acciones Rápidas</h2>
 </div>
-<div class="quick-actions">
+<div class="quick-actions" style="grid-template-columns:repeat(4, 1fr)">
     <a href="{{ url_for('events.index') }}" class="quick-action-card">
         <div class="quick-action-icon green">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -95,17 +95,38 @@
             <div class="quick-action-desc">Añade un nuevo evento</div>
         </div>
     </a>
+    <a href="{{ url_for('stats.index') }}" class="quick-action-card">
+        <div class="quick-action-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 20V10M12 20V4M6 20v-6" />
+            </svg>
+        </div>
+        <div>
+            <div class="quick-action-text">Ver Estadísticas</div>
+            <div class="quick-action-desc">Análisis detallado</div>
+        </div>
+    </a>
+    <a href="{{ url_for('agent.index') }}" class="quick-action-card">
+        <div class="quick-action-icon amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a4 4 0 014 4v1a1 1 0 001 1h1a4 4 0 010 8h-1a1 1 0 00-1 1v1a4 4 0 01-8 0v-1a1 1 0 00-1-1H6a4 4 0 010-8h1a1 1 0 001-1V6a4 4 0 014-4z" />
+            </svg>
+        </div>
+        <div>
+            <div class="quick-action-text">Agente de IA</div>
+            <div class="quick-action-desc">Conversaciones y estado</div>
+        </div>
+    </a>
     <a href="{{ url_for('settings.index') }}" class="quick-action-card">
         <div class="quick-action-icon cyan">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3" />
-                <path
-                    d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06" />
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06" />
             </svg>
         </div>
         <div>
-            <div class="quick-action-text">Editar Info Empresa</div>
-            <div class="quick-action-desc">Actualiza datos del bot</div>
+            <div class="quick-action-text">Ajustes</div>
+            <div class="quick-action-desc">Info de la empresa</div>
         </div>
     </a>
 </div>
