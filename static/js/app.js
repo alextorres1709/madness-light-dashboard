@@ -9,13 +9,18 @@ function closeModal(id) {
     document.body.style.overflow = '';
 }
 
-// Close modal on overlay click
+// Close modal on overlay click (but not on click-drag from inside modal)
+let modalMouseDownTarget = null;
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('mousedown', (e) => {
+        modalMouseDownTarget = e.target;
+    });
     overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
+        if (e.target === overlay && modalMouseDownTarget === overlay) {
             overlay.classList.remove('active');
             document.body.style.overflow = '';
         }
+        modalMouseDownTarget = null;
     });
 });
 

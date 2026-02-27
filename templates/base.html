@@ -5,8 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Dashboard{% endblock %} — Madness Light</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
@@ -107,7 +111,7 @@
             </div>
 
             <div class="sidebar-brand">
-                <a href="https://nodexai.com" target="_blank">
+                <a href="https://nodexai.es" target="_blank">
                     Powered by <span class="nodex-logo">NodexAI</span>
                 </a>
             </div>
@@ -135,7 +139,7 @@
     </div>
 
     <!-- Powered by NodexAI — fixed bottom-right -->
-    <a href="https://nodexai.com" target="_blank" class="powered-footer">
+    <a href="https://nodexai.es" target="_blank" class="powered-footer">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2L2 7l10 5 10-5-10-5z" />
             <path d="M2 17l10 5 10-5" />

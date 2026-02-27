@@ -31,7 +31,7 @@ class Event(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
+    date = db.Column(db.DateTime, nullable=False, index=True)
     venue = db.Column(db.String(300), nullable=False)  # Sala
     theme = db.Column(db.String(100), default="Normal")  # Temática
     description = db.Column(db.Text, default="")
@@ -40,7 +40,7 @@ class Event(db.Model):
     entry_price = db.Column(db.String(100), default="")  # Precio referencia
     entry_link = db.Column(db.String(500), default="")  # Link app Elite Events
     image_url = db.Column(db.String(500), default="")
-    active = db.Column(db.Boolean, default=True)
+    active = db.Column(db.Boolean, default=True, index=True)
     created_at = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc)
     )
@@ -67,13 +67,13 @@ class Message(db.Model):
     __tablename__ = "messages"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.String(100), nullable=False, index=True)
     user_name = db.Column(db.String(200), default="Unknown")
     message = db.Column(db.Text, nullable=False)
     response = db.Column(db.Text, default="")
     platform = db.Column(db.String(50), default="telegram")
     timestamp = db.Column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc)
+        db.DateTime, default=lambda: datetime.now(timezone.utc), index=True
     )
 
     def to_dict(self):
@@ -122,11 +122,11 @@ class Conversation(db.Model):
     __tablename__ = "conversations"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(20), nullable=False)  # 'user' or 'assistant'
+    user_id = db.Column(db.String(100), nullable=False, index=True)
+    role = db.Column(db.String(20), nullable=False, index=True)  # 'user' or 'assistant'
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc)
+        db.DateTime, default=lambda: datetime.now(timezone.utc), index=True
     )
 
     def to_dict(self):
