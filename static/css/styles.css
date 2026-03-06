@@ -2085,12 +2085,12 @@ select.form-input {
     --brand-cyan: #06b6d4;
     --brand-purple: #a855f7;
     --brand-amber: #f59e0b;
-    --bg-primary: #222222;
-    --bg-secondary: #2a2a2a;
-    --bg-tertiary: #333333;
-    --bg-card: #1c1c1c;
-    --bg-card-hover: #2e2e2e;
-    --bg-glass: rgba(28, 28, 28, 0.85);
+    --bg-primary: #0a0a12;
+    --bg-secondary: #111118;
+    --bg-tertiary: #1a1a22;
+    --bg-card: #0e0e16;
+    --bg-card-hover: #16161e;
+    --bg-glass: rgba(14, 14, 22, 0.85);
     --border-color: rgba(255, 255, 255, 0.06);
     --border-hover: rgba(255, 255, 255, 0.12);
     --border-focus: rgba(137, 233, 0, 0.5);
@@ -2116,7 +2116,7 @@ select.form-input {
 }
 
 [data-theme="dark"] .header {
-    background: rgba(34, 34, 34, 0.9);
+    background: rgba(10, 10, 18, 0.9);
     border-bottom-color: var(--border-color);
 }
 
@@ -2166,7 +2166,7 @@ select.form-input {
 
 [data-theme="dark"] .btn-primary {
     background: #89E900;
-    color: #222222;
+    color: #0a0a12;
     box-shadow: 0 0 16px rgba(137, 233, 0, 0.25);
 }
 
@@ -2276,7 +2276,7 @@ select.form-input {
 
 [data-theme="dark"] .message-avatar {
     background: #89E900;
-    color: #222222;
+    color: #0a0a12;
 }
 
 [data-theme="dark"] .ai-insight-icon {
@@ -2308,7 +2308,7 @@ select.form-input {
 
 [data-theme="dark"] ::selection {
     background: #89E900;
-    color: #222222;
+    color: #0a0a12;
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb {

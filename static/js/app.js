@@ -19,8 +19,8 @@ function getChartTheme() {
         amberA: function(a) { return 'rgba(245,158,11,'+a+')'; },
         text: d ? '#a0aec0' : '#94a3b8',
         grid: d ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-        tip: { bg: d?'#2a2a2a':'#fafbfc', title: d?'#e2e8f0':'#0f172a', body: d?'#a0aec0':'#334155', border: d?'#2a2a3e':'#e0e4ea' },
-        card: d ? '#1c1c1c' : '#fafbfc',
+        tip: { bg: d?'#111118':'#fafbfc', title: d?'#e2e8f0':'#0f172a', body: d?'#a0aec0':'#334155', border: d?'#2a2a3e':'#e0e4ea' },
+        card: d ? '#0e0e16' : '#fafbfc',
         palette: d
             ? ['#89E900','#00f0ff','#f59e0b','#ef4444','#a78bfa','#ec4899','#34d399','#64748b']
             : ['#4F46E5','#14b8a6','#f59e0b','#ef4444','#6366f1','#ec4899','#8b5cf6','#64748b']
