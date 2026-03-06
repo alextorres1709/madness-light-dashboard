@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta — Madness Light</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #222222;
+            --bg-card: #1c1c1c;
+            --border: #333333;
+            --border-light: #3a3a3a;
+            --green: #89E900;
+            --green-dim: #89E90080;
+            --green-bg: #89E90010;
+            --green-subtle: #89E90008;
+            --cyan: #06B6D4;
+            --cyan-dim: #06B6D480;
+            --purple: #A855F7;
+            --purple-dim: #A855F780;
+            --amber: #F59E0B;
+            --text: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-dim: #666666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #111;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* ========== PAGE SYSTEM ========== */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-inner {
+            padding: 50px 55px;
+            min-height: 297mm;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 30px;
+            right: 55px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            letter-spacing: 0.1em;
+        }
+
+        .page-watermark {
+            position: absolute;
+            bottom: 30px;
+            left: 55px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.65rem;
+            color: #1a1a1a;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        @media print {
+            body {
+                background: #000;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+        }
+
+        /* ========== COVER PAGE ========== */
+        .cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--green-bg) 0%, transparent 65%);
+            pointer-events: none;
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.15);
+            }
+        }
+
+        .cover-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 1.1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 100px;
+            font-size: 0.65rem;
+            color: var(--green);
+            background: var(--green-bg);
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+        }
+
+        .cover h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            margin-bottom: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover h1 .highlight {
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cover-sub {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 400px;
+            font-weight: 300;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 4rem;
+        }
+
+        .cover-meta {
+            position: absolute;
+            bottom: 50px;
+            left: 55px;
+            right: 55px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-top: 1px solid var(--border);
+            padding-top: 1.2rem;
+        }
+
+        .cover-meta-left {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: -0.01em;
+        }
+
+        .cover-meta-left span {
+            color: var(--green);
+        }
+
+        .cover-meta-right {
+            text-align: right;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* ========== TYPOGRAPHY ========== */
+        .section-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-num::before {
+            content: '';
+            width: 18px;
+            height: 1.5px;
+            background: var(--green);
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 0.8rem;
+        }
+
+        .page-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            max-width: 460px;
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        /* ========== CARDS ========== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1.5px;
+            background: linear-gradient(90deg, transparent, var(--green), transparent);
+            opacity: 0.6;
+        }
+
+        /* ========== PROBLEM CARDS ========== */
+        .problems {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem;
+        }
+
+        .problem-card .icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .problem-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .problem-card p {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* ========== SOLUTION / ENTREGABLES ========== */
+        .deliverables {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            flex: 1;
+        }
+
+        .deliverable {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            background: linear-gradient(145deg, var(--bg-card), #050505);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.6rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .deliverable:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-light);
+        }
+
+        .deliverable::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 70%);
+            pointer-events: none;
+        }
+
+        .deliverable-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .deliverable h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+
+        .deliverable p {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        .deliverable .tag {
+            display: inline-block;
+            font-size: 0.55rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            align-self: flex-start;
+        }
+
+        .deliverable-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== FEATURE PAGE LAYOUT ========== */
+        .feature-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            flex: 1;
+            align-items: center;
+        }
+
+        .feature-text .ftag {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.7rem;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-text h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.7rem;
+            line-height: 1.2;
+        }
+
+        .feature-text p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.2rem;
+            line-height: 1.65;
+        }
+
+        .flist {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .flist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .flist li .arrow {
+            color: var(--green);
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ========== CHAT RENDER ========== */
+        .render-frame {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .render-frame .frame-dots {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .render-frame .frame-dots span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--border-light);
+        }
+
+        .render-frame .frame-dots span:first-child {
+            background: #ff5f57;
+        }
+
+        .render-frame .frame-dots span:nth-child(2) {
+            background: #ffbd2e;
+        }
+
+        .render-frame .frame-dots span:nth-child(3) {
+            background: #28c840;
+        }
+
+        .chat-sim {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .chat-bubble {
+            padding: 0.65rem 0.9rem;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            max-width: 88%;
+            line-height: 1.5;
+        }
+
+        .chat-bubble.user {
+            background: #14142a;
+            border: 1px solid #252540;
+            align-self: flex-end;
+            border-bottom-right-radius: 3px;
+            color: #d0d0ff;
+        }
+
+        .chat-bubble.bot {
+            background: linear-gradient(135deg, #071507, #050a05);
+            border: 1px solid #1a2e1a;
+            align-self: flex-start;
+            border-bottom-left-radius: 3px;
+        }
+
+        .chat-bubble .bname {
+            font-size: 0.6rem;
+            color: var(--green);
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.03em;
+        }
+
+        /* ========== DASHBOARD RENDER ========== */
+        .dash-render {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .dash-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dash-topbar h4 {
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .dash-topbar .live {
+            font-size: 0.6rem;
+            color: var(--green);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .dash-topbar .live::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        .dash-kpis {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .dash-kpi {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.7rem;
+            text-align: center;
+        }
+
+        .dash-kpi .val {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .dash-kpi .lbl {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 0.15rem;
+        }
+
+        .dash-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 45px;
+        }
+
+        .dash-bars .bar {
+            flex: 1;
+            border-radius: 2px 2px 0 0;
+            min-height: 3px;
+        }
+
+        .ai-pill {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+        }
+
+        .ai-pill .badge {
+            font-size: 0.55rem;
+            color: var(--purple);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.3rem;
+        }
+
+        .ai-pill p {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        /* ========== AI INSIGHTS RENDER ========== */
+        .insights-render {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .insight-block {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.9rem;
+        }
+
+        .insight-block .ilabel {
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .progress-row .plabel {
+            font-size: 0.68rem;
+            color: var(--text-secondary);
+            width: 110px;
+            flex-shrink: 0;
+        }
+
+        .progress-row .pbar {
+            flex: 1;
+            height: 5px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-row .pbar .pfill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .insight-mini-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .insight-mini {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.8rem;
+            text-align: center;
+        }
+
+        .insight-mini .im-label {
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.25rem;
+        }
+
+        .insight-mini .im-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .insight-mini .im-sub {
+            font-size: 0.58rem;
+            color: var(--text-dim);
+            margin-top: 0.1rem;
+        }
+
+        /* ========== ENTREGABLES CHECKLIST ========== */
+        .checklist {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.4rem;
+            background: linear-gradient(145deg, var(--bg-card), #050505);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .check-item:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-light);
+        }
+
+        .check-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.02), transparent 60%);
+            pointer-events: none;
+        }
+
+        .check-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--green-bg);
+            border: 1px solid #1a2e1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--green);
+            font-size: 0.85rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 15px var(--green-bg);
+        }
+
+        .check-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .check-item h4 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            line-height: 1.3;
+        }
+
+        .check-item p {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* ========== STATS ROW ========== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: auto;
+            padding-top: 2rem;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 1.2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .stat-box .sval {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-box .slbl {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-top: 0.15rem;
+            letter-spacing: 0.02em;
+        }
+
+        /* ========== TECH GRID ========== */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+        }
+
+        .tech-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem;
+        }
+
+        .tech-item .ticon {
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-item h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .tech-item p {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* ========== SECURITY GRID ========== */
+        .sec-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .sec-item {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem;
+        }
+
+        .sec-item .sicon {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: var(--green-bg);
+            border: 1px solid #1a2e1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--green);
+            flex-shrink: 0;
+        }
+
+        .sec-item h4 {
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+
+        .sec-item p {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* ========== ROI CARDS ========== */
+        .roi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .roi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .roi-card .rval {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+
+        .roi-card .rlbl {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .roi-card .rdesc {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* ========== TIMELINE ========== */
+        .timeline {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background: linear-gradient(180deg, var(--green), var(--cyan), var(--purple), var(--amber));
+            border-radius: 2px;
+        }
+
+        .tl-item {
+            position: relative;
+            margin-bottom: 1.8rem;
+        }
+
+        .tl-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tl-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2.5px solid var(--bg);
+        }
+
+        .tl-item:nth-child(1)::before {
+            background: var(--green);
+            box-shadow: 0 0 0 2px var(--green);
+        }
+
+        .tl-item:nth-child(2)::before {
+            background: var(--cyan);
+            box-shadow: 0 0 0 2px var(--cyan);
+        }
+
+        .tl-item:nth-child(3)::before {
+            background: var(--purple);
+            box-shadow: 0 0 0 2px var(--purple);
+        }
+
+        .tl-item:nth-child(4)::before {
+            background: var(--amber);
+            box-shadow: 0 0 0 2px var(--amber);
+        }
+
+        .tl-item .tl-week {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 0.15rem;
+        }
+
+        .tl-item:nth-child(1) .tl-week {
+            color: var(--green);
+        }
+
+        .tl-item:nth-child(2) .tl-week {
+            color: var(--cyan);
+        }
+
+        .tl-item:nth-child(3) .tl-week {
+            color: var(--purple);
+        }
+
+        .tl-item:nth-child(4) .tl-week {
+            color: var(--amber);
+        }
+
+        .tl-item h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .tl-item p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* ========== CLOSING PAGE ========== */
+        .closing {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .closing::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, var(--green-bg) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .closing h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.8rem;
+            position: relative;
+            z-index: 1;
+            line-height: 1.15;
+        }
+
+        .closing p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            max-width: 380px;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== SCROLL ANIMATION ========== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========== SEPARATOR ========== */
+        .sep {
+            width: 40px;
+            height: 1.5px;
+            background: linear-gradient(90deg, var(--green), var(--cyan));
+            border-radius: 2px;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==================== PAGE 1: COVER ==================== -->
+    <div class="page">
+        <div class="page-inner cover">
+            <div class="cover-badge">Propuesta de Servicio — 2026</div>
+            <h1>
+                Atencion al Cliente<br>
+                e <span class="highlight">Inteligencia<br>de Negocio</span>
+            </h1>
+            <p class="cover-sub">
+                Un agente de IA que atiende a vuestros clientes 24/7 y,
+                al mismo tiempo, extrae estadisticas de cada conversacion:
+                que preguntan, que dudas tienen y que eventos les interesan.
+            </p>
+            <div class="cover-meta">
+                <div class="cover-meta-left">MADNESS <span>LIGHT</span></div>
+                <div class="cover-meta-right">
+                    Documento confidencial<br>
+                    Febrero 2026
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 2: PROBLEMA ==================== -->
+    <div class="page">
+        <div class="page-inner">
+            <div class="section-num">01 — El Problema</div>
+            <h2 class="page-title">Respondeis lo mismo mil veces<br>y no sacais nada de eso</h2>
+            <p class="page-subtitle">
+                El equipo dedica horas a responder las mismas preguntas.
+                Pero lo peor: cada conversacion es informacion que se pierde
+                sin generar ningun dato util para el negocio.
+            </p>
+
+            <div class="problems reveal">
+                <div class="problem-card">
+                    <div class="icon" style="background: #ff4d4d12; color: #ff5555;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                            <line x1="12" y1="9" x2="12" y2="13" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                        </svg>
+                    </div>
+                    <h3>Sobrecarga del equipo</h3>
+                    <p>Decenas de mensajes diarios con lo mismo: precios, ubicacion, horarios, dress code. Se pierden
+                        respuestas y el equipo no da abasto.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="icon" style="background: #ff8c0012; color: #ff9922;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                    </div>
+                    <h3>Respuestas con retraso</h3>
+                    <p>Un usuario pregunta a las 2AM. Nadie contesta hasta las 10AM. Para entonces ya ha perdido el
+                        interes o ha comprado en otro sitio.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="icon" style="background: #ff4d9a12; color: #ff5599;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+                            <polyline points="17 18 23 18 23 12" />
+                        </svg>
+                    </div>
+                    <h3>Decisiones a ciegas</h3>
+                    <p>No sabeis que preguntan los clientes, que dudas les frenan ni que eventos generan mas interes.
+                        Cada conversacion es informacion que se pierde.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="icon" style="background: #8b5cf612; color: #9966ff;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </div>
+                    <h3>RRPP sin escalar</h3>
+                    <p>Explicar el programa a cada interesado consume tiempo. El proceso de captacion es manual, lento y
+                        dificil de crecer.</p>
+                </div>
+            </div>
+
+            <div class="stats-row reveal">
+                <div class="stat-box">
+                    <div class="sval">24/7</div>
+                    <div class="slbl">Disponibilidad</div>
+                </div>
+                <div class="stat-box">
+                    <div class="sval">&lt;5s</div>
+                    <div class="slbl">Tiempo respuesta</div>
+                </div>
+                <div class="stat-box">
+                    <div class="sval">99.9%</div>
+                    <div class="slbl">Uptime</div>
+                </div>
+                <div class="stat-box">
+                    <div class="sval">&infin;</div>
+                    <div class="slbl">Usuarios</div>
+                </div>
+            </div>
+        </div>
+        <span class="page-watermark">MADNESS LIGHT — CONFIDENCIAL</span>
+        <span class="page-number">02</span>
+    </div>
+
+    <!-- ==================== PAGE 3: QUE SE ENTREGA ==================== -->
+    <div class="page">
+        <div class="page-inner">
+            <div class="section-num">02 — Que se entrega</div>
+            <h2 class="page-title">Atencion automatizada<br>+ inteligencia de datos</h2>
+            <p class="page-subtitle">
+                No es un simple chatbot. Es un sistema que atiende a los clientes y,
+                al mismo tiempo, os da visibilidad total sobre sus dudas, intereses
+                y comportamiento.
+            </p>
+
+            <div class="deliverables reveal">
+                <div class="deliverable">
+                    <span class="tag" style="background: var(--green-bg); color: var(--green);">Nucleo del
+                        sistema</span>
+                    <div class="deliverable-icon"
+                        style="background: var(--green-bg); border: 1px solid #1a2e1a; color: var(--green); box-shadow: 0 0 20px var(--green-bg);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="10" rx="2" />
+                            <circle cx="12" cy="5" r="2" />
+                            <line x1="12" y1="7" x2="12" y2="11" />
+                            <line x1="9" y1="15" x2="9" y2="17" />
+                            <line x1="15" y1="15" x2="15" y2="17" />
+                        </svg>
+                    </div>
+                    <div class="deliverable-content">
+                        <h4>Bot Inteligente en Telegram</h4>
+                        <p>Agente de IA que atiende a vuestros usuarios con lenguaje natural. Responde sobre fiestas,
+                            entradas, RRPP y normativa, con memoria de conversacion y datos actualizados en tiempo real.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="deliverable">
+                    <span class="tag" style="background: #06B6D410; color: var(--cyan);">Panel de control</span>
+                    <div class="deliverable-icon"
+                        style="background: #06B6D410; border: 1px solid #0a2a30; color: var(--cyan); box-shadow: 0 0 20px #06B6D410;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7" />
+                            <rect x="14" y="3" width="7" height="7" />
+                            <rect x="14" y="14" width="7" height="7" />
+                            <rect x="3" y="14" width="7" height="7" />
+                        </svg>
+                    </div>
+                    <div class="deliverable-content">
+                        <h4>Dashboard de Gestion Web</h4>
+                        <p>Panel con 10 modulos: eventos, estadisticas, conversaciones, calendario, analitica, usuarios,
+                            salas, mensajes masivos, log de actividad y ajustes. Accesible desde cualquier navegador.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="deliverable">
+                    <span class="tag" style="background: #A855F710; color: var(--purple);">Inteligencia de
+                        negocio</span>
+                    <div class="deliverable-icon"
+                        style="background: #A855F710; border: 1px solid #2a1a3e; color: var(--purple); box-shadow: 0 0 20px #A855F710;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                        </svg>
+                    </div>
+                    <div class="deliverable-content">
+                        <h4>Estadisticas de Dudas y Tendencias</h4>
+                        <p>Cada conversacion genera datos: ranking de dudas frecuentes, que eventos interesan mas,
+                            objeciones sobre RRPP, sentimiento de los usuarios y sugerencias de mejora concretas. Todo
+                            automatico.</p>
+                    </div>
+                </div>
+
+                <div class="deliverable">
+                    <span class="tag" style="background: #F59E0B10; color: var(--amber);">Control de acceso</span>
+                    <div class="deliverable-icon"
+                        style="background: #F59E0B10; border: 1px solid #2e2a0a; color: var(--amber); box-shadow: 0 0 20px #F59E0B10;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </div>
+                    <div class="deliverable-content">
+                        <h4>Sistema de Usuarios y Roles</h4>
+                        <p>Tres niveles de acceso (Admin, Editor, Viewer) para que cada miembro del equipo tenga los
+                            permisos que le corresponden. Con log de actividad completo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span class="page-watermark">MADNESS LIGHT — CONFIDENCIAL</span>
+        <span class="page-number">03</span>
+    </div>
+
+    <!-- ==================== PAGE 4: BOT FEATURE ==================== -->
+    <div class="page">
+        <div class="page-inner">
+            <div class="section-num">03 — Bot con IA</div>
+
+            <div class="feature-layout reveal">
+                <div class="feature-text">
+                    <div class="ftag" style="background: var(--green-bg); color: var(--green);">Telegram Bot</div>
+                    <h3>Conversaciones naturales,<br>respuestas instantaneas</h3>
+                    <p>Un agente de IA que habla como vosotros. No usa menus ni respuestas predefinidas. Genera
+                        respuestas interpretando la intencion y el contexto de cada usuario.</p>
+                    <ul class="flist">
+                        <li><span class="arrow">&#10132;</span> Informa sobre fiestas, precios, salas y horarios al
+                            instante</li>
+                        <li><span class="arrow">&#10132;</span> Envia posters oficiales de cada evento directamente al
+                            chat</li>
+                        <li><span class="arrow">&#10132;</span> Comparte enlaces de compra de entradas en Elite Events
+                        </li>
+                        <li><span class="arrow">&#10132;</span> Explica el programa RRPP con todos los rangos y
+                            beneficios</li>
+                        <li><span class="arrow">&#10132;</span> Recuerda conversaciones anteriores para mantener el
+                            contexto</li>
+                        <li><span class="arrow">&#10132;</span> Filtra temas fuera de lugar protegiendo la imagen de
+                            marca</li>
+                        <li><span class="arrow">&#10132;</span> Tono personalizado al estilo Madness Light: cercano,
+                            directo</li>
+                    </ul>
+                </div>
+
+                <div class="render-frame">
+                    <div class="frame-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="chat-sim">
+                        <div class="chat-bubble user">
+                            Ey! Donde es la fiesta este finde?
+                        </div>
+                        <div class="chat-bubble bot">
+                            <div class="bname">Madness Light Bot</div>
+                            Buenas! Este sabado en Shoko Madrid, tematica Neon con DJ Marco. Entradas desde 8&euro; en
+                            la app Elite Events. Te paso el link?
+                        </div>
+                        <div class="chat-bubble user">
+                            Si porfa! Y como va lo de RRPP?
+                        </div>
+                        <div class="chat-bubble bot">
+                            <div class="bname">Madness Light Bot</div>
+                            Aqui el link de entradas. Sobre RRPP: empiezas como <strong>Base</strong> con acceso VIP y
+                            cola rapida. Con 10 entradas subes a <strong>Embajador</strong>, y con 30+ llegas a
+                            <strong>Elite</strong> con entrada gratis todo el mes.
+                        </div>
+                        <div class="chat-bubble user">
+                            Que guay! Y se puede entrar con deportivas?
+                        </div>
+                        <div class="chat-bubble bot">
+                            <div class="bname">Madness Light Bot</div>
+                            En Shoko no se permite ropa deportiva ni chanclas. Ven con un look casual-arreglado y no
+                            tendras ningun problema.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span class="page-watermark">MADNESS LIGHT — CONFIDENCIAL</span>
+        <span class="page-number">04</span>
+    </div>
+
+    <!-- ==================== PAGE 5: DASHBOARD FEATURE ==================== -->
+    <div class="page">
+        <div class="page-inner">
+            <div class="section-num">04 — Dashboard</div>
+
+            <div class="feature-layout reveal">
+                <div class="feature-text">
+                    <div class="ftag" style="background: #06B6D410; color: var(--cyan);">Panel de Control</div>
+                    <h3>Gestion de eventos<br>y datos en un solo sitio</h3>
+                    <p>Un panel donde gestionais las fiestas y, al mismo tiempo, veis todo lo que pasa: que preguntan
+                        los clientes, que dudas tienen, que eventos interesan mas y como evoluciona el interes semana a
+                        semana.</p>
+                    <ul class="flist">
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> KPIs en tiempo real:
+                            mensajes, usuarios unicos, retencion</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Graficos de actividad
+                            diaria, por horas y por evento</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Gestion de eventos con
+                            calendario visual y exportacion CSV</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Estadisticas de dudas
+                            frecuentes y objeciones RRPP</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Funnel de conversion:
+                            usuarios &rarr; recurrentes &rarr; interesados RRPP</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Mensajes masivos a toda la
+                            audiencia o segmentos</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Historial completo de
+                            conversaciones con busqueda</li>
+                    </ul>
+                </div>
+
+                <div class="render-frame">
+                    <div class="frame-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="dash-render">
+                        <div class="dash-topbar">
+                            <h4>Madness Light Dashboard</h4>
+                            <div class="live">En vivo</div>
+                        </div>
+                        <div class="dash-kpis">
+                            <div class="dash-kpi">
+                                <div class="val" style="color: var(--green);">147</div>
+                                <div class="lbl">Hoy</div>
+                            </div>
+                            <div class="dash-kpi">
+                                <div class="val" style="color: var(--cyan);">892</div>
+                                <div class="lbl">Semana</div>
+                            </div>
+                            <div class="dash-kpi">
+                                <div class="val" style="color: var(--purple);">3.2K</div>
+                                <div class="lbl">Mes</div>
+                            </div>
+                        </div>
+                        <div class="dash-bars">
+                            <div class="bar" style="height: 20%; background: var(--green-dim);"></div>
+                            <div class="bar" style="height: 35%; background: var(--green-dim);"></div>
+                            <div class="bar" style="height: 50%; background: var(--green-dim);"></div>
+                            <div class="bar" style="height: 30%; background: var(--green-dim);"></div>
+                            <div class="bar" style="height: 55%; background: var(--green);"></div>
+                            <div class="bar" style="height: 75%; background: var(--green);"></div>
+                            <div class="bar" style="height: 90%; background: var(--green);"></div>
+                            <div class="bar" style="height: 65%; background: var(--green);"></div>
+                            <div class="bar" style="height: 95%; background: var(--green);"></div>
+                            <div class="bar" style="height: 100%; background: var(--green);"></div>
+                            <div class="bar" style="height: 80%; background: var(--green);"></div>
+                            <div class="bar" style="height: 60%; background: var(--green-dim);"></div>
+                        </div>
+                        <div class="ai-pill">
+                            <div class="badge">AI INSIGHT</div>
+                            <p>El 68% de las consultas son sobre la fiesta Neon del sabado. Sentimiento: positivo.
+                                Sugerencia: publicar el cartel 48h antes genera mas interaccion.</p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
+                            <div
+                                style="background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.7rem;">
+                                <div
+                                    style="font-size: 0.5rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em;">
+                                    Evento activo</div>
+                                <div style="font-size: 0.7rem; font-weight: 600; margin-top: 0.15rem;">Fiesta Neon
+                                    &mdash; Shoko</div>
+                            </div>
+                            <div
+                                style="background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.7rem;">
+                                <div
+                                    style="font-size: 0.5rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em;">
+                                    Usuarios unicos</div>
+                                <div style="font-size: 0.7rem; font-weight: 600; margin-top: 0.15rem;">234 esta semana
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span class="page-watermark">MADNESS LIGHT — CONFIDENCIAL</span>
+        <span class="page-number">05</span>
+    </div>
+
+    <!-- ==================== PAGE 6: AI INSIGHTS ==================== -->
+    <div class="page">
+        <div class="page-inner">
+            <div class="section-num">05 — Estadisticas de Dudas</div>
+
+            <div class="feature-layout reveal">
+                <div class="feature-text">
+                    <div class="ftag" style="background: #A855F710; color: var(--purple);">Inteligencia de Negocio</div>
+                    <h3>Cada pregunta es un dato.<br>Cada duda, una oportunidad.</h3>
+                    <p>El sistema no solo responde: registra y clasifica. Cada conversacion genera estadisticas que os
+                        dicen exactamente que necesitan vuestros clientes, que les frena y donde esta la oportunidad.
+                    </p>
+                    <ul class="flist">
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Ranking de dudas
+                            frecuentes: precios, ubicacion, dress code, RRPP</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Que eventos generan mas
+                            preguntas y de que tipo</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Objeciones sobre RRPP: que
+                            les frena y como solucionarlo</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Sentimiento de los
+                            usuarios hacia la marca y los eventos</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Horarios pico: cuando la
+                            gente pregunta mas</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Retencion: cuantos vuelven
+                            a hablar y cuantos son nuevos</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Sugerencias de mejora
+                            generadas por IA cada hora</li>
+                    </ul>
+                </div>
+
+                <div class="render-frame">
+                    <div class="frame-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="insights-render">
+                        <div class="insight-block">
+                            <div class="ilabel" style="color: var(--purple);">DUDAS MAS FRECUENTES</div>
+                            <div class="progress-row">
+                                <span class="plabel">Precio entradas</span>
+                                <div class="pbar" style="background: #A855F720;">
+                                    <div class="pfill" style="width: 88%; background: var(--purple);"></div>
+                                </div>
+                            </div>
+                            <div class="progress-row">
+                                <span class="plabel">Ubicacion y sala</span>
+                                <div class="pbar" style="background: #A855F720;">
+                                    <div class="pfill" style="width: 72%; background: var(--purple);"></div>
+                                </div>
+                            </div>
+                            <div class="progress-row">
+                                <span class="plabel">Como ser RRPP</span>
+                                <div class="pbar" style="background: #A855F720;">
+                                    <div class="pfill" style="width: 56%; background: var(--purple);"></div>
+                                </div>
+                            </div>
+                            <div class="progress-row">
+                                <span class="plabel">Dress code</span>
+                                <div class="pbar" style="background: #A855F720;">
+                                    <div class="pfill" style="width: 35%; background: var(--purple);"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="insight-mini-grid">
+                            <div class="insight-mini">
+                                <div class="im-label" style="color: var(--green);">RETENCION</div>
+                                <div class="im-value" style="color: var(--green);">64%</div>
+                                <div class="im-sub">vuelven a hablar</div>
+                            </div>
+                            <div class="insight-mini">
+                                <div class="im-label" style="color: var(--amber);">INTERES RRPP</div>
+                                <div class="im-value" style="color: var(--amber);">23%</div>
+                                <div class="im-sub">preguntan por RRPP</div>
+                            </div>
+                        </div>
+                        <div class="insight-block" style="margin-top: 0.2rem;">
+                            <div class="ilabel" style="color: var(--cyan);">OBJECIONES RRPP DETECTADAS</div>
+                            <p style="font-size: 0.68rem; color: var(--text-secondary); line-height: 1.5;">El 45%
+                                pregunta por comisiones antes de unirse. Sugerencia: incluir un ejemplo concreto de
+                                ganancias en la primera respuesta aumentaria la conversion un 30%.</p>
+                        </div>
+                        <div class="insight-block" style="margin-top: 0.4rem;">
+                            <div class="ilabel" style="color: var(--green);">SUGERENCIA IA</div>
+                            <p style="font-size: 0.68rem; color: var(--text-secondary); line-height: 1.5;">Publicar el
+                                cartel 48h antes del lanzamiento de entradas genera +35% de preguntas organicas sobre el
+                                evento.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span class="page-watermark">MADNESS LIGHT — CONFIDENCIAL</span>
+        <span class="page-number">06</span>
+    </div>
+
+    <!-- ==================== PAGE 7: ENTREGABLES COMPLETO ==================== -->
+    <div class="page">
+        <div class="page-inner">
+            <div class="section-num">06 — Que recibis</div>
+            <h2 class="page-title">Todo lo incluido<br>en la plataforma</h2>
+            <p class="page-subtitle">
+                Configurado, desplegado y listo para usar desde el primer dia.
+            </p>
+
+            <div class="checklist reveal">
+                <div class="check-item">
+                    <div class="check-icon">&#10003;</div>
+                    <div class="check-content">
+                        <h4>Bot de Telegram con IA (GPT-4o)</h4>
+                        <p>Agente 24/7 con memoria de conversación, datos en tiempo real de los eventos y un tono
+                            interactivo alineado con la marca Madness Light.</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">&#10003;</div>
+                    <div class="check-content">
+                        <h4>Dashboard Web de 10 Módulos</h4>
+                        <p>Panel de administración integrado: eventos, métricas de rendimiento, agente IA, chat
+                            unificado, control de usuarios, salas, difusión y alertas.</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">&#10003;</div>
+                    <div class="check-content">
+                        <h4>CRM de Usuarios y Chats</h4>
+                        <p>Buscador avanzado por usuario, sistema de filtrado temporal, retención de contexto del
+                            cliente y panel visual del recorrido en Telegram.</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">&#10003;</div>
+                    <div class="check-content">
+                        <h4>Motor de Eventos y Salas</h4>
+                        <p>Catálogo visual de eventos, asignación rápida de programaciones en múltiples ubicaciones y
+                            exportación a un solo clic.</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">&#10003;</div>
+                    <div class="check-content">
+                        <h4>Sistema Blindado de Accesos</h4>
+                        <p>Estructura robusta de permisos (Administrador, Promotor, Lector) con panel forense de
+                            auditoría para cada modificación sensible del sistema.</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">&#10003;</div>
+                    <div class="check-content">
+                        <h4>Generador de Campañas Masivas</h4>
+                        <p>Plataforma para impactar directamente en Telegram a todos los usuarios que han interactuado
+                            con el Bot, sin costes extra por mensaje enviado.</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">&#10003;</div>
+                    <div class="check-content">
+                        <h4>Analytics Integral e Insights IA</h4>
+                        <p>Ranking automático de FAQs, extracción de objeciones estructurales sobre RRPP, embudo de
+                            retención y alertas proactivas generadas mediante IA.</p>
+                    </div>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon">&#10003;</div>
+                    <div class="check-content">
+                        <h4>Acompañamiento y Mejora Continua</h4>
+                        <p>Carga cero inicial, entrenamiento guiado del equipo, alineación profunda del tono corporativo
+                            en el prompt y soporte premium tras el GO-LIVE.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span class="page-watermark">MADNESS LIGHT — CONFIDENCIAL</span>
+        <span class="page-number">07</span>
+    </div>
+
+    <!-- ==================== PAGE 8: TECH + SEGURIDAD ==================== -->
+    <div class="page">
+        <div class="page-inner">
+            <div class="section-num">07 — Tecnologia y Seguridad</div>
+            <h2 class="page-title">Construido sobre<br>tecnologia probada</h2>
+            <p class="page-subtitle">
+                Cada componente elegido por fiabilidad y rendimiento.
+            </p>
+
+            <div class="tech-grid reveal">
+                <div class="tech-item">
+                    <div class="ticon" style="color: var(--purple);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                        </svg>
+                    </div>
+                    <h4>OpenAI GPT-4o</h4>
+                    <p>Motor de IA para respuestas naturales, analisis de sentimiento y comprension de imagenes.</p>
+                </div>
+                <div class="tech-item">
+                    <div class="ticon" style="color: var(--green);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <ellipse cx="12" cy="5" rx="9" ry="3" />
+                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                        </svg>
+                    </div>
+                    <h4>Supabase PostgreSQL</h4>
+                    <p>Base de datos en la nube con sincronizacion en tiempo real y backups automaticos.</p>
+                </div>
+                <div class="tech-item">
+                    <div class="ticon" style="color: var(--amber);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="5" r="3" />
+                            <circle cx="6" cy="12" r="3" />
+                            <circle cx="18" cy="19" r="3" />
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                        </svg>
+                    </div>
+                    <h4>n8n Workflows</h4>
+                    <p>Orquestacion del flujo entre Telegram, la IA y la base de datos.</p>
+                </div>
+                <div class="tech-item">
+                    <div class="ticon" style="color: var(--cyan);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                    </div>
+                    <h4>Telegram Bot API</h4>
+                    <p>Integracion nativa con Telegram para mensajes directos y envios masivos a la audiencia.</p>
+                </div>
+                <div class="tech-item">
+                    <div class="ticon" style="color: var(--green);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10" />
+                            <line x1="12" y1="20" x2="12" y2="4" />
+                            <line x1="6" y1="20" x2="6" y2="14" />
+                        </svg>
+                    </div>
+                    <h4>Flask + Chart.js</h4>
+                    <p>Dashboard web con graficos interactivos, gestion de eventos y exportacion de datos.</p>
+                </div>
+                <div class="tech-item">
+                    <div class="ticon" style="color: var(--cyan);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+                        </svg>
+                    </div>
+                    <h4>Vercel Cloud</h4>
+                    <p>Despliegue en la nube con disponibilidad del 99.9% y actualizaciones sin tiempo de inactividad.
+                    </p>
+                </div>
+            </div>
+
+            <div class="sep"></div>
+
+            <div
+                style="font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 0.8rem;">
+                Seguridad y Privacidad</div>
+
+            <div class="sec-grid reveal">
+                <div class="sec-item">
+                    <div class="sicon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4>Cifrado SSL end-to-end</h4>
+                        <p>Todas las comunicaciones entre Telegram, servidor y base de datos van cifradas.</p>
+                    </div>
+                </div>
+                <div class="sec-item">
+                    <div class="sicon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4>Roles y permisos por usuario</h4>
+                        <p>Cada miembro del equipo accede solo a lo que necesita. Sin permisos de mas.</p>
+                    </div>
+                </div>
+                <div class="sec-item">
+                    <div class="sicon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="8" y1="6" x2="21" y2="6" />
+                            <line x1="8" y1="12" x2="21" y2="12" />
+                            <line x1="8" y1="18" x2="21" y2="18" />
+                            <line x1="3" y1="6" x2="3.01" y2="6" />
+                            <line x1="3" y1="12" x2="3.01" y2="12" />
+                            <line x1="3" y1="18" x2="3.01" y2="18" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4>Log de auditoria completo</h4>
+                        <p>Registro de cada accion realizada en el panel: quien cambio que y cuando.</p>
+                    </div>
+                </div>
+                <div class="sec-item">
+                    <div class="sicon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4>Filtros de contenido</h4>
+                        <p>El bot no puede ser manipulado para generar respuestas inapropiadas ni salirse del guion.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span class="page-watermark">MADNESS LIGHT — CONFIDENCIAL</span>
+        <span class="page-number">08</span>
+    </div>
+
+    <!-- ==================== PAGE 9: ROI + TIMELINE ==================== -->
+    <div class="page">
+        <div class="page-inner">
+            <div class="section-num">08 — Impacto e Implementacion</div>
+            <h2 class="page-title">Resultados desde<br>el primer dia</h2>
+            <p class="page-subtitle">
+                Proyecciones basadas en el volumen de consultas actual y los tiempos de respuesta del equipo.
+            </p>
+
+            <div class="roi-grid reveal">
+                <div class="roi-card">
+                    <div class="rval" style="color: var(--green);">+40%</div>
+                    <div class="rlbl">Conversion de entradas</div>
+                    <div class="rdesc">Responder en el momento de maxima intencion de compra mejora la conversion frente
+                        a horas de espera.</div>
+                </div>
+                <div class="roi-card">
+                    <div class="rval" style="color: var(--cyan);">-80%</div>
+                    <div class="rlbl">Carga de soporte</div>
+                    <div class="rdesc">El bot resuelve el 80% de consultas recurrentes. El equipo se dedica a lo
+                        importante.</div>
+                </div>
+                <div class="roi-card">
+                    <div class="rval" style="color: var(--purple);">100%</div>
+                    <div class="rlbl">Visibilidad de datos</div>
+                    <div class="rdesc">Estadisticas de cada duda, objecion y tendencia. Dejais de tomar decisiones a
+                        ciegas.</div>
+                </div>
+            </div>
+
+            <div class="sep" style="margin-top: 2.5rem;"></div>
+
+            <div
+                style="font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 1.2rem;">
+                Hoja de ruta</div>
+
+            <div class="timeline reveal">
+                <div class="tl-item">
+                    <div class="tl-week">Semana 1</div>
+                    <h4>Setup e infraestructura</h4>
+                    <p>Configuracion de base de datos, bot de Telegram y flujos de trabajo. Carga inicial de eventos y
+                        configuracion de la base de conocimiento de Madness Light.</p>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-week">Semana 2</div>
+                    <h4>Ajuste del agente de IA</h4>
+                    <p>Calibracion del tono conversacional al estilo Madness Light. Pruebas de respuestas con escenarios
+                        reales y ajustes de comportamiento.</p>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-week">Semana 3</div>
+                    <h4>Dashboard y formacion</h4>
+                    <p>Despliegue del panel completo con todos los modulos. Formacion del equipo para gestionar eventos,
+                        usuarios y leer las metricas.</p>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-week">Semana 4</div>
+                    <h4>Lanzamiento y seguimiento</h4>
+                    <p>Go-live con usuarios reales. Monitorizacion activa, ajustes en directo y soporte durante las
+                        primeras fiestas.</p>
+                </div>
+            </div>
+        </div>
+        <span class="page-watermark">MADNESS LIGHT — CONFIDENCIAL</span>
+        <span class="page-number">09</span>
+    </div>
+
+    <!-- ==================== PAGE 10: CLOSING ==================== -->
+    <div class="page">
+        <div class="page-inner closing">
+            <div class="cover-badge" style="margin-bottom: 2.5rem;">Siguiente paso</div>
+            <h2>
+                Vamos a hacer que<br>
+                <span
+                    style="background: linear-gradient(135deg, var(--green), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Madness
+                    Light</span><br>
+                sea imparable
+            </h2>
+            <p style="margin-top: 1rem;">
+                Hablemos. Sin compromiso, sin presion.<br>
+                Solo una conversacion para dar el siguiente paso.
+            </p>
+
+            <div class="cover-meta">
+                <div class="cover-meta-left">MADNESS <span>LIGHT</span></div>
+                <div class="cover-meta-right">
+                    Documento confidencial<br>
+                    Febrero 2026
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCROLL ANIMATIONS -->
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+
+</html>
