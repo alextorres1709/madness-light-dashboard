@@ -1,7 +1,15 @@
 from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template
+from sqlalchemy import or_
 from models import db, Event, Conversation
 from routes.auth import login_required
+
+RRPP_KEYWORDS = [
+    'rrpp', 'promotor', 'promotora', 'comision', 'comisiones',
+    'ganar dinero', 'equipo', 'reclutar', 'relaciones publicas',
+    'codigo', 'enlace', 'rangos', 'puntos', 'ser rrpp',
+    'quiero ser', 'trabajar', 'sueldo', 'beneficios'
+]
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -74,6 +82,33 @@ def index():
     )
     total_events = Event.query.count()
 
+    # ── RRPP & Funnel data ────────────────────────────────
+    total_users = (
+        db.session.query(db.func.count(db.func.distinct(Conversation.user_id)))
+        .filter(Conversation.role == "user")
+        .scalar()
+    ) or 0
+
+    keyword_filters = [Conversation.content.ilike(f'%{kw}%') for kw in RRPP_KEYWORDS]
+    rrpp_users = (
+        db.session.query(db.func.count(db.func.distinct(Conversation.user_id)))
+        .filter(Conversation.role == "user", or_(*keyword_filters))
+        .scalar()
+    ) or 0
+    rrpp_interest_rate = round((rrpp_users / total_users) * 100, 1) if total_users else 0
+
+    returning_users = (
+        db.session.query(db.func.count())
+        .select_from(
+            db.session.query(Conversation.user_id)
+            .filter(Conversation.role == "user")
+            .group_by(Conversation.user_id)
+            .having(db.func.count(Conversation.id) > 1)
+            .subquery()
+        )
+    ).scalar() or 0
+    retention_rate = round((returning_users / total_users) * 100, 1) if total_users else 0
+
     return render_template(
         "dashboard.html",
         messages_today=messages_today,
@@ -86,4 +121,9 @@ def index():
         recent_messages=recent_messages,
         daily_messages=daily_messages,
         hourly_messages=hourly_messages,
+        total_users=total_users,
+        rrpp_users=rrpp_users,
+        rrpp_interest_rate=rrpp_interest_rate,
+        retention_rate=retention_rate,
+        returning_users=returning_users,
     )

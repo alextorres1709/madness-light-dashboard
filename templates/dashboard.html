@@ -69,9 +69,94 @@
                 <path d="M16 3.13a4 4 0 010 7.75" />
             </svg>
         </div>
-        <div class="kpi-label">Total Mensajes</div>
-        <div class="kpi-value">{{ messages_total }}</div>
-        <div class="kpi-subtitle">desde siempre</div>
+        <div class="kpi-label">Usuarios Únicos</div>
+        <div class="kpi-value">{{ total_users }}</div>
+        <div class="kpi-subtitle">{{ messages_total }} mensajes totales</div>
+    </div>
+</div>
+
+<!-- RRPP Summary + Conversion Funnel -->
+<div class="section-header">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+        <path d="M16 3.13a4 4 0 010 7.75" />
+    </svg>
+    <h2>Resumen RRPP & Retención</h2>
+</div>
+<div class="grid-2">
+    <!-- RRPP Summary Cards -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                    <circle cx="8.5" cy="7" r="4" />
+                    <line x1="20" y1="8" x2="20" y2="14" />
+                    <line x1="23" y1="11" x2="17" y2="11" />
+                </svg>
+                Interés en RRPP
+            </h3>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+            <div class="kpi-card kpi-accent-purple" style="margin:0">
+                <div class="kpi-label">Usuarios interesados</div>
+                <div class="kpi-value">{{ rrpp_users }}</div>
+                <div class="kpi-subtitle">de {{ total_users }} totales</div>
+            </div>
+            <div class="kpi-card kpi-accent-cyan" style="margin:0">
+                <div class="kpi-label">Tasa de interés</div>
+                <div class="kpi-value">{{ rrpp_interest_rate }}%</div>
+                <div class="kpi-subtitle">preguntaron por RRPP</div>
+            </div>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+            <div class="kpi-card kpi-accent-green" style="margin:0">
+                <div class="kpi-label">Retención</div>
+                <div class="kpi-value">{{ retention_rate }}%</div>
+                <div class="kpi-subtitle">vuelven a hablar</div>
+            </div>
+            <div class="kpi-card kpi-accent-amber" style="margin:0">
+                <div class="kpi-label">Usuarios recurrentes</div>
+                <div class="kpi-value">{{ returning_users }}</div>
+                <div class="kpi-subtitle">más de 1 conversación</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversion Funnel -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                </svg>
+                Funnel de Conversión
+            </h3>
+        </div>
+        <div style="padding:12px 0">
+            {% set funnel_steps = [
+                ('Total Usuarios', total_users, total_users),
+                ('Vuelven a hablar', returning_users, total_users),
+                ('Interesados en RRPP', rrpp_users, total_users)
+            ] %}
+            {% for label, value, base in funnel_steps %}
+            {% set pct = ((value / base * 100) | round(1)) if base > 0 else 0 %}
+            <div class="funnel-step">
+                <div class="funnel-label">
+                    <span>{{ label }}</span>
+                    <span class="funnel-value">{{ value }} <small>({{ pct }}%)</small></span>
+                </div>
+                <div class="funnel-bar-container">
+                    <div class="funnel-bar" style="width:{{ pct }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <p style="font-size:12px;color:var(--text-tertiary);margin-top:8px">
+            El funnel muestra la progresión desde usuario casual hasta interesado en el programa RRPP.
+        </p>
     </div>
 </div>
 
@@ -82,7 +167,7 @@
     </svg>
     <h2>Acciones Rápidas</h2>
 </div>
-<div class="quick-actions" style="grid-template-columns:repeat(4, 1fr)">
+<div class="quick-actions">
     <a href="{{ url_for('events.index') }}" class="quick-action-card">
         <div class="quick-action-icon green">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -109,7 +194,8 @@
     <a href="{{ url_for('agent.index') }}" class="quick-action-card">
         <div class="quick-action-icon amber">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2a4 4 0 014 4v1a1 1 0 001 1h1a4 4 0 010 8h-1a1 1 0 00-1 1v1a4 4 0 01-8 0v-1a1 1 0 00-1-1H6a4 4 0 010-8h1a1 1 0 001-1V6a4 4 0 014-4z" />
+                <path
+                    d="M12 2a4 4 0 014 4v1a1 1 0 001 1h1a4 4 0 010 8h-1a1 1 0 00-1 1v1a4 4 0 01-8 0v-1a1 1 0 00-1-1H6a4 4 0 010-8h1a1 1 0 001-1V6a4 4 0 014-4z" />
             </svg>
         </div>
         <div>
@@ -121,7 +207,8 @@
         <div class="quick-action-icon cyan">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06" />
+                <path
+                    d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06" />
             </svg>
         </div>
         <div>
@@ -169,49 +256,8 @@
     </div>
 </div>
 
-<!-- Bottom Section: Upcoming Events + Recent Messages -->
-<div class="grid-3">
-    <!-- Recent Messages -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                </svg>
-                Mensajes Recientes
-            </h3>
-            <span class="badge badge-platform">{{ messages_total }} total</span>
-        </div>
-
-        {% if recent_messages %}
-        <div class="messages-list">
-            {% for msg in recent_messages[:10] %}
-            <div class="message-item">
-                <div class="message-avatar">{{ msg.user_id[:1] | upper }}</div>
-                <div class="message-body">
-                    <div class="message-header">
-                        <span class="message-user">Usuario {{ msg.user_id[-4:] }}</span>
-                        <span class="badge badge-platform">Telegram</span>
-                        <span class="message-time">{{ msg.created_at.strftime('%d/%m %H:%M') if msg.created_at else ''
-                            }}</span>
-                    </div>
-                    <div class="message-text">{{ msg.content[:150] }}{{ '...' if msg.content|length > 150 else '' }}</div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-            </svg>
-            <h3>No hay mensajes todavía</h3>
-            <p>Los mensajes aparecerán cuando el agente de IA empiece a funcionar</p>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- Upcoming Events -->
+<!-- Upcoming Events -->
+<div style="margin-bottom:24px">
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
@@ -235,7 +281,8 @@
                 <div class="upcoming-event-info">
                     <div class="upcoming-event-name">{{ event.name }}</div>
                     <div class="upcoming-event-meta">
-                        📍 {{ event.venue }} · <span class="badge badge-theme" style="padding:2px 6px;font-size:10px">{{
+                        📍 {{ event.venue }} · <span class="badge badge-theme"
+                            style="padding:2px 6px;font-size:10px">{{
                             event.theme }}</span>
                     </div>
                 </div>
@@ -260,76 +307,92 @@
 {% block scripts %}
 <script>
     if (typeof Chart === 'undefined') {
-        document.querySelectorAll('.chart-container').forEach(c => {
+        document.querySelectorAll('.chart-container').forEach(function(c) {
             c.innerHTML = '<p style="color:var(--text-secondary);padding:20px;text-align:center">Error al cargar las gráficas. Recarga la página.</p>';
         });
     } else {
-        Chart.defaults.color = 'rgba(255,255,255,0.35)';
-        Chart.defaults.font.family = 'Inter';
+        var dailyData = {{ daily_messages | tojson }};
+        var hourlyData = {{ hourly_messages | tojson }};
+        var _dCharts = [];
 
-        // Daily messages chart
-        const dailyData = {{ daily_messages | tojson }};
-        new Chart(document.getElementById('dailyChart'), {
-            type: 'line',
-            data: {
-                labels: dailyData.map(d => d.date),
-                datasets: [{
-                    label: 'Mensajes',
-                    data: dailyData.map(d => d.count),
-                    borderColor: '#39FF14',
-                    backgroundColor: (ctx) => {
-                        const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 280);
-                        gradient.addColorStop(0, 'rgba(57, 255, 20, 0.15)');
-                        gradient.addColorStop(1, 'rgba(57, 255, 20, 0.0)');
-                        return gradient;
-                    },
-                    fill: true, tension: 0.4, borderWidth: 2,
-                    pointRadius: 0, pointHoverRadius: 6,
-                    pointHoverBackgroundColor: '#39FF14',
-                    pointHoverBorderColor: '#000',
-                    pointHoverBorderWidth: 2,
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(10,10,15,0.95)', borderColor: 'rgba(57,255,20,0.2)', borderWidth: 1, padding: 12, cornerRadius: 8, titleFont: { weight: 700 } } },
-                scales: {
-                    x: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { maxTicksLimit: 10, font: { size: 11 } } },
-                    y: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
-                }
-            }
-        });
+        function buildDashboardCharts() {
+            _dCharts.forEach(function(c) { c.destroy(); });
+            _dCharts = [];
+            var t = getChartTheme();
+            Chart.defaults.color = t.text;
+            Chart.defaults.font.family = 'Inter';
 
-        // Hourly messages chart
-        const hourlyData = {{ hourly_messages | tojson }};
-        new Chart(document.getElementById('hourlyChart'), {
-            type: 'bar',
-            data: {
-                labels: hourlyData.map(d => d.hour),
-                datasets: [{
-                    label: 'Mensajes',
-                    data: hourlyData.map(d => d.count),
-                    backgroundColor: (ctx) => {
-                        const gradient = ctx.chart.ctx.createLinearGradient(0, 280, 0, 0);
-                        gradient.addColorStop(0, 'rgba(6, 182, 212, 0.05)');
-                        gradient.addColorStop(1, 'rgba(6, 182, 212, 0.35)');
-                        return gradient;
+            _dCharts.push(new Chart(document.getElementById('dailyChart'), {
+                type: 'line',
+                data: {
+                    labels: dailyData.map(function(d) { return d.date; }),
+                    datasets: [{
+                        label: 'Mensajes',
+                        data: dailyData.map(function(d) { return d.count; }),
+                        borderColor: t.primary,
+                        backgroundColor: function(ctx) {
+                            var g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 280);
+                            g.addColorStop(0, t.primaryA(0.12));
+                            g.addColorStop(1, t.primaryA(0.0));
+                            return g;
+                        },
+                        fill: true, tension: 0.4, borderWidth: 2,
+                        pointRadius: 0, pointHoverRadius: 6,
+                        pointHoverBackgroundColor: t.primary,
+                        pointHoverBorderColor: t.card,
+                        pointHoverBorderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: t.tip.bg, titleColor: t.tip.title, bodyColor: t.tip.body,
+                            borderColor: t.tip.border, borderWidth: 1, padding: 12, cornerRadius: 8,
+                            titleFont: { weight: 700 }
+                        }
                     },
-                    borderColor: 'rgba(6, 182, 212, 0.5)',
-                    borderWidth: 1, borderRadius: 6,
-                    hoverBackgroundColor: 'rgba(6, 182, 212, 0.5)',
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(10,10,15,0.95)', borderColor: 'rgba(6,182,212,0.2)', borderWidth: 1, padding: 12, cornerRadius: 8 } },
-                scales: {
-                    x: { border: { display: false }, grid: { display: false }, ticks: { maxTicksLimit: 12, font: { size: 11 } } },
-                    y: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
+                    scales: {
+                        x: { border: { display: false }, grid: { color: t.grid }, ticks: { maxTicksLimit: 10, font: { size: 11 } } },
+                        y: { border: { display: false }, grid: { color: t.grid }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
+                    }
                 }
-            }
-        });
+            }));
+
+            _dCharts.push(new Chart(document.getElementById('hourlyChart'), {
+                type: 'bar',
+                data: {
+                    labels: hourlyData.map(function(d) { return d.hour; }),
+                    datasets: [{
+                        label: 'Mensajes',
+                        data: hourlyData.map(function(d) { return d.count; }),
+                        backgroundColor: t.primaryA(0.15),
+                        borderColor: t.primaryA(0.4),
+                        borderWidth: 1, borderRadius: 6,
+                        hoverBackgroundColor: t.primaryA(0.3),
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: t.tip.bg, titleColor: t.tip.title, bodyColor: t.tip.body,
+                            borderColor: t.tip.border, borderWidth: 1, padding: 12, cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        x: { border: { display: false }, grid: { display: false }, ticks: { maxTicksLimit: 12, font: { size: 11 } } },
+                        y: { border: { display: false }, grid: { color: t.grid }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
+                    }
+                }
+            }));
+        }
+
+        buildDashboardCharts();
+        window.addEventListener('themechange', buildDashboardCharts);
     }
 </script>
 {% endblock %}

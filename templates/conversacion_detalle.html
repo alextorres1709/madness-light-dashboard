@@ -22,8 +22,8 @@
 </div>
 
 <form method="GET" action="{{ url_for('conversations.detail', user_id=user_id) }}" class="toolbar">
-    <input type="date" name="from" class="form-input" value="{{ date_from }}" style="max-width:180px">
-    <input type="date" name="to" class="form-input" value="{{ date_to }}" style="max-width:180px">
+    <input type="date" name="from" class="form-input" value="{{ date_from }}" style="max-width:180px;flex:1;min-width:120px">
+    <input type="date" name="to" class="form-input" value="{{ date_to }}" style="max-width:180px;flex:1;min-width:120px">
     <button type="submit" class="btn btn-secondary btn-sm">Filtrar</button>
 </form>
 

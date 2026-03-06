@@ -40,7 +40,7 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Direccion</th>
+                    <th class="hide-mobile">Direccion</th>
                     <th>Aforo</th>
                     <th>Estado</th>
                     <th>Acciones</th>
@@ -50,7 +50,7 @@
                 {% for venue in venues %}
                 <tr>
                     <td>{{ venue.name }}</td>
-                    <td>{{ venue.address or '—' }}</td>
+                    <td class="hide-mobile">{{ venue.address or '—' }}</td>
                     <td>{{ venue.capacity or '—' }}</td>
                     <td>
                         <span class="badge {% if venue.active %}badge-active{% else %}badge-inactive{% endif %}">

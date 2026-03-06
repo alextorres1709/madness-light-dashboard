@@ -34,7 +34,7 @@
         <div class="kpi-value">{{ users_this_month }}</div>
         <div class="kpi-subtitle">
             {% if user_growth > 0 %}
-            <span style="color:#39FF14">+{{ user_growth }}%</span> vs mes anterior
+            <span style="color:#059669">+{{ user_growth }}%</span> vs mes anterior
             {% elif user_growth < 0 %}
             <span style="color:#ef4444">{{ user_growth }}%</span> vs mes anterior
             {% else %}
@@ -90,9 +90,35 @@
         <div class="kpi-value">{{ total_events }}</div>
         <div class="kpi-subtitle">{{ upcoming_events }} próximamente</div>
     </div>
+
+    <div class="kpi-card kpi-accent-green animate-in">
+        <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                <polyline points="17 6 23 6 23 12" />
+            </svg>
+        </div>
+        <div class="kpi-label">Retención</div>
+        <div class="kpi-value">{{ retention_rate }}%</div>
+        <div class="kpi-subtitle">{{ returning_users }} usuarios recurrentes</div>
+    </div>
+
+    <div class="kpi-card kpi-accent-purple animate-in">
+        <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="20" y1="8" x2="20" y2="14" />
+                <line x1="23" y1="11" x2="17" y2="11" />
+            </svg>
+        </div>
+        <div class="kpi-label">Interés RRPP</div>
+        <div class="kpi-value">{{ rrpp_interest_rate }}%</div>
+        <div class="kpi-subtitle">{{ rrpp_users }} usuarios preguntan por RRPP</div>
+    </div>
 </div>
 
-<!-- Charts Row 1: Users + Hourly -->
+<!-- Charts Row 1: New vs Returning + Hourly -->
 <div class="section-header">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -110,11 +136,11 @@
                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
                     <polyline points="17 6 23 6 23 12" />
                 </svg>
-                Usuarios Activos por Semana
+                Nuevos vs Recurrentes por Semana
             </h3>
         </div>
         <div class="chart-container">
-            <canvas id="weeklyUsersChart"></canvas>
+            <canvas id="newReturningChart"></canvas>
         </div>
     </div>
 
@@ -181,6 +207,72 @@
     {% endif %}
 </div>
 {% endif %}
+
+<!-- Topic Distribution + Event Mentions -->
+<div class="section-header">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+    </svg>
+    <h2>Análisis de Conversaciones</h2>
+</div>
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 2a14.5 14.5 0 000 20 14.5 14.5 0 000-20" />
+                    <path d="M2 12h20" />
+                </svg>
+                Temas de Conversación (IA)
+            </h3>
+        </div>
+        <div id="topic-distribution-container" style="min-height:260px">
+            <div class="ai-loading">
+                <div class="ai-loading-spinner"></div>
+                <p>Analizando temas...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 20V10M12 20V4M6 20v-6" />
+                </svg>
+                Interés por Eventos
+            </h3>
+        </div>
+        {% if event_mentions %}
+        <div class="chart-container" style="height:200px">
+            <canvas id="eventMentionsChart"></canvas>
+        </div>
+        {% else %}
+        <div class="empty-state" style="padding:30px">
+            <h3>Sin menciones</h3>
+            <p>Cuando los usuarios pregunten por eventos aparecerán aquí</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- RRPP Analysis Section -->
+<div class="section-header">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+        <circle cx="8.5" cy="7" r="4" />
+        <line x1="20" y1="8" x2="20" y2="14" />
+        <line x1="23" y1="11" x2="17" y2="11" />
+    </svg>
+    <h2>Análisis RRPP (IA)</h2>
+</div>
+<div id="rrpp-insights-container">
+    <div class="ai-loading">
+        <div class="ai-loading-spinner"></div>
+        <p>Analizando conversaciones RRPP...</p>
+    </div>
+</div>
 
 <!-- Bottom: Top Users + Upcoming Events -->
 <div class="section-header">
@@ -276,7 +368,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 2a4 4 0 014 4v1a1 1 0 001 1h1a4 4 0 010 8h-1a1 1 0 00-1 1v1a4 4 0 01-8 0v-1a1 1 0 00-1-1H6a4 4 0 010-8h1a1 1 0 001-1V6a4 4 0 014-4z" />
     </svg>
-    <h2>Análisis IA</h2>
+    <h2>Análisis IA General</h2>
 </div>
 <div id="ai-insights-container">
     <div class="ai-loading">
@@ -289,135 +381,228 @@
 {% block scripts %}
 <script>
     if (typeof Chart === 'undefined') {
-        document.querySelectorAll('.chart-container').forEach(c => {
+        document.querySelectorAll('.chart-container').forEach(function(c) {
             c.innerHTML = '<p style="color:var(--text-secondary);padding:20px;text-align:center">Error al cargar las gráficas. Recarga la página.</p>';
         });
     } else {
-        Chart.defaults.color = 'rgba(255,255,255,0.35)';
-        Chart.defaults.font.family = 'Inter';
+        var nrData = {{ new_returning_weekly | tojson }};
+        var hourlyData = {{ hourly_messages | tojson }};
+        {% if venues_data %}var venuesData = {{ venues_data | tojson }};{% endif %}
+        {% if themes_data %}var themesData = {{ themes_data | tojson }};{% endif %}
+        {% if event_mentions %}var mentionsData = {{ event_mentions | tojson }};{% endif %}
+        var _sCharts = [];
 
-        const chartScales = (opts = {}) => ({
-            x: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)', ...opts.xGrid }, ticks: { font: { size: 11 }, ...opts.xTicks } },
-            y: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
-        });
-        const chartTooltip = (color) => ({
-            backgroundColor: 'rgba(10,10,15,0.95)',
-            borderColor: color, borderWidth: 1,
-            padding: 12, cornerRadius: 8
-        });
+        function buildStatsCharts() {
+            _sCharts.forEach(function(c) { c.destroy(); });
+            _sCharts = [];
+            var t = getChartTheme();
+            Chart.defaults.color = t.text;
+            Chart.defaults.font.family = 'Inter';
+            var tip = function() { return { backgroundColor: t.tip.bg, titleColor: t.tip.title, bodyColor: t.tip.body, borderColor: t.tip.border, borderWidth: 1, padding: 12, cornerRadius: 8 }; };
 
-        // Weekly users chart
-        const weeklyData = {{ weekly_users | tojson }};
-        new Chart(document.getElementById('weeklyUsersChart'), {
-            type: 'bar',
-            data: {
-                labels: weeklyData.map(d => d.week),
-                datasets: [{
-                    label: 'Usuarios',
-                    data: weeklyData.map(d => d.count),
-                    backgroundColor: (ctx) => {
-                        const g = ctx.chart.ctx.createLinearGradient(0, 280, 0, 0);
-                        g.addColorStop(0, 'rgba(57, 255, 20, 0.05)');
-                        g.addColorStop(1, 'rgba(57, 255, 20, 0.35)');
-                        return g;
-                    },
-                    borderColor: 'rgba(57, 255, 20, 0.5)',
-                    borderWidth: 1, borderRadius: 6,
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: chartTooltip('rgba(57,255,20,0.2)') },
-                scales: chartScales()
-            }
-        });
-
-        // Hourly activity chart
-        const hourlyData = {{ hourly_messages | tojson }};
-        new Chart(document.getElementById('hourlyChart'), {
-            type: 'bar',
-            data: {
-                labels: hourlyData.map(d => d.hour),
-                datasets: [{
-                    label: 'Mensajes',
-                    data: hourlyData.map(d => d.count),
-                    backgroundColor: (ctx) => {
-                        const g = ctx.chart.ctx.createLinearGradient(0, 280, 0, 0);
-                        g.addColorStop(0, 'rgba(168, 85, 247, 0.05)');
-                        g.addColorStop(1, 'rgba(168, 85, 247, 0.35)');
-                        return g;
-                    },
-                    borderColor: 'rgba(168, 85, 247, 0.5)',
-                    borderWidth: 1, borderRadius: 6,
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: chartTooltip('rgba(168,85,247,0.2)') },
-                scales: chartScales({ xGrid: { display: false }, xTicks: { maxTicksLimit: 12 } })
-            }
-        });
-
-        {% if venues_data %}
-        // Venues chart
-        const venuesData = {{ venues_data | tojson }};
-        new Chart(document.getElementById('venuesChart'), {
-            type: 'bar',
-            data: {
-                labels: venuesData.map(d => d.venue.split('(')[0].trim()),
-                datasets: [{
-                    label: 'Eventos',
-                    data: venuesData.map(d => d.count),
-                    backgroundColor: (ctx) => {
-                        const g = ctx.chart.ctx.createLinearGradient(0, 280, 0, 0);
-                        g.addColorStop(0, 'rgba(6, 182, 212, 0.05)');
-                        g.addColorStop(1, 'rgba(6, 182, 212, 0.35)');
-                        return g;
-                    },
-                    borderColor: 'rgba(6, 182, 212, 0.5)',
-                    borderWidth: 1, borderRadius: 6,
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: { legend: { display: false }, tooltip: chartTooltip('rgba(6,182,212,0.2)') },
-                scales: {
-                    x: { border: { display: false }, grid: { color: 'rgba(255,255,255,0.03)' }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
-                    y: { border: { display: false }, grid: { display: false }, ticks: { font: { size: 11 } } }
+            // New vs Returning
+            _sCharts.push(new Chart(document.getElementById('newReturningChart'), {
+                type: 'bar',
+                data: {
+                    labels: nrData.map(function(d) { return d.week; }),
+                    datasets: [
+                        { label: 'Nuevos', data: nrData.map(function(d) { return d.new; }), backgroundColor: t.primaryA(0.25), borderColor: t.primaryA(0.5), borderWidth: 1, borderRadius: 4 },
+                        { label: 'Recurrentes', data: nrData.map(function(d) { return d.returning; }), backgroundColor: t.secondaryA(0.25), borderColor: t.secondaryA(0.5), borderWidth: 1, borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 11 } } }, tooltip: tip() },
+                    scales: {
+                        x: { stacked: true, border: { display: false }, grid: { color: t.grid }, ticks: { font: { size: 11 } } },
+                        y: { stacked: true, border: { display: false }, grid: { color: t.grid }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
+                    }
                 }
-            }
-        });
-        {% endif %}
+            }));
 
-        {% if themes_data %}
-        // Themes doughnut chart
-        const themesData = {{ themes_data | tojson }};
-        const themeColors = ['rgba(57,255,20,0.6)', 'rgba(6,182,212,0.6)', 'rgba(168,85,247,0.6)', 'rgba(245,158,11,0.6)', 'rgba(239,68,68,0.6)', 'rgba(99,102,241,0.6)', 'rgba(236,72,153,0.6)', 'rgba(107,114,128,0.6)'];
-        new Chart(document.getElementById('themesChart'), {
-            type: 'doughnut',
-            data: {
-                labels: themesData.map(d => d.theme),
-                datasets: [{
-                    data: themesData.map(d => d.count),
-                    backgroundColor: themeColors.slice(0, themesData.length),
-                    borderColor: 'rgba(10,10,15,0.8)',
-                    borderWidth: 2,
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                cutout: '60%',
-                plugins: {
-                    legend: { position: 'right', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } },
-                    tooltip: chartTooltip('rgba(168,85,247,0.2)')
+            // Hourly
+            _sCharts.push(new Chart(document.getElementById('hourlyChart'), {
+                type: 'bar',
+                data: {
+                    labels: hourlyData.map(function(d) { return d.hour; }),
+                    datasets: [{
+                        label: 'Mensajes', data: hourlyData.map(function(d) { return d.count; }),
+                        backgroundColor: t.indigoA(0.15), borderColor: t.indigoA(0.4),
+                        borderWidth: 1, borderRadius: 6, hoverBackgroundColor: t.indigoA(0.3)
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: tip() },
+                    scales: {
+                        x: { border: { display: false }, grid: { display: false }, ticks: { maxTicksLimit: 12, font: { size: 11 } } },
+                        y: { border: { display: false }, grid: { color: t.grid }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } }
+                    }
                 }
+            }));
+
+            {% if venues_data %}
+            _sCharts.push(new Chart(document.getElementById('venuesChart'), {
+                type: 'bar',
+                data: {
+                    labels: venuesData.map(function(d) { return d.venue.split('(')[0].trim(); }),
+                    datasets: [{
+                        label: 'Eventos', data: venuesData.map(function(d) { return d.count; }),
+                        backgroundColor: t.secondaryA(0.15), borderColor: t.secondaryA(0.4),
+                        borderWidth: 1, borderRadius: 6, hoverBackgroundColor: t.secondaryA(0.3)
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                    plugins: { legend: { display: false }, tooltip: tip() },
+                    scales: {
+                        x: { border: { display: false }, grid: { color: t.grid }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
+                        y: { border: { display: false }, grid: { display: false }, ticks: { font: { size: 11 } } }
+                    }
+                }
+            }));
+            {% endif %}
+
+            {% if themes_data %}
+            _sCharts.push(new Chart(document.getElementById('themesChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: themesData.map(function(d) { return d.theme; }),
+                    datasets: [{ data: themesData.map(function(d) { return d.count; }), backgroundColor: t.palette.slice(0, themesData.length), borderColor: t.card, borderWidth: 3 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '60%',
+                    plugins: { legend: { position: 'right', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } }, tooltip: tip() }
+                }
+            }));
+            {% endif %}
+
+            {% if event_mentions %}
+            if (mentionsData.length > 0) {
+                _sCharts.push(new Chart(document.getElementById('eventMentionsChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: mentionsData.map(function(d) { return d.name; }),
+                        datasets: [{
+                            label: 'Menciones', data: mentionsData.map(function(d) { return d.mentions; }),
+                            backgroundColor: t.amberA(0.2), borderColor: t.amberA(0.4),
+                            borderWidth: 1, borderRadius: 6, hoverBackgroundColor: t.amberA(0.35)
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                        plugins: { legend: { display: false }, tooltip: tip() },
+                        scales: {
+                            x: { border: { display: false }, grid: { color: t.grid }, beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
+                            y: { border: { display: false }, grid: { display: false }, ticks: { font: { size: 11 } } }
+                        }
+                    }
+                }));
             }
-        });
-        {% endif %}
+            {% endif %}
+        }
+
+        buildStatsCharts();
+        window.addEventListener('themechange', buildStatsCharts);
     }
 
-    // AI Insights
+    // Topic Distribution (async)
+    var _topicChart = null;
+    var _topicData = null;
+    function buildTopicChart(data) {
+        var container = document.getElementById('topic-distribution-container');
+        if (!data.topics || data.topics.length === 0) {
+            container.innerHTML = '<div class="empty-state" style="padding:30px"><h3>Sin datos suficientes</h3><p>Se necesitan más conversaciones para clasificar temas</p></div>';
+            return;
+        }
+        container.innerHTML = '<div class="chart-container" style="height:240px"><canvas id="topicChart"></canvas></div>';
+        if (_topicChart) _topicChart.destroy();
+        var t = getChartTheme();
+        if (typeof Chart !== 'undefined') {
+            _topicChart = new Chart(document.getElementById('topicChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: data.topics.map(function(tp) { return tp.name; }),
+                    datasets: [{ data: data.topics.map(function(tp) { return tp.percentage; }), backgroundColor: t.palette.slice(0, data.topics.length), borderColor: t.card, borderWidth: 3 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '55%',
+                    plugins: {
+                        legend: { position: 'right', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+                        tooltip: {
+                            backgroundColor: t.tip.bg, titleColor: t.tip.title, bodyColor: t.tip.body,
+                            borderColor: t.tip.border, borderWidth: 1, padding: 12, cornerRadius: 8,
+                            callbacks: { label: function(ctx) { return ctx.label + ': ' + ctx.raw + '%'; } }
+                        }
+                    }
+                }
+            });
+        }
+    }
+    fetch('/estadisticas/topic-distribution')
+        .then(function(r) { return r.json(); })
+        .then(function(data) { _topicData = data; buildTopicChart(data); })
+        .catch(function() {
+            document.getElementById('topic-distribution-container').innerHTML =
+                '<div class="empty-state" style="padding:30px"><h3>Error</h3><p>No se pudo cargar la distribución de temas</p></div>';
+        });
+    window.addEventListener('themechange', function() { if (_topicData) buildTopicChart(_topicData); });
+
+    // RRPP Insights (async)
+    fetch('/estadisticas/rrpp-insights')
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('rrpp-insights-container');
+            if (data.error) {
+                container.innerHTML = '<div class="ai-error"><p>No se pudo generar el análisis RRPP: ' + data.error + '</p></div>';
+                return;
+            }
+            container.innerHTML = `
+                <div class="ai-insights-grid">
+                    <div class="ai-insight-card ai-accent-green">
+                        <div class="ai-insight-header">
+                            <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                            <h3>Dudas Principales</h3>
+                        </div>
+                        <div class="ai-insight-content">${data.dudas_principales || 'Sin datos suficientes'}</div>
+                    </div>
+                    <div class="ai-insight-card ai-accent-red">
+                        <div class="ai-insight-header">
+                            <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                            <h3>Objeciones Frecuentes</h3>
+                        </div>
+                        <div class="ai-insight-content">${data.objeciones || 'Sin datos suficientes'}</div>
+                    </div>
+                    <div class="ai-insight-card ai-accent-amber">
+                        <div class="ai-insight-header">
+                            <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+                            <h3>Preguntas sobre Comisiones</h3>
+                        </div>
+                        <div class="ai-insight-content">${data.preguntas_comisiones || 'Sin datos suficientes'}</div>
+                    </div>
+                    <div class="ai-insight-card ai-accent-cyan">
+                        <div class="ai-insight-header">
+                            <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+                            <h3>Nivel de Interés</h3>
+                        </div>
+                        <div class="ai-insight-content">${data.nivel_interes || 'Sin datos suficientes'}</div>
+                    </div>
+                    <div class="ai-insight-card ai-accent-purple" style="grid-column: 1 / -1">
+                        <div class="ai-insight-header">
+                            <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+                            <h3>Sugerencias de Conversión</h3>
+                        </div>
+                        <div class="ai-insight-content">${data.sugerencias_conversion || 'Sin datos suficientes'}</div>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(() => {
+            document.getElementById('rrpp-insights-container').innerHTML =
+                '<div class="ai-error"><p>Error al conectar con el servicio de análisis RRPP</p></div>';
+        });
+
+    // AI General Insights (async)
     fetch('/estadisticas/insights')
         .then(r => r.json())
         .then(data => {
@@ -429,23 +614,31 @@
             container.innerHTML = `
                 <div class="ai-insights-grid">
                     <div class="ai-insight-card ai-accent-green">
-                        <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-                        <h3>Preguntas Frecuentes</h3>
+                        <div class="ai-insight-header">
+                            <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+                            <h3>Preguntas Frecuentes</h3>
+                        </div>
                         <div class="ai-insight-content">${data.preguntas_frecuentes || 'Sin datos suficientes'}</div>
                     </div>
                     <div class="ai-insight-card ai-accent-cyan">
-                        <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-                        <h3>Salas Populares</h3>
+                        <div class="ai-insight-header">
+                            <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                            <h3>Salas Populares</h3>
+                        </div>
                         <div class="ai-insight-content">${data.salas_populares || 'Sin datos suficientes'}</div>
                     </div>
                     <div class="ai-insight-card ai-accent-purple">
-                        <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
-                        <h3>Sentimiento General</h3>
+                        <div class="ai-insight-header">
+                            <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+                            <h3>Sentimiento General</h3>
+                        </div>
                         <div class="ai-insight-content">${data.sentimiento || 'Sin datos suficientes'}</div>
                     </div>
                     <div class="ai-insight-card ai-accent-amber">
-                        <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
-                        <h3>Sugerencias de Mejora</h3>
+                        <div class="ai-insight-header">
+                            <div class="ai-insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+                            <h3>Sugerencias de Mejora</h3>
+                        </div>
                         <div class="ai-insight-content">${data.sugerencias || 'Sin datos suficientes'}</div>
                     </div>
                 </div>

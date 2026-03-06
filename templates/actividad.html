@@ -42,7 +42,7 @@
                     <th>Fecha</th>
                     <th>Usuario</th>
                     <th>Accion</th>
-                    <th>Tipo</th>
+                    <th class="hide-mobile">Tipo</th>
                     <th>Detalle</th>
                 </tr>
             </thead>
@@ -56,7 +56,7 @@
                             {{ log.action }}
                         </span>
                     </td>
-                    <td>{{ log.target_type }}</td>
+                    <td class="hide-mobile">{{ log.target_type }}</td>
                     <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ log.details }}</td>
                 </tr>
                 {% endfor %}

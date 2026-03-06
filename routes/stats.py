@@ -2,8 +2,16 @@ import csv
 import io
 from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template, jsonify, Response
+from sqlalchemy import or_
 from models import db, Conversation, Event
 from routes.auth import login_required
+
+RRPP_KEYWORDS = [
+    'rrpp', 'promotor', 'promotora', 'comision', 'comisiones',
+    'ganar dinero', 'equipo', 'reclutar', 'relaciones publicas',
+    'codigo', 'enlace', 'rangos', 'puntos', 'ser rrpp',
+    'quiero ser', 'trabajar', 'sueldo', 'beneficios'
+]
 
 stats_bp = Blueprint("stats", __name__)
 
@@ -64,6 +72,28 @@ def index():
         Event.active == True, Event.date >= now
     ).count()
 
+    # ── Tasa de retención ────────────────────────────────
+    returning_users = (
+        db.session.query(db.func.count())
+        .select_from(
+            db.session.query(Conversation.user_id)
+            .filter(Conversation.role == "user")
+            .group_by(Conversation.user_id)
+            .having(db.func.count(Conversation.id) > 1)
+            .subquery()
+        )
+    ).scalar() or 0
+    retention_rate = round((returning_users / total_users) * 100, 1) if total_users else 0
+
+    # ── Interés RRPP ───────────────────────────────────
+    keyword_filters = [Conversation.content.ilike(f'%{kw}%') for kw in RRPP_KEYWORDS]
+    rrpp_users = (
+        db.session.query(db.func.count(db.func.distinct(Conversation.user_id)))
+        .filter(Conversation.role == "user", or_(*keyword_filters))
+        .scalar()
+    ) or 0
+    rrpp_interest_rate = round((rrpp_users / total_users) * 100, 1) if total_users else 0
+
     # ── Crecimiento de usuarios (últimas 8 semanas) ──────
     weekly_users_rows = (
         db.session.query(
@@ -81,12 +111,38 @@ def index():
         week_key = d.strftime("%Y-W%W")
         weekly_map.setdefault(week_key, set()).add(r[1])
 
+    # First-seen date per user (all time, not limited to 8 weeks)
+    first_seen_rows = (
+        db.session.query(
+            Conversation.user_id,
+            db.func.min(db.func.date(Conversation.created_at)).label("first_seen"),
+        )
+        .filter(Conversation.role == "user")
+        .group_by(Conversation.user_id)
+        .all()
+    )
+    first_seen_map = {r[0]: str(r[1]) for r in first_seen_rows}
+
     weekly_users = []
+    new_returning_weekly = []
     for i in range(8):
         d = eight_weeks_ago + timedelta(weeks=i)
         key = d.strftime("%Y-W%W")
         label = d.strftime("%d/%m")
-        weekly_users.append({"week": label, "count": len(weekly_map.get(key, set()))})
+        users_in_week = weekly_map.get(key, set())
+        weekly_users.append({"week": label, "count": len(users_in_week)})
+
+        w_start = d.strftime("%Y-%m-%d")
+        w_end = (d + timedelta(weeks=1)).strftime("%Y-%m-%d")
+        new_count = sum(
+            1 for uid in users_in_week
+            if first_seen_map.get(uid, "") >= w_start and first_seen_map.get(uid, "") < w_end
+        )
+        new_returning_weekly.append({
+            "week": label,
+            "new": new_count,
+            "returning": len(users_in_week) - new_count,
+        })
 
     # ── Actividad por hora ───────────────────────────────
     hourly_rows = (
@@ -146,6 +202,19 @@ def index():
         .all()
     )
 
+    # ── Menciones de eventos en conversaciones ────────
+    event_mentions = []
+    for event in next_events:
+        if event.name:
+            mention_count = (
+                Conversation.query
+                .filter(Conversation.role == "user",
+                        Conversation.content.ilike(f'%{event.name}%'))
+                .count()
+            )
+            event_mentions.append({"name": event.name, "mentions": mention_count})
+    event_mentions.sort(key=lambda x: x["mentions"], reverse=True)
+
     return render_template(
         "estadisticas.html",
         # KPIs
@@ -157,11 +226,17 @@ def index():
         total_events=total_events,
         upcoming_events=upcoming_events,
         total_messages=total_messages,
+        retention_rate=retention_rate,
+        returning_users=returning_users,
+        rrpp_interest_rate=rrpp_interest_rate,
+        rrpp_users=rrpp_users,
         # Charts
         weekly_users=weekly_users,
         hourly_messages=hourly_messages,
         venues_data=venues_data,
         themes_data=themes_data,
+        new_returning_weekly=new_returning_weekly,
+        event_mentions=event_mentions,
         # Tables
         top_users_data=top_users_data,
         next_events=next_events,
@@ -175,6 +250,30 @@ def insights():
     try:
         from services.ai_insights import get_insights
         data = get_insights()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@stats_bp.route("/estadisticas/rrpp-insights")
+@login_required
+def rrpp_insights():
+    """Return RRPP-focused AI insights."""
+    try:
+        from services.ai_insights import get_rrpp_insights
+        data = get_rrpp_insights()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@stats_bp.route("/estadisticas/topic-distribution")
+@login_required
+def topic_distribution():
+    """Return AI-categorized topic distribution."""
+    try:
+        from services.ai_insights import get_topic_distribution
+        data = get_topic_distribution()
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

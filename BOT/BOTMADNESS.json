@@ -21,85 +21,6 @@
                     "id": "TELEGRAM_CREDENTIAL_ID",
                     "name": "Telegram Bot Token"
                 }
-            },
-            "notes": "🔹 Configura tu Bot Token de @BotFather aquí"
-        },
-        {
-            "parameters": {
-                "rules": {
-                    "values": [
-                        {
-                            "conditions": {
-                                "options": {
-                                    "caseSensitive": false
-                                },
-                                "conditions": [
-                                    {
-                                        "leftValue": "={{ $json.message.text }}",
-                                        "rightValue": "/start",
-                                        "operator": {
-                                            "type": "string",
-                                            "operation": "startsWith"
-                                        }
-                                    }
-                                ]
-                            },
-                            "renameOutput": "Comando /start"
-                        },
-                        {
-                            "conditions": {
-                                "options": {
-                                    "caseSensitive": false
-                                },
-                                "conditions": [
-                                    {
-                                        "leftValue": "={{ $json.message.photo }}",
-                                        "rightValue": "",
-                                        "operator": {
-                                            "type": "string",
-                                            "operation": "isNotEmpty"
-                                        }
-                                    }
-                                ]
-                            },
-                            "renameOutput": "Foto recibida"
-                        }
-                    ]
-                },
-                "options": {
-                    "fallbackOutput": "extra"
-                }
-            },
-            "id": "switch-msg-type",
-            "name": "Tipo de Mensaje",
-            "type": "n8n-nodes-base.switch",
-            "typeVersion": 3,
-            "position": [
-                460,
-                460
-            ]
-        },
-        {
-            "parameters": {
-                "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-                "text": "={{ [\n  '¡Ey, ' + ($('Telegram Trigger').item.json.message.from.first_name || 'crack') + '! 🔥 Soy el bot de **Madness Light**, tu colega virtual.\\n\\n🎉 Pregúntame sobre:\\n• Próximas fiestas y entradas\\n• Cómo ser RRPP y ganar pasta\\n• Transporte, vestimenta, consejos\\n\\n¡Mándame lo que quieras saber! 💬',\n  '¡Buenas, ' + ($('Telegram Trigger').item.json.message.from.first_name || 'crack') + '! 🎉 Aquí el bot de **Madness Light**.\\n\\n🔥 Te puedo ayudar con:\\n• Info de las próximas fiestas\\n• Entradas y precios\\n• Programa RRPP (gana pasta 💸)\\n\\n¡Dispara tu pregunta! 🚀',\n  '¡Qué pasa, ' + ($('Telegram Trigger').item.json.message.from.first_name || 'crack') + '! 👋 Soy el bot oficial de **Madness Light**.\\n\\n🎶 Estoy aquí para contarte todo sobre:\\n• Fiestas, DJs y salas\\n• Cómo pillar entradas\\n• Unirte al equipo RRPP\\n\\n¡Pregunta sin miedo! 💬🔥',\n  '¡Hola, ' + ($('Telegram Trigger').item.json.message.from.first_name || 'crack') + '! 🙌 Bienvenid@ al bot de **Madness Light**.\\n\\n🎉 ¿Qué quieres saber?\\n• Próximos eventos y entradas\\n• Ser RRPP y sus beneficios\\n• Salas, transporte, dress code\\n\\n¡Cuéntame! 🎶',\n  '¡Yoo, ' + ($('Telegram Trigger').item.json.message.from.first_name || 'crack') + '! 🤙 Aquí tu colega de **Madness Light**.\\n\\n💥 Te echo un cable con:\\n• Fiestas y cómo entrar\\n• Programa RRPP (pasta extra 💸)\\n• Tips de vestimenta y transporte\\n\\n¡Suelta tu pregunta! 🎉'\n][Math.floor(Math.random() * 5)] }}",
-                "additionalFields": {
-                    "parse_mode": "Markdown"
-                }
-            },
-            "id": "welcome-msg",
-            "name": "Mensaje Bienvenida",
-            "type": "n8n-nodes-base.telegram",
-            "typeVersion": 1.2,
-            "position": [
-                700,
-                240
-            ],
-            "credentials": {
-                "telegramApi": {
-                    "id": "TELEGRAM_CREDENTIAL_ID",
-                    "name": "Telegram Bot Token"
-                }
             }
         },
         {
@@ -109,8 +30,8 @@
                         {
                             "id": "user-id",
                             "name": "userId",
-                            "value": "={{ $('Telegram Trigger').item.json.message.from.id }}",
-                            "type": "number"
+                            "value": "={{ String($('Telegram Trigger').item.json.message.from.id) }}",
+                            "type": "string"
                         },
                         {
                             "id": "user-name",
@@ -121,25 +42,13 @@
                         {
                             "id": "chat-id",
                             "name": "chatId",
-                            "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-                            "type": "number"
+                            "value": "={{ String($('Telegram Trigger').item.json.message.chat.id) }}",
+                            "type": "string"
                         },
                         {
                             "id": "user-msg",
                             "name": "userMessage",
-                            "value": "={{ $('Telegram Trigger').item.json.message.text }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "msg-type",
-                            "name": "messageType",
-                            "value": "text",
-                            "type": "string"
-                        },
-                        {
-                            "id": "timestamp",
-                            "name": "timestamp",
-                            "value": "={{ new Date().toISOString() }}",
+                            "value": "={{ $('Telegram Trigger').item.json.message.text || '(mensaje sin texto)' }}",
                             "type": "string"
                         }
                     ]
@@ -151,199 +60,14 @@
             "type": "n8n-nodes-base.set",
             "typeVersion": 3.4,
             "position": [
-                700,
-                560
+                480,
+                460
             ]
         },
         {
             "parameters": {
-                "method": "GET",
-                "url": "=https://api.telegram.org/bot{{ $credentials.telegramApi.token }}/getFile?file_id={{ $('Telegram Trigger').item.json.message.photo.pop().file_id }}",
-                "options": {}
-            },
-            "id": "get-photo-file",
-            "name": "Obtener Fichero Foto",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.2,
-            "position": [
-                700,
-                780
-            ],
-            "credentials": {
-                "telegramApi": {
-                    "id": "TELEGRAM_CREDENTIAL_ID",
-                    "name": "Telegram Bot Token"
-                }
-            },
-            "notes": "⚠️ Si $credentials.telegramApi.token no funciona, guarda el token como variable de entorno BOT_TOKEN y usa {{ $env.BOT_TOKEN }} en su lugar."
-        },
-        {
-            "parameters": {
-                "assignments": {
-                    "assignments": [
-                        {
-                            "id": "photo-url",
-                            "name": "photoUrl",
-                            "value": "=https://api.telegram.org/file/bot{{ $credentials.telegramApi.token }}/{{ $json.result.file_path }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "user-id-p",
-                            "name": "userId",
-                            "value": "={{ $('Telegram Trigger').item.json.message.from.id }}",
-                            "type": "number"
-                        },
-                        {
-                            "id": "user-name-p",
-                            "name": "userName",
-                            "value": "={{ $('Telegram Trigger').item.json.message.from.first_name || 'Colega' }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "chat-id-p",
-                            "name": "chatId",
-                            "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-                            "type": "number"
-                        },
-                        {
-                            "id": "caption",
-                            "name": "caption",
-                            "value": "={{ $('Telegram Trigger').item.json.message.caption || '' }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "msg-type-p",
-                            "name": "messageType",
-                            "value": "photo",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "options": {}
-            },
-            "id": "set-photo-url",
-            "name": "Preparar URL Foto",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
-            "position": [
-                920,
-                780
-            ]
-        },
-        {
-            "parameters": {
-                "modelId": {
-                    "__rl": true,
-                    "value": "gpt-4o-mini",
-                    "mode": "list"
-                },
-                "messages": {
-                    "values": [
-                        {
-                            "content": "=Analiza esta imagen y describe lo que ves. Si es un cartel de fiesta, extrae: nombre del evento, fecha, sala, DJs, precio. Si es otra cosa, descríbela brevemente.\n\nCaption del usuario: {{ $json.caption }}",
-                            "role": "user"
-                        }
-                    ]
-                },
-                "options": {
-                    "maxTokens": 500,
-                    "temperature": 0.3
-                },
-                "inputType": "auto"
-            },
-            "id": "vision-analysis",
-            "name": "GPT Vision — Analizar Imagen",
-            "type": "@n8n/n8n-nodes-langchain.openAi",
-            "typeVersion": 1.8,
-            "position": [
-                1140,
-                780
-            ],
-            "credentials": {
-                "openAiApi": {
-                    "id": "OPENAI_CREDENTIAL_ID",
-                    "name": "OpenAI API Key"
-                }
-            },
-            "notes": "Analiza la imagen con GPT-4o-mini Vision. Si es un cartel de fiesta, extrae detalles."
-        },
-        {
-            "parameters": {
-                "assignments": {
-                    "assignments": [
-                        {
-                            "id": "vision-result",
-                            "name": "userMessage",
-                            "value": "=[El usuario envió una imagen. Análisis de la imagen: {{ $json.message.content }}] {{ $('Preparar URL Foto').item.json.caption ? '\\nMensaje adicional del usuario: ' + $('Preparar URL Foto').item.json.caption : '' }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "keep-userid",
-                            "name": "userId",
-                            "value": "={{ $('Preparar URL Foto').item.json.userId }}",
-                            "type": "number"
-                        },
-                        {
-                            "id": "keep-username",
-                            "name": "userName",
-                            "value": "={{ $('Preparar URL Foto').item.json.userName }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "keep-chatid",
-                            "name": "chatId",
-                            "value": "={{ $('Preparar URL Foto').item.json.chatId }}",
-                            "type": "number"
-                        },
-                        {
-                            "id": "keep-msgtype",
-                            "name": "messageType",
-                            "value": "photo",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "options": {}
-            },
-            "id": "merge-vision-result",
-            "name": "Fusionar Resultado Vision",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
-            "position": [
-                1360,
-                780
-            ]
-        },
-        {
-            "parameters": {
-                "operation": "select",
-                "schema": {
-                    "__rl": true,
-                    "value": "public",
-                    "mode": "list"
-                },
-                "table": {
-                    "__rl": true,
-                    "value": "conversations",
-                    "mode": "list"
-                },
-                "limit": 20,
-                "where": {
-                    "values": [
-                        {
-                            "column": "user_id",
-                            "value": "={{ $json.userId }}"
-                        }
-                    ]
-                },
-                "sort": {
-                    "values": [
-                        {
-                            "column": "created_at",
-                            "direction": "DESC"
-                        }
-                    ]
-                },
+                "operation": "executeQuery",
+                "query": "=SELECT COALESCE((SELECT json_agg(sub)::text FROM (SELECT role, content FROM conversations WHERE user_id = '{{ $json.userId }}' ORDER BY created_at DESC LIMIT 20) sub), '(Sin historial previo)') as historial",
                 "options": {}
             },
             "id": "load-history",
@@ -351,62 +75,72 @@
             "type": "n8n-nodes-base.postgres",
             "typeVersion": 2.5,
             "position": [
-                1780,
-                560
+                740,
+                460
             ],
+            "alwaysOutputData": true,
             "credentials": {
                 "postgres": {
                     "id": "SUPABASE_POSTGRES_ID",
                     "name": "Supabase PostgreSQL"
                 }
-            },
-            "notes": "📦 Lee las últimas 20 interacciones del usuario de Supabase"
+            }
         },
         {
             "parameters": {
-                "assignments": {
-                    "assignments": [
-                        {
-                            "id": "history-context",
-                            "name": "chatHistory",
-                            "value": "={{ $json.length > 0 ? $json.map(m => m.role + ': ' + m.content).reverse().join('\\n') : '(Sin historial previo)' }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "forward-msg",
-                            "name": "userMessage",
-                            "value": "={{ $input.item.json.userMessage }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "forward-userid",
-                            "name": "userId",
-                            "value": "={{ $input.item.json.userId }}",
-                            "type": "number"
-                        },
-                        {
-                            "id": "forward-username",
-                            "name": "userName",
-                            "value": "={{ $input.item.json.userName }}",
-                            "type": "string"
-                        },
-                        {
-                            "id": "forward-chatid",
-                            "name": "chatId",
-                            "value": "={{ $input.item.json.chatId }}",
-                            "type": "number"
-                        }
-                    ]
-                },
+                "operation": "executeQuery",
+                "query": "SELECT COALESCE((SELECT json_agg(sub)::text FROM (SELECT name, date, venue, theme, dj_info, entry_price, entry_link FROM events ORDER BY date DESC LIMIT 10) sub), '(No hay eventos programados)') as eventos",
                 "options": {}
             },
-            "id": "prepare-context",
-            "name": "Preparar Contexto",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
+            "id": "load-events",
+            "name": "Cargar Eventos",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.5,
             "position": [
-                2000,
-                560
+                1000,
+                460
+            ],
+            "alwaysOutputData": true,
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_POSTGRES_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT COALESCE(description, '') as description, COALESCE(extra_info, '') as extra_info FROM company_info LIMIT 1;",
+                "options": {}
+            },
+            "id": "load-company",
+            "name": "Cargar Info Empresa",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.5,
+            "position": [
+                1260,
+                460
+            ],
+            "alwaysOutputData": true,
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_POSTGRES_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const userName = $('Preparar Texto').first().json.userName;\nconst userMessage = $('Preparar Texto').first().json.userMessage;\nconst chatId = $('Preparar Texto').first().json.chatId;\nconst userId = $('Preparar Texto').first().json.userId;\nconst eventos = $('Cargar Eventos').first().json.eventos || '(No hay eventos programados)';\nconst empresaDesc = $('Cargar Info Empresa').first().json.description || '';\nconst empresaInfo = $('Cargar Info Empresa').first().json.extra_info || '';\nconst historial = $('Cargar Historial Chat').first().json.historial || '(Sin historial)';\n\nconst hoy = new Date();\nconst fechaActual = hoy.toLocaleDateString('es-ES');\n\nconst systemPrompt = `Eres el Colega Virtual de Madness Light (fiestas light +14 Madrid). Fecha actual: ${fechaActual}.\nEl usuario se llama: ${userName}\n\nCOMO RESPONDER - LEE ESTO PRIMERO\nAntes de responder, identifica QUE esta preguntando el usuario:\n\n1. SALUDO (hola, hey, buenas, qué tal, /start, wenas, qué pasa) → Mensaje de bienvenida con su nombre, que eres el bot de Madness, qué puedes ayudarle y que pregunte. Varía el estilo.\n\n2. FIESTAS/EVENTOS (fiesta, evento, próxima, cuándo, entradas, precios, DJs, sala, finde, lineup, música) → Usa SOLO los datos de la seccion EVENTOS de abajo. NUNCA inventes. Si no hay datos, di que aún no hay fechas confirmadas. Empuja a comprar en Elite Events.\n\n3. RRPP/EMPRESA (rrpp, trabajar, cómo funciona, normas, rangos, sueldo, vestimenta, beneficios, puntos, ser rrpp, quiero ser rrpp) → Usa los datos de INFO EMPRESA. Prioridad: primero explica BENEFICIOS y CÓMO FUNCIONA (sistema de puntos, rangos, cómo se venden entradas, qué ganas). Los requisitos NO los sueltes de primeras, al final menciona \"si quieres saber los requisitos pregúntame\". El objetivo es que el usuario QUIERA ser RRPP, no asustarle con requisitos.\n\n4. CHARLA (transporte, ligar, consejos, qué ponerme) → Responde con colegueo usando tu conocimiento general.\n\n5. FUERA DE TEMA (cocina, deberes, deportes, política) → \"Bua, ni idea yo solo sé de Fiestas y RRPP. Te miro algo de la próxima?\"\n\nIMPORTANTE: Responde SOLO sobre lo que pregunta el usuario. Si pregunta sobre RRPP, habla de RRPP, NO de fiestas. Si pregunta sobre fiestas, habla de fiestas, NO de RRPP. NO mezcles temas.\n\n--- EVENTOS ---\n${eventos}\nCampos: name (nombre), date (fecha), venue (sala), theme (temática), dj_info (DJs), entry_price (precio), entry_link (link compra).\n\n--- INFO EMPRESA ---\n${empresaDesc}\n${empresaInfo}\n\n--- ESTILO ---\n- Escribe como si fuera un WhatsApp a un colega. Nada de listas con viñetas ni formato de folleto.\n- NO uses formato tipo \"Requisitos:\", \"Beneficios:\", listas con -, \\n, ni bullet points. Eso parece un PDF corporativo.\n- Usa frases naturales con emojis sueltos entre medias, como en un chat real.\n- Ejemplo MALO: \"🔹 Requisitos:\\n- Edad mínima: 14 años\\n- Compatible con estudios\"\n- Ejemplo MALO 2: \"Básicamente tienes que tener 14 años mínimo y lo mejor es que es compatible con estudios y curro\" (demasiado coloquial y centra en requisitos)\n- Ejemplo BUENO: \"Como RRPP compartes un enlace con tu gente y por cada entrada que vendan a través de él sumas puntos 📊 Esos puntos te hacen subir de rango: empiezas como RRPP Base con acceso VIP y sin colas, y si llegas a Elite entras gratis a todas las fiestas 🔥 Además puedes canjear puntos por dinero. Si quieres te cuento los requisitos o los rangos en detalle\"\n- Tono: juvenil pero profesional. Como un community manager joven, no como un chaval de 15.\n- Sé concreto con datos reales pero metidos en frases naturales, no en listas\n- 6-10 líneas máximo. Si hay mucho que contar, da lo importante y pregunta si quiere saber más\n\n--- HISTORIAL ---\n${historial}`;\n\nreturn [{\n  json: {\n    systemPrompt,\n    userMessage,\n    chatId,\n    userId,\n    userName\n  }\n}];"
+            },
+            "id": "build-prompt",
+            "name": "Preparar Prompt",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1520,
+                460
             ]
         },
         {
@@ -420,7 +154,7 @@
                     "values": [
                         {
                             "role": "system",
-                            "content": "Eres el Colega Virtual de **Madness Light** (fiestas light +14 Madrid). Fecha actual: {{ $now.format('dd/MM/yyyy') }}.\n\n### 🛑 PASO 1: FILTRO DE SEGURIDAD\nAntes de responder, analiza la pregunta. Recuerda la fecha actual.\n\n**✅ TEMAS PERMITIDOS:**\n• Fiestas: Entradas, fechas, precios, música, DJs, ambiente.\n• Empresa: RRPP, trabajar, rangos, sueldo, normas, vestimenta.\n• Logística: Transporte (Metro/Renfe), ubicación, seguridad, padres.\n• Social: Consejos para ligar, qué ponerse, qué se cuece en Madrid.\n\n**❌ TEMAS PROHIBIDOS (BLOQUEO INMEDIATO):**\n• Cocina/Recetas, Deberes, Deportes, Política, Religión, Tecnología, Chistes random.\n\n**⚠️ Si es tema PROHIBIDO, responde SOLO:**\n\"Bua, ni idea 🤷🏻♂️. Yo de eso no piloto, yo solo sé de **Fiestas y RRPP**. ¿Te miro algo de la próxima?\"\n\n### 🧠 PASO 2: PROTOCOLO DE HERRAMIENTAS\n\n1. **EMPRESA (RRPP, Normas)** → Usa SIEMPRE `consultar_info_empresa`. NUNCA respondas de memoria.\n2. **EVENTOS (Fechas, Precios)** → Usa SIEMPRE `consultar_eventos_db`.\n3. **Si el evento tiene cartel** → Usa `enviar_cartel_fiesta` para mandar la imagen.\n4. **CHARLA DE CALLE** → Usa tu conocimiento general.\n\n### 💬 ESTILO\n• Respuestas CORTAS (WhatsApp style). Máximo 3 líneas.\n• Colegueo respetuoso. Emojis (🔥💸🎉) sin pasarte.\n• El nombre del usuario es: {{ $json.userName }}\n\n### 🎯 OBJETIVOS\n1. VENDER RRPP: Beneficios (Pasta, VIP, Gratis) y cierra.\n2. VENDER ENTRADAS: Da fecha/sala y empuja a la app \"Elite Events\".\n\n### 📝 HISTORIAL DE CONVERSACIÓN:\n{{ $json.chatHistory }}"
+                            "content": "={{ $json.systemPrompt }}"
                         },
                         {
                             "role": "user",
@@ -429,393 +163,17 @@
                     ]
                 },
                 "options": {
-                    "maxTokens": 500,
-                    "temperature": 0.7,
-                    "functions": {
-                        "values": [
-                            {
-                                "name": "consultar_info_empresa",
-                                "description": "Consulta información sobre la empresa Madness Light: RRPP, normas, rangos, vestimenta, sueldos, puntos, beneficios. SIEMPRE usar cuando preguntan sobre la empresa.",
-                                "parameters": {
-                                    "type": "object",
-                                    "properties": {
-                                        "tema": {
-                                            "type": "string",
-                                            "description": "El tema específico a consultar: 'rrpp', 'normas', 'rangos', 'vestimenta', 'sueldo', 'beneficios', 'puntos', 'general'"
-                                        }
-                                    },
-                                    "required": [
-                                        "tema"
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "consultar_eventos_db",
-                                "description": "Consulta la base de datos de eventos/fiestas de Madness Light. Devuelve fechas, salas, precios, DJs, enlaces de compra. SIEMPRE usar cuando preguntan sobre fiestas.",
-                                "parameters": {
-                                    "type": "object",
-                                    "properties": {
-                                        "consulta": {
-                                            "type": "string",
-                                            "description": "Tipo de consulta: 'proxima_fiesta', 'todas_fiestas', 'fiesta_especifica', 'precios', 'djs'"
-                                        },
-                                        "filtro_fecha": {
-                                            "type": "string",
-                                            "description": "Filtro opcional de fecha en formato YYYY-MM-DD"
-                                        }
-                                    },
-                                    "required": [
-                                        "consulta"
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "enviar_cartel_fiesta",
-                                "description": "Envía el cartel/poster de una fiesta específica al usuario por Telegram. Usar cuando el usuario pide ver el cartel o cuando se habla de un evento específico.",
-                                "parameters": {
-                                    "type": "object",
-                                    "properties": {
-                                        "evento_id": {
-                                            "type": "number",
-                                            "description": "ID del evento del cual enviar el cartel"
-                                        },
-                                        "nombre_evento": {
-                                            "type": "string",
-                                            "description": "Nombre del evento (alternativa al ID)"
-                                        }
-                                    },
-                                    "required": [
-                                        "nombre_evento"
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                }
-            },
-            "id": "ai-agent",
-            "name": "🤖 Agente IA — Colega Virtual",
-            "type": "@n8n/n8n-nodes-langchain.openAi",
-            "typeVersion": 1.8,
-            "position": [
-                2260,
-                560
-            ],
-            "credentials": {
-                "openAiApi": {
-                    "id": "OPENAI_CREDENTIAL_ID",
-                    "name": "OpenAI API Key"
-                }
-            },
-            "notes": "🧠 Agente principal GPT-4o-mini con function calling. System prompt completo con filtro de seguridad y herramientas."
-        },
-        {
-            "parameters": {
-                "rules": {
-                    "values": [
-                        {
-                            "conditions": {
-                                "options": {
-                                    "caseSensitive": false,
-                                    "leftValue": ""
-                                },
-                                "conditions": [
-                                    {
-                                        "leftValue": "={{ $json.message?.function_call?.name }}",
-                                        "rightValue": "consultar_info_empresa",
-                                        "operator": {
-                                            "type": "string",
-                                            "operation": "equals"
-                                        }
-                                    }
-                                ]
-                            },
-                            "renameOutput": "Tool: Info Empresa"
-                        },
-                        {
-                            "conditions": {
-                                "options": {
-                                    "caseSensitive": false,
-                                    "leftValue": ""
-                                },
-                                "conditions": [
-                                    {
-                                        "leftValue": "={{ $json.message?.function_call?.name }}",
-                                        "rightValue": "consultar_eventos_db",
-                                        "operator": {
-                                            "type": "string",
-                                            "operation": "equals"
-                                        }
-                                    }
-                                ]
-                            },
-                            "renameOutput": "Tool: Eventos DB"
-                        },
-                        {
-                            "conditions": {
-                                "options": {
-                                    "caseSensitive": false,
-                                    "leftValue": ""
-                                },
-                                "conditions": [
-                                    {
-                                        "leftValue": "={{ $json.message?.function_call?.name }}",
-                                        "rightValue": "enviar_cartel_fiesta",
-                                        "operator": {
-                                            "type": "string",
-                                            "operation": "equals"
-                                        }
-                                    }
-                                ]
-                            },
-                            "renameOutput": "Tool: Enviar Cartel"
-                        },
-                        {
-                            "conditions": {
-                                "options": {
-                                    "caseSensitive": false,
-                                    "leftValue": ""
-                                },
-                                "conditions": [
-                                    {
-                                        "leftValue": "={{ $json.message?.content }}",
-                                        "rightValue": "",
-                                        "operator": {
-                                            "type": "string",
-                                            "operation": "isNotEmpty"
-                                        }
-                                    }
-                                ]
-                            },
-                            "renameOutput": "Respuesta Directa"
-                        }
-                    ]
-                },
-                "options": {}
-            },
-            "id": "tool-router",
-            "name": "Router de Tools",
-            "type": "n8n-nodes-base.switch",
-            "typeVersion": 3,
-            "position": [
-                2520,
-                560
-            ]
-        },
-        {
-            "parameters": {
-                "operation": "executeQuery",
-                "query": "SELECT name, description, phone, email, address, hours, extra_info FROM company_info LIMIT 1;",
-                "options": {}
-            },
-            "id": "read-company-doc",
-            "name": "📄 Leer Info Empresa (Supabase)",
-            "type": "n8n-nodes-base.postgres",
-            "typeVersion": 2.5,
-            "position": [
-                2780,
-                300
-            ],
-            "credentials": {
-                "postgres": {
-                    "id": "SUPABASE_POSTGRES_ID",
-                    "name": "Supabase PostgreSQL"
-                }
-            },
-            "notes": "📄 Lee la info de la empresa desde Supabase (company_info.extra_info)"
-        },
-        {
-            "parameters": {
-                "assignments": {
-                    "assignments": [
-                        {
-                            "id": "empresa-result",
-                            "name": "toolResult",
-                            "value": "={{ $json.extra_info || $json.description || 'No se encontró información.' }}",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "options": {}
-            },
-            "id": "format-empresa",
-            "name": "Formatear Info Empresa",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
-            "position": [
-                3000,
-                300
-            ]
-        },
-        {
-            "parameters": {
-                "operation": "executeQuery",
-                "query": "=SELECT id, name, date, venue, theme, description, dj_info, capacity, entry_price, entry_link, image_url, active FROM events WHERE active = true AND date >= CURRENT_DATE ORDER BY date ASC LIMIT 10;",
-                "options": {}
-            },
-            "id": "query-eventos",
-            "name": "📅 Consultar Eventos (Supabase)",
-            "type": "n8n-nodes-base.postgres",
-            "typeVersion": 2.5,
-            "position": [
-                2780,
-                540
-            ],
-            "credentials": {
-                "postgres": {
-                    "id": "SUPABASE_POSTGRES_ID",
-                    "name": "Supabase PostgreSQL"
-                }
-            },
-            "notes": "📅 Consulta los próximos eventos activos en Supabase"
-        },
-        {
-            "parameters": {
-                "assignments": {
-                    "assignments": [
-                        {
-                            "id": "eventos-result",
-                            "name": "toolResult",
-                            "value": "={{ $json.length > 0 ? JSON.stringify($json.map(e => ({ nombre: e.name, fecha: e.date, sala: e.venue, tematica: e.theme, precio: e.entry_price, djs: e.dj_info, link: e.entry_link, tiene_cartel: !!e.image_url })), null, 2) : 'No hay eventos programados próximamente.' }}",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "options": {}
-            },
-            "id": "format-eventos",
-            "name": "Formatear Eventos",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
-            "position": [
-                3000,
-                540
-            ]
-        },
-        {
-            "parameters": {
-                "operation": "select",
-                "schema": {
-                    "__rl": true,
-                    "value": "public",
-                    "mode": "list"
-                },
-                "table": {
-                    "__rl": true,
-                    "value": "events",
-                    "mode": "list"
-                },
-                "limit": 1,
-                "where": {
-                    "values": [
-                        {
-                            "column": "name",
-                            "condition": "ILIKE",
-                            "value": "={{ '%' + (JSON.parse($('🤖 Agente IA — Colega Virtual').item.json.message.function_call.arguments).nombre_evento || '') + '%' }}"
-                        },
-                        {
-                            "column": "image_url",
-                            "condition": "IS NOT NULL"
-                        }
-                    ]
-                },
-                "options": {}
-            },
-            "id": "get-cartel-url",
-            "name": "🖼️ Buscar Cartel en DB",
-            "type": "n8n-nodes-base.postgres",
-            "typeVersion": 2.5,
-            "position": [
-                2780,
-                780
-            ],
-            "credentials": {
-                "postgres": {
-                    "id": "SUPABASE_POSTGRES_ID",
-                    "name": "Supabase PostgreSQL"
-                }
-            },
-            "notes": "Busca el cartel del evento usando el nodo SELECT parametrizado (evita SQL injection)"
-        },
-        {
-            "parameters": {
-                "chatId": "={{ $('Preparar Contexto').item.json.chatId }}",
-                "operation": "sendPhoto",
-                "file": "={{ $json.image_url || '' }}",
-                "additionalFields": {
-                    "caption": "=🎉 Cartel de **{{ $json.name || 'Evento' }}** — ¡No te lo pierdas!",
-                    "parse_mode": "Markdown"
-                }
-            },
-            "id": "send-cartel-photo",
-            "name": "📤 Enviar Cartel por Telegram",
-            "type": "n8n-nodes-base.telegram",
-            "typeVersion": 1.2,
-            "position": [
-                3000,
-                780
-            ],
-            "credentials": {
-                "telegramApi": {
-                    "id": "TELEGRAM_CREDENTIAL_ID",
-                    "name": "Telegram Bot Token"
-                }
-            }
-        },
-        {
-            "parameters": {
-                "assignments": {
-                    "assignments": [
-                        {
-                            "id": "cartel-result",
-                            "name": "toolResult",
-                            "value": "={{ $json.image_url ? 'Cartel enviado correctamente al usuario.' : 'No se encontró cartel para ese evento.' }}",
-                            "type": "string"
-                        }
-                    ]
-                },
-                "options": {}
-            },
-            "id": "format-cartel-result",
-            "name": "Resultado Cartel",
-            "type": "n8n-nodes-base.set",
-            "typeVersion": 3.4,
-            "position": [
-                3220,
-                780
-            ]
-        },
-        {
-            "parameters": {
-                "modelId": {
-                    "__rl": true,
-                    "value": "gpt-4o-mini",
-                    "mode": "list"
-                },
-                "messages": {
-                    "values": [
-                        {
-                            "role": "system",
-                            "content": "Eres el Colega Virtual de Madness Light. Genera la respuesta final usando el resultado de la herramienta. Estilo WhatsApp: corto, colegueo, emojis. Máximo 3 líneas. Si hay link de entradas, menciónalo. Si enviaste un cartel, dilo."
-                        },
-                        {
-                            "role": "user",
-                            "content": "=Pregunta original del usuario: {{ $('Preparar Contexto').item.json.userMessage }}\n\nResultado de la herramienta: {{ $json.toolResult }}"
-                        }
-                    ]
-                },
-                "options": {
-                    "maxTokens": 300,
+                    "maxTokens": 1000,
                     "temperature": 0.7
                 }
             },
-            "id": "ai-format-tool-response",
-            "name": "🤖 Formatear Respuesta Tool",
+            "id": "ai-agent",
+            "name": "🤖 Agente IA",
             "type": "@n8n/n8n-nodes-langchain.openAi",
             "typeVersion": 1.8,
             "position": [
-                3660,
-                540
+                1780,
+                460
             ],
             "credentials": {
                 "openAiApi": {
@@ -831,20 +189,20 @@
                         {
                             "id": "final-response",
                             "name": "finalResponse",
-                            "value": "={{ $json.message?.content || $json.toolResponse || 'Lo siento, no he podido procesar tu mensaje 😅' }}",
+                            "value": "={{ $json.message?.content || $json.choices?.[0]?.message?.content || $json.text || 'Lo siento, no he podido procesar tu mensaje' }}",
                             "type": "string"
                         },
                         {
                             "id": "final-chatid",
                             "name": "chatId",
-                            "value": "={{ $('Preparar Contexto').item.json.chatId }}",
-                            "type": "number"
+                            "value": "={{ $('Preparar Prompt').item.json.chatId }}",
+                            "type": "string"
                         },
                         {
                             "id": "final-userid",
                             "name": "userId",
-                            "value": "={{ $('Preparar Contexto').item.json.userId }}",
-                            "type": "number"
+                            "value": "={{ $('Preparar Prompt').item.json.userId }}",
+                            "type": "string"
                         }
                     ]
                 },
@@ -855,8 +213,8 @@
             "type": "n8n-nodes-base.set",
             "typeVersion": 3.4,
             "position": [
-                4100,
-                560
+                2040,
+                460
             ]
         },
         {
@@ -877,7 +235,7 @@
                     "value": {
                         "user_id": "={{ $json.userId }}",
                         "role": "user",
-                        "content": "={{ $('Preparar Contexto').item.json.userMessage }}",
+                        "content": "={{ $('Preparar Prompt').item.json.userMessage }}",
                         "created_at": "={{ new Date().toISOString() }}"
                     }
                 },
@@ -888,8 +246,8 @@
             "type": "n8n-nodes-base.postgres",
             "typeVersion": 2.5,
             "position": [
-                4320,
-                420
+                2300,
+                300
             ],
             "credentials": {
                 "postgres": {
@@ -927,8 +285,8 @@
             "type": "n8n-nodes-base.postgres",
             "typeVersion": 2.5,
             "position": [
-                4320,
-                700
+                2300,
+                600
             ],
             "credentials": {
                 "postgres": {
@@ -945,13 +303,13 @@
                     "parse_mode": "Markdown"
                 }
             },
-            "id": "send-telegram-response",
+            "id": "send-telegram",
             "name": "📤 Responder en Telegram",
             "type": "n8n-nodes-base.telegram",
             "typeVersion": 1.2,
             "position": [
-                4560,
-                560
+                2300,
+                460
             ],
             "credentials": {
                 "telegramApi": {
@@ -962,13 +320,13 @@
         },
         {
             "parameters": {},
-            "id": "no-op-end",
+            "id": "end",
             "name": "Fin",
             "type": "n8n-nodes-base.noOp",
             "typeVersion": 1,
             "position": [
-                4780,
-                560
+                2560,
+                460
             ]
         }
     ],
@@ -977,76 +335,7 @@
             "main": [
                 [
                     {
-                        "node": "Tipo de Mensaje",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Tipo de Mensaje": {
-            "main": [
-                [
-                    {
-                        "node": "Mensaje Bienvenida",
-                        "type": "main",
-                        "index": 0
-                    }
-                ],
-                [
-                    {
-                        "node": "Obtener Fichero Foto",
-                        "type": "main",
-                        "index": 0
-                    }
-                ],
-                [
-                    {
                         "node": "Preparar Texto",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Obtener Fichero Foto": {
-            "main": [
-                [
-                    {
-                        "node": "Preparar URL Foto",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Preparar URL Foto": {
-            "main": [
-                [
-                    {
-                        "node": "GPT Vision — Analizar Imagen",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "GPT Vision — Analizar Imagen": {
-            "main": [
-                [
-                    {
-                        "node": "Fusionar Resultado Vision",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Fusionar Resultado Vision": {
-            "main": [
-                [
-                    {
-                        "node": "Cargar Historial Chat",
                         "type": "main",
                         "index": 0
                     }
@@ -1068,145 +357,47 @@
             "main": [
                 [
                     {
-                        "node": "Preparar Contexto",
+                        "node": "Cargar Eventos",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Preparar Contexto": {
+        "Cargar Eventos": {
             "main": [
                 [
                     {
-                        "node": "🤖 Agente IA — Colega Virtual",
+                        "node": "Cargar Info Empresa",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "🤖 Agente IA — Colega Virtual": {
+        "Cargar Info Empresa": {
             "main": [
                 [
                     {
-                        "node": "Router de Tools",
+                        "node": "Preparar Prompt",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Router de Tools": {
+        "Preparar Prompt": {
             "main": [
                 [
                     {
-                        "node": "📄 Leer Info Empresa (Google Docs)",
-                        "type": "main",
-                        "index": 0
-                    }
-                ],
-                [
-                    {
-                        "node": "📅 Consultar Eventos (Supabase)",
-                        "type": "main",
-                        "index": 0
-                    }
-                ],
-                [
-                    {
-                        "node": "🖼️ Buscar Cartel en DB",
-                        "type": "main",
-                        "index": 0
-                    }
-                ],
-                [
-                    {
-                        "node": "Preparar Respuesta Final",
+                        "node": "🤖 Agente IA",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "📄 Leer Info Empresa (Supabase)": {
-            "main": [
-                [
-                    {
-                        "node": "Formatear Info Empresa",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Formatear Info Empresa": {
-            "main": [
-                [
-                    {
-                        "node": "🤖 Formatear Respuesta Tool",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "📅 Consultar Eventos (Supabase)": {
-            "main": [
-                [
-                    {
-                        "node": "Formatear Eventos",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Formatear Eventos": {
-            "main": [
-                [
-                    {
-                        "node": "🤖 Formatear Respuesta Tool",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "🖼️ Buscar Cartel en DB": {
-            "main": [
-                [
-                    {
-                        "node": "📤 Enviar Cartel por Telegram",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "📤 Enviar Cartel por Telegram": {
-            "main": [
-                [
-                    {
-                        "node": "Resultado Cartel",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Resultado Cartel": {
-            "main": [
-                [
-                    {
-                        "node": "🤖 Formatear Respuesta Tool",
-                        "type": "main",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "🤖 Formatear Respuesta Tool": {
+        "🤖 Agente IA": {
             "main": [
                 [
                     {
@@ -1257,7 +448,7 @@
         "callerPolicy": "workflowsFromSameOwner",
         "errorWorkflow": ""
     },
-    "versionId": "madness-light-v1",
+    "versionId": "madness-light-v5",
     "meta": {
         "templateCredsSetupCompleted": false,
         "instanceId": "madness-light-bot"

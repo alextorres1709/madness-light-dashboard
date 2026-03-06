@@ -46,7 +46,7 @@
                     <th>Email</th>
                     <th>Rol</th>
                     <th>Estado</th>
-                    <th>Creado</th>
+                    <th class="hide-mobile">Creado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -65,7 +65,7 @@
                             {{ 'Activo' if user.active else 'Inactivo' }}
                         </span>
                     </td>
-                    <td>{{ user.created_at.strftime('%d/%m/%Y') if user.created_at else '—' }}</td>
+                    <td class="hide-mobile">{{ user.created_at.strftime('%d/%m/%Y') if user.created_at else '—' }}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-secondary btn-sm"

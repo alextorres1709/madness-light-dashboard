@@ -8,7 +8,7 @@
     <div>
         <h1 class="page-title">Fiestas y Eventos</h1>
         <p class="page-subtitle">Gestiona las fiestas que el chatbot muestra a los clientes · Entradas vía <strong
-                style="color:var(--brand-green)">Elite Events App</strong></p>
+                style="color:var(--brand-primary)">Elite Events App</strong></p>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
         <a href="{{ url_for('events.export_csv') }}" class="btn btn-secondary">
@@ -75,8 +75,8 @@
                     <th>Nombre</th>
                     <th>Fecha</th>
                     <th>Sala</th>
-                    <th>Temática</th>
-                    <th>Entrada</th>
+                    <th class="hide-mobile">Temática</th>
+                    <th class="hide-mobile">Entrada</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -87,8 +87,8 @@
                     <td>{{ event.name }}</td>
                     <td>{{ event.date.strftime('%d/%m/%Y %H:%M') if event.date else '—' }}</td>
                     <td>{{ event.venue }}</td>
-                    <td><span class="badge badge-category">{{ event.theme }}</span></td>
-                    <td>{{ event.entry_price if event.entry_price else '—' }}</td>
+                    <td class="hide-mobile"><span class="badge badge-category">{{ event.theme }}</span></td>
+                    <td class="hide-mobile">{{ event.entry_price if event.entry_price else '—' }}</td>
                     <td>
                         <span class="badge {% if event.active %}badge-active{% else %}badge-inactive{% endif %}">
                             {{ 'Activa' if event.active else 'Inactiva' }}
@@ -370,6 +370,7 @@
                     '<div class="kpi-value" style="font-size:24px">' + data.unique_users + '</div></div></div>';
 
                 if (data.timeline.length > 0 && typeof Chart !== 'undefined') {
+                    var t = getChartTheme();
                     document.getElementById('analytics-chart-container').style.display = 'block';
                     if (analyticsChart) analyticsChart.destroy();
                     analyticsChart = new Chart(document.getElementById('analyticsChart'), {
@@ -379,8 +380,8 @@
                             datasets: [{
                                 label: 'Menciones',
                                 data: data.timeline.map(function(d) { return d.count; }),
-                                backgroundColor: 'rgba(57,255,20,0.3)',
-                                borderColor: 'rgba(57,255,20,0.5)',
+                                backgroundColor: t.primaryA(0.2),
+                                borderColor: t.primaryA(0.5),
                                 borderWidth: 1, borderRadius: 4
                             }]
                         },
@@ -388,8 +389,8 @@
                             responsive: true, maintainAspectRatio: false,
                             plugins: { legend: { display: false } },
                             scales: {
-                                x: { border:{display:false}, grid:{display:false}, ticks:{color:'rgba(255,255,255,0.4)',font:{size:11}} },
-                                y: { border:{display:false}, grid:{color:'rgba(255,255,255,0.03)'}, beginAtZero:true, ticks:{stepSize:1,color:'rgba(255,255,255,0.4)'} }
+                                x: { border:{display:false}, grid:{display:false}, ticks:{color:t.text,font:{size:11}} },
+                                y: { border:{display:false}, grid:{color:t.grid}, beginAtZero:true, ticks:{stepSize:1,color:t.text} }
                             }
                         }
                     });

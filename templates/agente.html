@@ -23,7 +23,7 @@
         </div>
         <div class="kpi-label">Estado</div>
         <div class="kpi-value"
-            style="font-size:24px;background:linear-gradient(135deg,#22c55e,#39FF14);-webkit-background-clip:text;background-clip:text">
+            style="font-size:24px;color:#059669">
             ● Activo</div>
         <div class="kpi-subtitle">Respondiendo mensajes</div>
     </div>
@@ -76,30 +76,65 @@
                 </h3>
             </div>
             <div style="display:flex;flex-direction:column;gap:10px">
-                <div class="capability-item">
+                <div class="capability-item capability-toggle" onclick="this.classList.toggle('open')">
                     <span class="capability-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <path d="M8 2v4M16 2v4" /><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M3 10h18" />
                         </svg>
                     </span>
-                    <div>
-                        <div class="capability-name">Calendario de eventos</div>
+                    <div style="flex:1;min-width:0">
+                        <div class="capability-name">Calendario de eventos <span class="capability-badge">{{ active_events|length }} activos</span></div>
                         <div class="capability-desc">Acceso a todas las fiestas programadas: fechas, salas, temáticas, DJs y precios</div>
+                        <div class="capability-detail">
+                            {% if active_events %}
+                            <table class="capability-table">
+                                <thead><tr><th>Evento</th><th>Fecha</th><th>Sala</th><th>Precio</th></tr></thead>
+                                <tbody>
+                                {% for e in active_events %}
+                                <tr>
+                                    <td>{{ e.name }}</td>
+                                    <td>{{ e.date.strftime('%d/%m/%Y') if e.date else '—' }}</td>
+                                    <td>{{ e.venue }}</td>
+                                    <td>{{ e.entry_price or '—' }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <p class="capability-empty">No hay eventos activos</p>
+                            {% endif %}
+                        </div>
                     </div>
+                    <svg class="capability-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
-                <div class="capability-item">
+                <div class="capability-item capability-toggle" onclick="this.classList.toggle('open')">
                     <span class="capability-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <path d="M3 21h18M3 7v1a3 3 0 006 0V7m0 1a3 3 0 006 0V7m0 1a3 3 0 006 0V7H3l2-4h14l2 4" />
                             <path d="M5 21V10.85M19 21V10.85" />
                         </svg>
                     </span>
-                    <div>
-                        <div class="capability-name">Perfil de la empresa</div>
+                    <div style="flex:1;min-width:0">
+                        <div class="capability-name">Perfil de la empresa <span class="capability-badge">Configurado</span></div>
                         <div class="capability-desc">Datos de Madness Light: descripción, ubicación, contacto y horarios de eventos</div>
+                        <div class="capability-detail">
+                            {% if company %}
+                            <div class="capability-data-grid">
+                                <div class="capability-data-item"><span class="capability-data-label">Nombre</span><span>{{ company.name or '—' }}</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Descripción</span><span>{{ company.description[:120] + '...' if company.description and company.description|length > 120 else company.description or '—' }}</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Teléfono</span><span>{{ company.phone or '—' }}</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Email</span><span>{{ company.email or '—' }}</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Dirección</span><span>{{ company.address or '—' }}</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Horarios</span><span>{{ company.hours or '—' }}</span></div>
+                            </div>
+                            {% else %}
+                            <p class="capability-empty">No configurado — ve a Ajustes</p>
+                            {% endif %}
+                        </div>
                     </div>
+                    <svg class="capability-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
-                <div class="capability-item">
+                <div class="capability-item capability-toggle" onclick="this.classList.toggle('open')">
                     <span class="capability-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -107,21 +142,37 @@
                             <line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" />
                         </svg>
                     </span>
-                    <div>
-                        <div class="capability-name">Base de conocimiento</div>
+                    <div style="flex:1;min-width:0">
+                        <div class="capability-name">Base de conocimiento <span class="capability-badge">{{ 'Activa' if company and company.extra_info else 'Vacía' }}</span></div>
                         <div class="capability-desc">Documentación interna sobre entradas, salas activas en Madrid, y programa de RRPP</div>
+                        <div class="capability-detail">
+                            {% if company and company.extra_info %}
+                            <pre class="capability-pre">{{ company.extra_info[:500] }}{% if company.extra_info|length > 500 %}...{% endif %}</pre>
+                            {% else %}
+                            <p class="capability-empty">Sin documentación adicional — configúrala en Ajustes</p>
+                            {% endif %}
+                        </div>
                     </div>
+                    <svg class="capability-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
-                <div class="capability-item">
+                <div class="capability-item capability-toggle" onclick="this.classList.toggle('open')">
                     <span class="capability-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                         </svg>
                     </span>
-                    <div>
-                        <div class="capability-name">Historial de conversaciones</div>
+                    <div style="flex:1;min-width:0">
+                        <div class="capability-name">Historial de conversaciones <span class="capability-badge">{{ unique_users }} usuarios</span></div>
                         <div class="capability-desc">Contexto de mensajes previos de cada usuario para respuestas personalizadas</div>
+                        <div class="capability-detail">
+                            <div class="capability-data-grid">
+                                <div class="capability-data-item"><span class="capability-data-label">Usuarios únicos</span><span>{{ unique_users }}</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Mensajes totales</span><span>{{ messages_total }}</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Estado</span><span style="color:#059669">Memoria activa por usuario</span></div>
+                            </div>
+                        </div>
                     </div>
+                    <svg class="capability-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
             </div>
         </div>
@@ -137,50 +188,105 @@
                 </h3>
             </div>
             <div style="display:flex;flex-direction:column;gap:10px">
-                <div class="capability-item">
+                <div class="capability-item capability-toggle" onclick="this.classList.toggle('open')">
                     <span class="capability-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
                         </svg>
                     </span>
-                    <div>
-                        <div class="capability-name">Info de Fiestas</div>
+                    <div style="flex:1;min-width:0">
+                        <div class="capability-name">Info de Fiestas <span class="capability-badge">{{ active_events|length }} eventos</span></div>
                         <div class="capability-desc">Responde sobre próximos eventos, salas, temáticas y precios</div>
+                        <div class="capability-detail">
+                            <div class="capability-data-grid">
+                                <div class="capability-data-item"><span class="capability-data-label">Eventos activos</span><span>{{ active_events|length }}</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Con enlace de compra</span><span>{{ events_with_links|length }}</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Próximo evento</span><span>{{ active_events[0].name + ' — ' + active_events[0].date.strftime('%d/%m') if active_events else 'Ninguno' }}</span></div>
+                            </div>
+                            <p class="capability-hint">El bot responde automáticamente con nombre, fecha, sala, temática, DJs y precio de cada evento.</p>
+                        </div>
                     </div>
+                    <svg class="capability-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
-                <div class="capability-item">
+                <div class="capability-item capability-toggle" onclick="this.classList.toggle('open')">
                     <span class="capability-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
                         </svg>
                     </span>
-                    <div>
-                        <div class="capability-name">Entradas</div>
+                    <div style="flex:1;min-width:0">
+                        <div class="capability-name">Entradas <span class="capability-badge">{{ events_with_links|length }} enlaces</span></div>
                         <div class="capability-desc">Guía a los usuarios a comprar entradas en Elite Events</div>
+                        <div class="capability-detail">
+                            {% if events_with_links %}
+                            <table class="capability-table">
+                                <thead><tr><th>Evento</th><th>Enlace</th></tr></thead>
+                                <tbody>
+                                {% for e in events_with_links %}
+                                <tr>
+                                    <td>{{ e.name }}</td>
+                                    <td><a href="{{ e.entry_link }}" target="_blank" style="color:var(--accent-primary);word-break:break-all">{{ e.entry_link[:50] }}{% if e.entry_link|length > 50 %}...{% endif %}</a></td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <p class="capability-empty">No hay eventos con enlace de compra configurado</p>
+                            {% endif %}
+                        </div>
                     </div>
+                    <svg class="capability-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
-                <div class="capability-item">
+                <div class="capability-item capability-toggle" onclick="this.classList.toggle('open')">
                     <span class="capability-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
                         </svg>
                     </span>
-                    <div>
-                        <div class="capability-name">Salas y Ubicaciones</div>
+                    <div style="flex:1;min-width:0">
+                        <div class="capability-name">Salas y Ubicaciones <span class="capability-badge">{{ active_venues|length }} salas</span></div>
                         <div class="capability-desc">Informa sobre las salas activas en Madrid</div>
+                        <div class="capability-detail">
+                            {% if active_venues %}
+                            <table class="capability-table">
+                                <thead><tr><th>Sala</th><th>Dirección</th><th>Aforo</th></tr></thead>
+                                <tbody>
+                                {% for v in active_venues %}
+                                <tr>
+                                    <td>{{ v.name }}</td>
+                                    <td>{{ v.address or '—' }}</td>
+                                    <td>{{ v.capacity or '—' }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <p class="capability-empty">No hay salas activas — configúralas en el módulo Salas</p>
+                            {% endif %}
+                        </div>
                     </div>
+                    <svg class="capability-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
-                <div class="capability-item">
+                <div class="capability-item capability-toggle" onclick="this.classList.toggle('open')">
                     <span class="capability-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                             <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" />
                             <path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" />
                         </svg>
                     </span>
-                    <div>
-                        <div class="capability-name">Programa RRPP</div>
+                    <div style="flex:1;min-width:0">
+                        <div class="capability-name">Programa RRPP <span class="capability-badge">3 rangos</span></div>
                         <div class="capability-desc">Explica el programa de relaciones públicas cuando se pregunta</div>
+                        <div class="capability-detail">
+                            <div class="capability-data-grid">
+                                <div class="capability-data-item"><span class="capability-data-label">Rango 1</span><span>RRPP Base — Comisiones por entrada vendida</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Rango 2</span><span>Embajador — Beneficios extra + acceso VIP</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Rango 3</span><span>Elite — Máximas comisiones + beneficios exclusivos</span></div>
+                            </div>
+                            <p class="capability-hint">El bot explica automáticamente los requisitos, beneficios y cómo apuntarse a cada rango.</p>
+                        </div>
                     </div>
+                    <svg class="capability-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
                 </div>
             </div>
         </div>
