@@ -7,11 +7,11 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Mensajes Masivos</h1>
-        <p class="page-subtitle">Envia mensajes a los usuarios del bot de Telegram</p>
+        <p class="page-subtitle">Envia plantillas de WhatsApp a clientes con opt-in</p>
     </div>
 </div>
 
-{% if not has_token %}
+{% if not has_wa %}
 <div class="card" style="border-color:rgba(239,68,68,0.3);margin-bottom:20px">
     <div style="padding:20px;display:flex;align-items:center;gap:12px">
         <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" width="24" height="24">
@@ -20,70 +20,173 @@
             <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
         <div>
-            <strong style="color:#ef4444">TELEGRAM_BOT_TOKEN no configurado</strong>
-            <p style="color:var(--text-secondary);font-size:13px;margin-top:4px">Anade la variable TELEGRAM_BOT_TOKEN en Vercel para poder enviar mensajes</p>
+            <strong style="color:#ef4444">WhatsApp no configurado</strong>
+            <p style="color:var(--text-secondary);font-size:13px;margin-top:4px">Configura WHATSAPP_TOKEN y WHATSAPP_PHONE_ID en las variables de entorno</p>
         </div>
     </div>
 </div>
 {% endif %}
 
 <!-- Audience KPIs -->
-<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
+<div class="kpi-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:24px">
     <div class="kpi-card kpi-accent-green animate-in">
-        <div class="kpi-label">Todos los usuarios</div>
-        <div class="kpi-value">{{ all_users }}</div>
-        <div class="kpi-subtitle">Total historico</div>
+        <div class="kpi-label">Clientes con opt-in</div>
+        <div class="kpi-value">{{ total_opted_in }}</div>
+        <div class="kpi-subtitle">Recibiran el mensaje</div>
     </div>
     <div class="kpi-card kpi-accent-cyan animate-in">
-        <div class="kpi-label">Activos (7 dias)</div>
-        <div class="kpi-value">{{ active_7d }}</div>
-        <div class="kpi-subtitle">Ultima semana</div>
-    </div>
-    <div class="kpi-card kpi-accent-purple animate-in">
-        <div class="kpi-label">Activos (30 dias)</div>
-        <div class="kpi-value">{{ active_30d }}</div>
-        <div class="kpi-subtitle">Ultimo mes</div>
+        <div class="kpi-label">Total clientes activos</div>
+        <div class="kpi-value">{{ total_clients }}</div>
+        <div class="kpi-subtitle">{{ total_clients - total_opted_in }} sin opt-in</div>
     </div>
 </div>
 
-<!-- Compose -->
+<!-- WhatsApp compliance info -->
+<div class="card" style="padding:16px 20px;margin-bottom:20px;border-color:rgba(37,211,102,0.3)">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2" width="20" height="20" style="flex-shrink:0;margin-top:2px">
+            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+        </svg>
+        <div style="font-size:13px;color:var(--text-secondary)">
+            <strong style="color:var(--text-primary)">Reglas de WhatsApp Business</strong><br>
+            Solo se envian <strong>plantillas aprobadas por Meta</strong> a clientes con opt-in activo.
+            Las plantillas se crean y aprueban en el <a href="https://business.facebook.com" target="_blank" style="color:#3b82f6">Meta Business Manager</a>.
+            Usa <code style="background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:12px">{"{{name}}"}</code> en las variables para personalizar con el nombre del cliente.
+        </div>
+    </div>
+</div>
+
+<!-- Compose with template -->
 <div class="card" style="padding:24px">
     <div class="section-header" style="margin-bottom:20px">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
             <path d="M22 2L11 13" />
             <path d="M22 2L15 22l-4-9-9-4z" />
         </svg>
-        <h3>Componer mensaje</h3>
+        <h3>Enviar plantilla</h3>
     </div>
 
-    <form method="POST" action="{{ url_for('broadcast.send') }}" onsubmit="return confirm('¿Enviar este mensaje a los usuarios seleccionados?')">
-        <div style="margin-bottom:20px">
-            <label class="form-label" style="margin-bottom:10px;display:block">Audiencia</label>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-                <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--border-color);border-radius:8px;cursor:pointer;font-size:14px;color:var(--text-secondary)">
-                    <input type="radio" name="audience" value="all" checked> Todos ({{ all_users }})
-                </label>
-                <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--border-color);border-radius:8px;cursor:pointer;font-size:14px;color:var(--text-secondary)">
-                    <input type="radio" name="audience" value="7d"> Activos 7d ({{ active_7d }})
-                </label>
-                <label style="display:flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--border-color);border-radius:8px;cursor:pointer;font-size:14px;color:var(--text-secondary)">
-                    <input type="radio" name="audience" value="30d"> Activos 30d ({{ active_30d }})
-                </label>
-            </div>
-        </div>
-
+    <form method="POST" action="{{ url_for('broadcast.send') }}" onsubmit="return confirmSend()">
+        <!-- Template selection -->
         <div class="form-group" style="margin-bottom:20px">
-            <label class="form-label">Mensaje</label>
-            <textarea name="message" class="form-input" rows="6" placeholder="Escribe tu mensaje... Soporta HTML basico (<b>, <i>, <a>)" required></textarea>
+            <label class="form-label">Plantilla aprobada</label>
+            {% if templates %}
+            <select name="template_name" id="templateSelect" class="form-input" required onchange="onTemplateChange()">
+                <option value="">-- Selecciona plantilla --</option>
+                {% for t in templates %}
+                <option value="{{ t.name }}"
+                        data-category="{{ t.category }}"
+                        data-body="{{ t.components | selectattr('type', 'equalto', 'BODY') | map(attribute='text') | first | default('') }}"
+                        data-lang="{{ t.language }}">
+                    {{ t.name }} ({{ t.category | lower }})
+                </option>
+                {% endfor %}
+            </select>
+            {% else %}
+            <div style="padding:12px 16px;border:1px dashed var(--border-color);border-radius:8px;color:var(--text-secondary);font-size:13px">
+                {% if has_wa %}
+                    No se encontraron plantillas aprobadas. Crea plantillas en el <a href="https://business.facebook.com" target="_blank" style="color:#3b82f6">Meta Business Manager</a>.
+                {% else %}
+                    Configura WhatsApp para ver las plantillas disponibles.
+                {% endif %}
+            </div>
+            <input type="text" name="template_name" class="form-input" style="margin-top:10px"
+                   placeholder="O escribe el nombre de la plantilla manualmente" required>
+            {% endif %}
         </div>
 
-        <button type="submit" class="btn btn-primary" {% if not has_token %}disabled style="opacity:0.5"{% endif %}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                <path d="M22 2L11 13" />
-                <path d="M22 2L15 22l-4-9-9-4z" />
-            </svg>
-            Enviar Mensaje
-        </button>
+        <!-- Template preview -->
+        <div id="templatePreview" style="display:none;margin-bottom:20px;padding:16px;background:var(--bg-tertiary);border-radius:10px;border:1px solid var(--border-color)">
+            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Vista previa</div>
+            <div id="previewBody" style="font-size:14px;color:var(--text-primary);white-space:pre-wrap"></div>
+            <div id="previewCategory" style="margin-top:8px;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(59,130,246,0.1);color:#3b82f6"></div>
+        </div>
+
+        <!-- Language -->
+        <div class="form-group" style="margin-bottom:20px">
+            <label class="form-label">Idioma</label>
+            <select name="language" class="form-input" style="max-width:200px">
+                <option value="es" selected>Espanol</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <!-- Template variables -->
+        <div id="variablesSection" style="display:none;margin-bottom:20px">
+            <label class="form-label" style="margin-bottom:10px;display:block">Variables de la plantilla</label>
+            <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px">
+                Rellena los valores para cada variable. Usa <code style="background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:11px">{"{{name}}"}</code> para insertar el nombre del cliente automaticamente.
+            </p>
+            <div id="variableInputs" style="display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center">
+            <button type="submit" class="btn btn-primary" {% if not has_wa %}disabled style="opacity:0.5"{% endif %}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <path d="M22 2L11 13" />
+                    <path d="M22 2L15 22l-4-9-9-4z" />
+                </svg>
+                Enviar a {{ total_opted_in }} clientes
+            </button>
+            <span style="font-size:12px;color:var(--text-secondary)">Solo clientes con opt-in activo</span>
+        </div>
     </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function onTemplateChange() {
+    const sel = document.getElementById('templateSelect');
+    const opt = sel.options[sel.selectedIndex];
+    const preview = document.getElementById('templatePreview');
+    const body = opt.dataset.body || '';
+    const category = opt.dataset.category || '';
+
+    if (!sel.value) {
+        preview.style.display = 'none';
+        document.getElementById('variablesSection').style.display = 'none';
+        return;
+    }
+
+    // Show preview
+    document.getElementById('previewBody').textContent = body || '(sin texto de cuerpo)';
+    document.getElementById('previewCategory').textContent = category.toLowerCase();
+    preview.style.display = 'block';
+
+    // Count variables in template body ({{1}}, {{2}}, etc.)
+    const varMatches = body.match(/\{\{\d+\}\}/g);
+    const varSection = document.getElementById('variablesSection');
+    const varInputs = document.getElementById('variableInputs');
+    varInputs.innerHTML = '';
+
+    if (varMatches && varMatches.length > 0) {
+        const uniqueVars = [...new Set(varMatches)].sort();
+        uniqueVars.forEach((v, i) => {
+            const num = i + 1;
+            const div = document.createElement('div');
+            div.style.cssText = 'display:flex;align-items:center;gap:10px';
+            div.innerHTML = `
+                <span style="font-size:13px;color:var(--text-secondary);min-width:40px">${v}</span>
+                <input type="text" name="var_${num}" class="form-input" style="flex:1"
+                       placeholder="Valor para ${v} (usa {{name}} para nombre del cliente)">
+            `;
+            varInputs.appendChild(div);
+        });
+        varSection.style.display = 'block';
+    } else {
+        varSection.style.display = 'none';
+    }
+}
+
+function confirmSend() {
+    const count = {{ total_opted_in }};
+    if (count === 0) {
+        alert('No hay clientes con opt-in activo');
+        return false;
+    }
+    return confirm(`¿Enviar esta plantilla a ${count} clientes con opt-in?\n\nEsta accion no se puede deshacer.`);
+}
+</script>
 {% endblock %}

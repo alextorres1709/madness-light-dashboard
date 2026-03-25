@@ -82,13 +82,81 @@
         @media print {
             body {
                 background: #000;
+                margin: 0;
+                padding: 0;
             }
 
             .page {
                 margin: 0;
                 box-shadow: none;
                 page-break-after: always;
+                page-break-inside: avoid;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
             }
+
+            .page:last-child {
+                page-break-after: auto;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Force all reveal animations to be visible in print */
+            .reveal {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+
+            .deliverable,
+            .feature-layout,
+            .feature-text,
+            .feature-visual,
+            .tech-grid,
+            .tech-card,
+            .security-grid,
+            .sec-item,
+            .checklist-grid,
+            .check-item,
+            .stat-box,
+            .timeline,
+            .step,
+            .impact-grid,
+            .impact-item {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+
+            /* Fix: hide radial gradient pseudo-elements on cover/closing (cause dark rectangle artifacts) */
+            .cover::before,
+            .closing::before {
+                display: none !important;
+            }
+
+            /* Fix: gradient text renders with bounding box artifacts in Chrome print — use solid color */
+            .cover h1 .highlight,
+            .closing h2 span[style*="background-clip"] {
+                -webkit-background-clip: unset !important;
+                background-clip: unset !important;
+                -webkit-text-fill-color: var(--green) !important;
+                background: none !important;
+            }
+
+            /* Fix: remove box-shadow on deliverable icons (square shadow artifacts) */
+            .deliverable-icon,
+            .check-icon {
+                box-shadow: none !important;
+            }
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
         }
 
         .cover {
@@ -1191,14 +1259,14 @@
         <div class="page-inner cover">
             <div class="cover-badge">Propuesta de Servicio — 2026</div>
             <h1>
-                Atencion al Cliente<br>
+                Atención al Cliente<br>
                 e <span class="highlight">Inteligencia<br>de Negocio</span>
             </h1>
             <p class="cover-sub">
                 Un agente de IA que atiende a vuestros clientes en WhatsApp
-                las 24 horas, un panel de control con 11 modulos,
-                una base de datos de clientes y automatizaciones inteligentes
-                como felicitaciones de cumpleanos personalizadas.
+                las 24 horas, un panel de control con 11 módulos,
+                una base de datos de clientes y automatizaciónes inteligentes
+                como felicitaciónes de cumpleaños personalizadas.
             </p>
             <div class="cover-meta">
                 <div class="cover-meta-left">MADNESS <span>LIGHT</span></div>
@@ -1214,12 +1282,12 @@
     <div class="page">
         <div class="page-inner">
             <div class="section-num">01 — El Problema</div>
-            <h2 class="page-title">Respondeis lo mismo mil veces<br>y no sacais nada de eso</h2>
+            <h2 class="page-title">Respondéis lo mismo mil veces<br>y no sacáis nada de eso</h2>
             <p class="page-subtitle">
                 Hay preguntas que llegan a las 2 de la madrugada un viernes.
-                Para cuando alguien las ve, esa persona ya perdio el interes.
-                Y mientras tanto, toda esa informacion sobre que quieren los
-                clientes se pierde sin generar ningun dato util.
+                Para cuando alguien las ve, esa persona ya perdió el interés.
+                Y mientras tanto, toda esa información sobre qué quieren los
+                clientes se pierde sin generar ningún dato útil.
             </p>
 
             <div class="problems reveal">
@@ -1232,7 +1300,7 @@
                         </svg>
                     </div>
                     <h3>A las 2AM no contesta nadie</h3>
-                    <p>Un usuario pregunta un viernes de madrugada. Nadie contesta hasta el sabado. Para entonces ya ha perdido el interes o ha comprado en otro sitio.</p>
+                    <p>Un usuario pregunta un viernes de madrugada. Nadie contesta hasta el sábado. Para entonces ya ha perdido el interés o ha comprado en otro sitio.</p>
                 </div>
                 <div class="problem-card">
                     <div class="icon" style="background: #ff4d4d12; color: #ff5555;">
@@ -1245,7 +1313,7 @@
                         </svg>
                     </div>
                     <h3>Las mismas preguntas mil veces</h3>
-                    <p>Donde es, cuanto cuesta, puedo entrar con deportivas, como funciona lo de RRPP. El equipo repite las mismas respuestas una y otra vez.</p>
+                    <p>Dónde es, cuanto cuesta, puedo entrar con deportivas, cómo funciona lo de RRPP. El equipo repite las mismas respuestas una y otra vez.</p>
                 </div>
                 <div class="problem-card">
                     <div class="icon" style="background: #ff4d9a12; color: #ff5599;">
@@ -1256,7 +1324,7 @@
                         </svg>
                     </div>
                     <h3>Sin datos para decidir</h3>
-                    <p>No sabeis que preguntan los clientes, que dudas les frenan ni que eventos generan mas interes. Cada conversacion es informacion que se pierde.</p>
+                    <p>No sabéis qué preguntan los clientes, qué dudas les frenan ni qué eventos generan más interés. Cada conversación es información que se pierde.</p>
                 </div>
                 <div class="problem-card">
                     <div class="icon" style="background: #8b5cf612; color: #9966ff;">
@@ -1269,7 +1337,7 @@
                         </svg>
                     </div>
                     <h3>Horas perdidas en trabajo manual</h3>
-                    <p>Contestar mensajes uno a uno, buscar informacion de eventos, explicar RRPP a cada persona que pregunta. Todo eso es tiempo que el equipo podria dedicar a lo que realmente mueve el negocio.</p>
+                    <p>Contestar mensajes uno a uno, buscar información de eventos, explicar RRPP a cada persona que pregunta. Todo eso es tiempo que el equipo podría dedicar a lo que realmente mueve el negocio.</p>
                 </div>
             </div>
 
@@ -1299,8 +1367,8 @@
     <!-- PAGE 3: QUE SE ENTREGA -->
     <div class="page">
         <div class="page-inner">
-            <div class="section-num">02 — Que se entrega</div>
-            <h2 class="page-title">Atencion automatizada por<br>WhatsApp + inteligencia de datos</h2>
+            <div class="section-num">02 — Qué se entrega</div>
+            <h2 class="page-title">Atención automatizada por<br>WhatsApp + inteligencia de datos</h2>
             <p class="page-subtitle">
                 No es un simple chatbot. Es un sistema que atiende a los clientes
                 por WhatsApp, gestiona una base de datos de clientes
@@ -1309,7 +1377,7 @@
 
             <div class="deliverables reveal">
                 <div class="deliverable">
-                    <span class="tag" style="background: var(--green-bg); color: var(--green);">Nucleo del sistema</span>
+                    <span class="tag" style="background: var(--green-bg); color: var(--green);">Núcleo del sistema</span>
                     <div class="deliverable-icon"
                         style="background: var(--green-bg); border: 1px solid #1a2e1a; color: var(--green); box-shadow: 0 0 20px var(--green-bg);">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1323,7 +1391,7 @@
                     </div>
                     <div class="deliverable-content">
                         <h4>Bot de IA en WhatsApp</h4>
-                        <p>Un agente que atiende por WhatsApp con lenguaje natural las 24 horas. Responde sobre fiestas, entradas, RRPP y normativa con datos en tiempo real y memoria de conversacion.</p>
+                        <p>Un agente que atiende por WhatsApp con lenguaje natural las 24 horas. Responde sobre fiestas, entradas, RRPP y normativa con datos en tiempo real y memoria de conversación.</p>
                     </div>
                 </div>
 
@@ -1341,7 +1409,7 @@
                     </div>
                     <div class="deliverable-content">
                         <h4>Dashboard + Base de Clientes</h4>
-                        <p>Panel con 11 modulos: eventos, clientes, estadisticas, conversaciones, calendario, analitica, usuarios, salas, mensajes masivos, log de actividad y ajustes.</p>
+                        <p>Panel con 11 módulos: eventos, clientes, estadísticas, conversaciones, calendario, analítica, usuarios, salas, mensajes masivos, log de actividad y ajustes.</p>
                     </div>
                 </div>
 
@@ -1355,13 +1423,13 @@
                         </svg>
                     </div>
                     <div class="deliverable-content">
-                        <h4>Estadisticas y Tendencias</h4>
-                        <p>Cada conversacion genera datos: ranking de dudas frecuentes, que eventos interesan mas, objeciones sobre RRPP, sentimiento de los usuarios y sugerencias de mejora. Todo automatico.</p>
+                        <h4>Estadísticas y Tendencias</h4>
+                        <p>Cada conversación genera datos: ranking de dudas frecuentes, qué eventos interesan más, objeciones sobre RRPP, sentimiento de los usuarios y sugerencias de mejora. Todo automático.</p>
                     </div>
                 </div>
 
                 <div class="deliverable">
-                    <span class="tag" style="background: #F59E0B10; color: var(--amber);">Automatizacion</span>
+                    <span class="tag" style="background: #F59E0B10; color: var(--amber);">Automatización</span>
                     <div class="deliverable-icon"
                         style="background: #F59E0B10; border: 1px solid #2e2a0a; color: var(--amber); box-shadow: 0 0 20px #F59E0B10;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1370,8 +1438,8 @@
                         </svg>
                     </div>
                     <div class="deliverable-content">
-                        <h4>Cumpleanos por WhatsApp</h4>
-                        <p>Cada dia el sistema revisa la base de datos. Si alguien cumple anos, le manda una felicitacion personalizada por WhatsApp. El dia antes, un pre-aviso. Todo automatico, sin duplicados.</p>
+                        <h4>Cumpleaños por WhatsApp</h4>
+                        <p>Cada día el sistema revisa la base de datos. Si alguien cumple años, le manda una felicitación personalizada por WhatsApp. El día antes, un pre-aviso. Todo automático, sin duplicados.</p>
                     </div>
                 </div>
             </div>
@@ -1380,23 +1448,23 @@
         <span class="page-number">03</span>
     </div>
 
-    <!-- PAGE 4: WHATSAPP + CUMPLEANOS FEATURE -->
+    <!-- PAGE 4: WHATSAPP + CUMPLEAÑOS FEATURE -->
     <div class="page">
         <div class="page-inner">
-            <div class="section-num">03 — WhatsApp + Cumpleanos</div>
+            <div class="section-num">03 — WhatsApp + Cumpleaños</div>
 
             <div class="feature-layout reveal">
                 <div class="feature-text">
                     <div class="ftag" style="background: #25D36615; color: #25D366;">WhatsApp Business</div>
-                    <h3>Atencion inteligente 24/7<br>+ felicitaciones automaticas</h3>
-                    <p>Un agente de IA que habla como vosotros por WhatsApp. Entiende lo que le dicen y responde de forma natural con datos actualizados. Ademas, automatizaciones propias de cumpleanos.</p>
+                    <h3>Atención inteligente 24/7<br>+ felicitaciónes automáticas</h3>
+                    <p>Un agente de IA que habla como vosotros por WhatsApp. Entiende lo que le dicen y responde de forma natural con datos actualizados. Además, automatizaciónes propias de cumpleaños.</p>
                     <ul class="flist">
-                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Atencion al cliente con IA en WhatsApp, 24/7</li>
+                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Atención al cliente con IA en WhatsApp, 24/7</li>
                         <li><span class="arrow" style="color: #25D366;">&#10132;</span> Responde sobre fiestas, entradas, RRPP y normativa al instante</li>
-                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Felicitacion de cumpleanos automatica el dia exacto</li>
-                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Pre-aviso el dia antes para generar expectativa</li>
-                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Un mensaje al ano por persona, sin duplicados</li>
-                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Preparado para recordatorios, ofertas y campanas futuras</li>
+                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Felicitación de cumpleaños automática el día exacto</li>
+                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Pre-aviso el día antes para generar expectativa</li>
+                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Un mensaje al año por persona, sin duplicados</li>
+                        <li><span class="arrow" style="color: #25D366;">&#10132;</span> Preparado para recordatorios, ofertas y campañas futuras</li>
                         <li><span class="arrow" style="color: #25D366;">&#10132;</span> Recuerda conversaciones anteriores para mantener el contexto</li>
                     </ul>
                 </div>
@@ -1411,33 +1479,33 @@
                         <div class="chat-avatar" style="background: #25D366; color: #fff;">M</div>
                         <div>
                             <div class="chat-name">Madness Light</div>
-                            <div class="chat-online">en linea</div>
+                            <div class="chat-online">en línea</div>
                         </div>
                     </div>
                     <div class="iphone-chat-body">
                         <div class="chat-sim">
                             <div class="chat-bubble wa-user">
-                                Buenas! Cuanto cuesta la entrada de manana?
+                                Buenas! Cuánto cuesta la entrada de mañana?
                             </div>
                             <div class="chat-bubble wa-bot">
                                 <div class="bname-wa">Madness Light</div>
-                                Buenas! La fiesta de manana en Shoko tiene entradas desde 8&euro; en preventa y 12&euro; en taquilla. Te paso el enlace de compra?
+                                Buenas! La fiesta de mañana en Shoko tiene entradas desde 8&euro; en preventa y 12&euro; en taquilla. Te paso el enlace de compra?
                             </div>
                             <div class="chat-bubble wa-user">
                                 Si porfa!
                             </div>
                             <div class="chat-bubble wa-bot">
                                 <div class="bname-wa">Madness Light</div>
-                                Aqui lo tienes: eliteevents.es/madness-neon. Puedes pagar con tarjeta o Bizum. Nos vemos manana!
+                                Aqui lo tienes: eliteevents.es/madness-neon. Puedes pagar con tarjeta o Bizum. Nos vemos mañana!
                             </div>
-                            <div class="chat-label">— al dia siguiente —</div>
+                            <div class="chat-label">— al día siguiente —</div>
                             <div class="chat-bubble wa-bot">
                                 <div class="bname-wa">Madness Light</div>
-                                Feliz cumpleanos, Laura! De parte de todo el equipo de Madness Light. Que lo pases increible hoy. Nos vemos pronto en la pista!
+                                Feliz cumpleaños, Laura! De parte de todo el equipo de Madness Light. Que lo pases increíble hoy. Nos vemos pronto en la pista!
                             </div>
                         </div>
                     </div>
-                    <div class="demo-note">Ejemplo orientativo — las respuestas reales son aun mejores</div>
+                    <div class="demo-note">Ejemplo orientativo — las respuestas reales son aún mejores</div>
                     <div class="iphone-home-bar"></div>
                 </div>
             </div>
@@ -1455,15 +1523,15 @@
                 <div class="feature-text">
                     <div class="ftag" style="background: #06B6D410; color: var(--cyan);">Panel de Control</div>
                     <h3>Eventos, clientes y datos<br>en un solo sitio</h3>
-                    <p>Un panel donde gestionais las fiestas, la base de datos de clientes y, al mismo tiempo, veis todo lo que pasa: que preguntan, que dudas tienen, que eventos interesan mas y como evoluciona el interes semana a semana.</p>
+                    <p>Un panel donde gestionáis las fiestas, la base de datos de clientes y, al mismo tiempo, veis todo lo que pasa: qué preguntan, qué dudas tienen, qué eventos interesan más y cómo evoluciona el interés semana a semana.</p>
                     <ul class="flist">
-                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> KPIs en tiempo real: mensajes, usuarios unicos, retencion</li>
-                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Base de datos de clientes: nombre, cumpleanos, telefono, historial</li>
-                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Gestion de eventos con calendario visual y exportacion CSV</li>
-                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Estadisticas de dudas frecuentes y objeciones RRPP</li>
-                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Historial completo de conversaciones con busqueda</li>
-                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Campanas y mensajes segmentados a la base de clientes</li>
-                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> 11 modulos: dashboard, fiestas, estadisticas, IA, chats, clientes, usuarios, actividad, salas, mensajes, ajustes</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> KPIs en tiempo real: mensajes, usuarios únicos, retención</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Base de datos de clientes: nombre, cumpleaños, teléfono, historial</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Gestión de eventos con calendario visual y exportación CSV</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Estadísticas de dudas frecuentes y objeciones RRPP</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Historial completo de conversaciones con búsqueda</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> Campañas y mensajes segmentados a la base de clientes</li>
+                        <li><span class="arrow" style="color: var(--cyan);">&#10132;</span> 11 módulos: dashboard, fiestas, estadísticas, IA, chats, clientes, usuarios, actividad, salas, mensajes, ajustes</li>
                     </ul>
                 </div>
 
@@ -1503,7 +1571,7 @@
                         </div>
                         <div class="ai-pill">
                             <div class="badge">AI INSIGHT</div>
-                            <p>El 68% de las consultas son sobre la fiesta Neon del sabado. Sentimiento: positivo. Sugerencia: publicar el cartel 48h antes genera mas interaccion.</p>
+                            <p>El 68% de las consultas son sobre la fiesta Neon del sábado. Sentimiento: positivo. Sugerencia: publicar el cartel 48h antes genera más interacción.</p>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
                             <div
@@ -1534,20 +1602,20 @@
     <!-- PAGE 6: AI INSIGHTS -->
     <div class="page">
         <div class="page-inner">
-            <div class="section-num">05 — Estadisticas de Dudas</div>
+            <div class="section-num">05 — Estadísticas de Dudas</div>
 
             <div class="feature-layout reveal">
                 <div class="feature-text">
                     <div class="ftag" style="background: #A855F710; color: var(--purple);">Inteligencia de Negocio</div>
                     <h3>Cada pregunta es un dato.<br>Cada duda, una oportunidad.</h3>
-                    <p>El sistema no solo responde: registra y clasifica. Cada conversacion genera estadisticas que os dicen exactamente que necesitan vuestros clientes, que les frena y donde esta la oportunidad.</p>
+                    <p>El sistema no solo responde: registra y clasifica. Cada conversación genera estadísticas que os dicen exactamente qué necesitan vuestros clientes, qué les frena y donde está la oportunidad.</p>
                     <ul class="flist">
-                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Ranking de dudas frecuentes: precios, ubicacion, dress code, RRPP</li>
-                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Que eventos generan mas preguntas y de que tipo</li>
-                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Objeciones sobre RRPP: que les frena y como solucionarlo</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Ranking de dudas frecuentes: precios, ubicación, dress code, RRPP</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Que eventos generan más preguntas y de qué tipo</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Objeciones sobre RRPP: qué les frena y cómo solucionarlo</li>
                         <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Sentimiento de los usuarios hacia la marca y los eventos</li>
-                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Horarios pico: cuando la gente pregunta mas</li>
-                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Retencion: cuantos vuelven a hablar y cuantos son nuevos</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Horarios pico: cuándo la gente pregunta más</li>
+                        <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Retención: cuántos vuelven a hablar y cuántos son nuevos</li>
                         <li><span class="arrow" style="color: var(--purple);">&#10132;</span> Sugerencias de mejora generadas por IA cada hora</li>
                     </ul>
                 </div>
@@ -1555,7 +1623,7 @@
                 <div class="render-frame" style="border-radius: 14px; border-width: 1px; padding: 1.2rem;">
                     <div class="insights-render">
                         <div class="insight-block">
-                            <div class="ilabel" style="color: var(--purple);">DUDAS MAS FRECUENTES</div>
+                            <div class="ilabel" style="color: var(--purple);">DUDAS MÁS FRECUENTES</div>
                             <div class="progress-row">
                                 <span class="plabel">Precio entradas</span>
                                 <div class="pbar" style="background: #A855F720;">
@@ -1569,7 +1637,7 @@
                                 </div>
                             </div>
                             <div class="progress-row">
-                                <span class="plabel">Como ser RRPP</span>
+                                <span class="plabel">Cómo ser RRPP</span>
                                 <div class="pbar" style="background: #A855F720;">
                                     <div class="pfill" style="width: 56%; background: var(--purple);"></div>
                                 </div>
@@ -1583,23 +1651,23 @@
                         </div>
                         <div class="insight-mini-grid">
                             <div class="insight-mini">
-                                <div class="im-label" style="color: var(--green);">RETENCION</div>
+                                <div class="im-label" style="color: var(--green);">RETENCIÓN</div>
                                 <div class="im-value" style="color: var(--green);">64%</div>
                                 <div class="im-sub">vuelven a hablar</div>
                             </div>
                             <div class="insight-mini">
-                                <div class="im-label" style="color: var(--amber);">INTERES RRPP</div>
+                                <div class="im-label" style="color: var(--amber);">INTERÉS RRPP</div>
                                 <div class="im-value" style="color: var(--amber);">23%</div>
                                 <div class="im-sub">preguntan por RRPP</div>
                             </div>
                         </div>
                         <div class="insight-block" style="margin-top: 0.2rem;">
                             <div class="ilabel" style="color: var(--cyan);">OBJECIONES RRPP DETECTADAS</div>
-                            <p style="font-size: 0.68rem; color: var(--text-secondary); line-height: 1.5;">El 45% pregunta por comisiones antes de unirse. Sugerencia: incluir un ejemplo concreto de ganancias en la primera respuesta aumentaria la conversion un 30%.</p>
+                            <p style="font-size: 0.68rem; color: var(--text-secondary); line-height: 1.5;">El 45% pregunta por comisiones antes de unirse. Sugerencia: incluir un ejemplo concreto de ganancias en la primera respuesta aumentaría la conversión un 30%.</p>
                         </div>
                         <div class="insight-block" style="margin-top: 0.4rem;">
                             <div class="ilabel" style="color: var(--green);">SUGERENCIA IA</div>
-                            <p style="font-size: 0.68rem; color: var(--text-secondary); line-height: 1.5;">Publicar el cartel 48h antes del lanzamiento de entradas genera +35% de preguntas organicas sobre el evento.</p>
+                            <p style="font-size: 0.68rem; color: var(--text-secondary); line-height: 1.5;">Publicar el cartel 48h antes del lanzamiento de entradas genera +35% de preguntas orgánicas sobre el evento.</p>
                         </div>
                     </div>
                 </div>
@@ -1612,10 +1680,10 @@
     <!-- PAGE 7: ENTREGABLES COMPLETO -->
     <div class="page">
         <div class="page-inner">
-            <div class="section-num">06 — Que recibis</div>
+            <div class="section-num">06 — Qué recibís</div>
             <h2 class="page-title">Todo lo incluido<br>en la plataforma</h2>
             <p class="page-subtitle">
-                Configurado, desplegado y listo para usar desde el primer dia.
+                Configurado, desplegado y listo para usar desde el primer día.
             </p>
 
             <div class="checklist reveal">
@@ -1623,63 +1691,63 @@
                     <div class="check-icon">&#10003;</div>
                     <div class="check-content">
                         <h4>Bot de WhatsApp con IA (GPT-4o)</h4>
-                        <p>Agente 24/7 con memoria de conversacion, datos en tiempo real de los eventos y un tono alineado con la marca Madness Light.</p>
+                        <p>Agente 24/7 con memoria de conversación, datos en tiempo real de los eventos y un tono alíneado con la marca Madness Light.</p>
                     </div>
                 </div>
                 <div class="check-item">
                     <div class="check-icon">&#10003;</div>
                     <div class="check-content">
-                        <h4>Felicitaciones de Cumpleanos</h4>
-                        <p>Automatizacion por WhatsApp: felicitacion el dia exacto y pre-aviso el dia anterior. Sin duplicados, todo automatico.</p>
+                        <h4>Felicitaciónes de Cumpleaños</h4>
+                        <p>Automatización por WhatsApp: felicitación el día exacto y pre-aviso el día anterior. Sin duplicados, todo automático.</p>
                     </div>
                 </div>
                 <div class="check-item">
                     <div class="check-icon">&#10003;</div>
                     <div class="check-content">
-                        <h4>Dashboard Web de 11 Modulos</h4>
-                        <p>Panel de administracion integrado: eventos, estadisticas, agente IA, conversaciones, clientes, usuarios, salas, mensajes, actividad y ajustes.</p>
+                        <h4>Dashboard Web de 11 Módulos</h4>
+                        <p>Panel de administración integrado: eventos, estadísticas, agente IA, conversaciones, clientes, usuarios, salas, mensajes, actividad y ajustes.</p>
                     </div>
                 </div>
                 <div class="check-item">
                     <div class="check-icon">&#10003;</div>
                     <div class="check-content">
                         <h4>Base de Datos de Clientes</h4>
-                        <p>Registro centralizado: nombre, cumpleanos, telefono, chat ID, fiestas asistidas y estado. Alimenta las automatizaciones.</p>
+                        <p>Registro centralizado: nombre, cumpleaños, teléfono, chat ID, fiestas asistidas y estado. Alimenta las automatizaciónes.</p>
                     </div>
                 </div>
                 <div class="check-item">
                     <div class="check-icon">&#10003;</div>
                     <div class="check-content">
                         <h4>Motor de Eventos y Salas</h4>
-                        <p>Catalogo visual de eventos, asignacion de salas, calendario y exportacion a CSV con un solo clic.</p>
+                        <p>Catálogo visual de eventos, asignación de salas, calendario y exportación a CSV con un solo clic.</p>
                     </div>
                 </div>
                 <div class="check-item">
                     <div class="check-icon">&#10003;</div>
                     <div class="check-content">
                         <h4>Sistema de Usuarios y Roles</h4>
-                        <p>Tres niveles de acceso (Admin, Editor, Viewer) con log de auditoria completo de cada accion.</p>
+                        <p>Tres niveles de acceso (Admin, Editor, Viewer) con log de auditoría completo de cada acción.</p>
                     </div>
                 </div>
                 <div class="check-item">
                     <div class="check-icon">&#10003;</div>
                     <div class="check-content">
-                        <h4>Mensajes y Campanas</h4>
-                        <p>Envio de mensajes segmentados a vuestra base de clientes, con filtros por actividad y perfil.</p>
+                        <h4>Mensajes y Campañas</h4>
+                        <p>Envío de mensajes segmentados a vuestra base de clientes, con filtros por actividad y perfil.</p>
                     </div>
                 </div>
                 <div class="check-item">
                     <div class="check-icon">&#10003;</div>
                     <div class="check-content">
                         <h4>Analytics e Insights IA</h4>
-                        <p>Ranking de dudas, objeciones RRPP, embudo de retencion, sentimiento y sugerencias generadas por IA.</p>
+                        <p>Ranking de dudas, objeciones RRPP, embudo de retención, sentimiento y sugerencias generadas por IA.</p>
                     </div>
                 </div>
                 <div class="check-item">
                     <div class="check-icon">&#10003;</div>
                     <div class="check-content">
-                        <h4>Acompanamiento y Mejora Continua</h4>
-                        <p>Formacion del equipo, ajuste del tono del bot al estilo Madness Light y soporte tras el lanzamiento.</p>
+                        <h4>Acompañamiento y Mejora Continua</h4>
+                        <p>Formación del equipo, ajuste del tono del bot al estilo Madness Light y soporte tras el lanzamiento.</p>
                     </div>
                 </div>
             </div>
@@ -1691,8 +1759,8 @@
     <!-- PAGE 8: TECH + SEGURIDAD -->
     <div class="page">
         <div class="page-inner">
-            <div class="section-num">07 — Tecnologia y Seguridad</div>
-            <h2 class="page-title">Construido sobre<br>tecnologia probada</h2>
+            <div class="section-num">07 — Tecnología y Seguridad</div>
+            <h2 class="page-title">Construido sobre<br>tecnología probada</h2>
             <p class="page-subtitle">
                 Cada componente elegido por fiabilidad y rendimiento.
             </p>
@@ -1706,7 +1774,7 @@
                         </svg>
                     </div>
                     <h4>OpenAI GPT-4o</h4>
-                    <p>Motor de IA para respuestas naturales, analisis de sentimiento y comprension de imagenes.</p>
+                    <p>Motor de IA para respuestas naturales, análisis de sentimiento y comprensión de imágenes.</p>
                 </div>
                 <div class="tech-item">
                     <div class="ticon" style="color: var(--green);">
@@ -1718,7 +1786,7 @@
                         </svg>
                     </div>
                     <h4>Supabase PostgreSQL</h4>
-                    <p>Base de datos en la nube con sincronizacion en tiempo real y backups automaticos.</p>
+                    <p>Base de datos en la nube con sincronización en tiempo real y backups automáticos.</p>
                 </div>
                 <div class="tech-item">
                     <div class="ticon" style="color: var(--amber);">
@@ -1732,7 +1800,7 @@
                         </svg>
                     </div>
                     <h4>n8n Workflows</h4>
-                    <p>Orquestacion de flujos entre WhatsApp, la IA y la base de datos.</p>
+                    <p>Orquestación de flujos entre WhatsApp, la IA y la base de datos.</p>
                 </div>
                 <div class="tech-item">
                     <div class="ticon" style="color: #25D366;">
@@ -1742,7 +1810,7 @@
                         </svg>
                     </div>
                     <h4>WhatsApp Cloud API</h4>
-                    <p>API oficial de Meta para atencion al cliente y automatizaciones por WhatsApp Business.</p>
+                    <p>API oficial de Meta para atención al cliente y automatizaciónes por WhatsApp Business.</p>
                 </div>
                 <div class="tech-item">
                     <div class="ticon" style="color: var(--green);">
@@ -1767,7 +1835,7 @@
                         </svg>
                     </div>
                     <h4>Chart.js</h4>
-                    <p>Graficos interactivos en el dashboard: tendencias, barras de actividad, embudos y KPIs visuales.</p>
+                    <p>Gráficos interactivos en el dashboard: tendencias, barras de actividad, embudos y KPIs visuales.</p>
                 </div>
             </div>
 
@@ -1800,7 +1868,7 @@
                     </div>
                     <div>
                         <h4>Roles y permisos por usuario</h4>
-                        <p>Cada miembro del equipo accede solo a lo que necesita. Sin permisos de mas.</p>
+                        <p>Cada miembro del equipo accede solo a lo que necesita. Sin permisos de más.</p>
                     </div>
                 </div>
                 <div class="sec-item">
@@ -1816,8 +1884,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h4>Log de auditoria completo</h4>
-                        <p>Registro de cada accion realizada en el panel: quien cambio que y cuando.</p>
+                        <h4>Log de auditoría completo</h4>
+                        <p>Registro de cada acción realizada en el panel: quien cambió qué y cuándo.</p>
                     </div>
                 </div>
                 <div class="sec-item">
@@ -1829,7 +1897,7 @@
                     </div>
                     <div>
                         <h4>Filtros de contenido</h4>
-                        <p>Los bots no pueden ser manipulados para generar respuestas inapropiadas ni salirse del guion.</p>
+                        <p>Los bots no pueden ser manipulados para generar respuestas inapropiadas ni salirse del guión.</p>
                     </div>
                 </div>
             </div>
@@ -1841,27 +1909,27 @@
     <!-- PAGE 9: ROI + TIMELINE -->
     <div class="page">
         <div class="page-inner">
-            <div class="section-num">08 — Impacto e Implementacion</div>
-            <h2 class="page-title">Resultados desde<br>el primer dia</h2>
+            <div class="section-num">08 — Impacto e Implementación</div>
+            <h2 class="page-title">Resultados desde<br>el primer día</h2>
             <p class="page-subtitle">
-                Todo esto ya esta en produccion. Los bots funcionan, el panel esta operativo y las automatizaciones estan activas.
+                Todo esto ya esta en producción. Los bots funcionan, el panel está operativo y las automatizaciónes están activas.
             </p>
 
             <div class="roi-grid reveal">
                 <div class="roi-card">
                     <div class="rval" style="color: var(--green);">24/7</div>
                     <div class="rlbl">Respuesta al instante</div>
-                    <div class="rdesc">Responder en el momento de maxima intencion de compra cambia completamente la conversion. No se pierde el momento.</div>
+                    <div class="rdesc">Responder en el momento de máxima intención de compra cambia completamente la conversión. No se pierde el momento.</div>
                 </div>
                 <div class="roi-card">
                     <div class="rval" style="color: var(--cyan);">0h</div>
                     <div class="rlbl">Trabajo manual</div>
-                    <div class="rdesc">El bot se encarga de las preguntas repetitivas y las automatizaciones funcionan solas. El equipo se libera para lo que realmente importa.</div>
+                    <div class="rdesc">El bot se encarga de las preguntas repetitivas y las automatizaciónes funcionan solas. El equipo se libera para lo que realmente importa.</div>
                 </div>
                 <div class="roi-card">
                     <div class="rval" style="color: var(--purple);">100%</div>
                     <div class="rlbl">Visibilidad de datos</div>
-                    <div class="rdesc">Por primera vez hay datos reales de que preguntan, que les frena, que eventos generan mas interes y como evoluciona el sentimiento.</div>
+                    <div class="rdesc">Por primera vez hay datos reales de qué preguntan, qué les frena, qué eventos generan más interés y cómo evoluciona el sentimiento.</div>
                 </div>
             </div>
 
@@ -1869,28 +1937,28 @@
 
             <div
                 style="font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 1.2rem;">
-                Proximos pasos</div>
+                Próximos pasos</div>
 
             <div class="timeline reveal">
                 <div class="tl-item">
                     <div class="tl-week">En marcha</div>
                     <h4>Todo operativo</h4>
-                    <p>El bot funciona en WhatsApp, el panel de control esta desplegado, la base de datos de clientes esta conectada y las automatizaciones de cumpleanos estan activas.</p>
+                    <p>El bot funciona en WhatsApp, el panel de control está desplegado, la base de datos de clientes está conectada y las automatizaciónes de cumpleaños están activas.</p>
                 </div>
                 <div class="tl-item">
                     <div class="tl-week">Corto plazo</div>
-                    <h4>Ajuste y formacion</h4>
+                    <h4>Ajuste y formación</h4>
                     <p>Ajustar el tono del bot al estilo exacto de Madness Light. Formar al equipo en el uso del panel y monitorizar durante las primeras fiestas.</p>
                 </div>
                 <div class="tl-item">
                     <div class="tl-week">Medio plazo</div>
-                    <h4>Ampliar automatizaciones</h4>
-                    <p>Recordatorios de eventos, ofertas personalizadas, campanas por perfil de cliente y cualquier otra automatizacion que vaya surgiendo.</p>
+                    <h4>Ampliar automatizaciónes</h4>
+                    <p>Recordatorios de eventos, ofertas personalizadas, campañas por perfil de cliente y cualquier otra automatización que vaya surgiendo.</p>
                 </div>
                 <div class="tl-item">
                     <div class="tl-week">Continuo</div>
                     <h4>Mejora y soporte</h4>
-                    <p>Lo que vaya surgiendo sobre la marcha. El sistema esta preparado para crecer con Madness Light.</p>
+                    <p>Lo que vaya surgiendo sobre la marcha. El sistema está preparado para crecer con Madness Light.</p>
                 </div>
             </div>
         </div>
@@ -1905,13 +1973,13 @@
             <h2>
                 Vamos a hacer que<br>
                 <span
-                    style="background: linear-gradient(135deg, var(--green), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Madness
+                    style="background: línear-gradient(135deg, var(--green), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Madness
                     Light</span><br>
                 sea imparable
             </h2>
             <p style="margin-top: 1rem;">
-                Hablemos. Sin compromiso, sin presion.<br>
-                Solo una conversacion para dar el siguiente paso.
+                Hablemos. Sin compromiso, sin presión.<br>
+                Solo una conversación para dar el siguiente paso.
             </p>
 
             <div class="cover-meta">

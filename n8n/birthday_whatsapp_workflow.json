@@ -1,0 +1,634 @@
+{
+  "name": "Madness Light — WhatsApp AI Bot + Cumpleaños",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-madness",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "wa-webhook",
+      "name": "📲 WhatsApp Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300],
+      "webhookId": "whatsapp-madness"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse WhatsApp Cloud API webhook payload\nconst body = $input.first().json.body || $input.first().json;\n\nif (!body.entry || !body.entry[0]?.changes?.[0]?.value?.messages) {\n  return [];\n}\n\nconst value = body.entry[0].changes[0].value;\nconst msg = value.messages[0];\nconst contact = value.contacts ? value.contacts[0] : null;\n\n// Solo procesar mensajes de texto\nif (msg.type !== 'text') return [];\n\nreturn [{\n  json: {\n    phoneFrom: msg.from,\n    userId: 'wa_' + msg.from,\n    userName: contact?.profile?.name || 'Colega',\n    userMessage: msg.text?.body || '(mensaje sin texto)',\n    waPhoneId: value.metadata.phone_number_id\n  }\n}];"
+      },
+      "id": "wa-extract",
+      "name": "Extraer Mensaje",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=SELECT COALESCE((SELECT json_agg(sub)::text FROM (SELECT role, content FROM conversations WHERE user_id = '{{ $json.userId }}' ORDER BY created_at DESC LIMIT 20) sub), '(Sin historial previo)') as historial",
+        "options": {}
+      },
+      "id": "wa-history",
+      "name": "Cargar Historial Chat",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [700, 300],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "SUPABASE_POSTGRES_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COALESCE((SELECT json_agg(sub)::text FROM (SELECT name, date, venue, theme, dj_info, entry_price, entry_link FROM events ORDER BY date DESC LIMIT 10) sub), '(No hay eventos programados)') as eventos",
+        "options": {}
+      },
+      "id": "wa-events",
+      "name": "Cargar Eventos",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [940, 300],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "SUPABASE_POSTGRES_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COALESCE(description, '') as description, COALESCE(extra_info, '') as extra_info FROM company_info LIMIT 1;",
+        "options": {}
+      },
+      "id": "wa-company",
+      "name": "Cargar Info Empresa",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1180, 300],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "SUPABASE_POSTGRES_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const userName = $('Extraer Mensaje').first().json.userName;\nconst userMessage = $('Extraer Mensaje').first().json.userMessage;\nconst phoneFrom = $('Extraer Mensaje').first().json.phoneFrom;\nconst userId = $('Extraer Mensaje').first().json.userId;\nconst waPhoneId = $('Extraer Mensaje').first().json.waPhoneId;\nconst eventos = $('Cargar Eventos').first().json.eventos || '(No hay eventos programados)';\nconst empresaDesc = $('Cargar Info Empresa').first().json.description || '';\nconst empresaInfo = $('Cargar Info Empresa').first().json.extra_info || '';\nconst historial = $('Cargar Historial Chat').first().json.historial || '(Sin historial)';\n\nconst hoy = new Date();\nconst fechaActual = hoy.toLocaleDateString('es-ES');\n\nconst systemPrompt = `Eres el Colega Virtual de Madness Light (fiestas light +14 Madrid) en WhatsApp. Fecha actual: ${fechaActual}.\nEl usuario se llama: ${userName}\n\nCOMO RESPONDER - LEE ESTO PRIMERO\nAntes de responder, identifica QUE esta preguntando el usuario:\n\n1. SALUDO (hola, hey, buenas, qué tal, wenas, qué pasa) → Mensaje de bienvenida con su nombre, que eres el bot de Madness, qué puedes ayudarle y que pregunte. Varía el estilo.\n\n2. FIESTAS/EVENTOS (fiesta, evento, próxima, cuándo, entradas, precios, DJs, sala, finde, lineup, música) → Usa SOLO los datos de la seccion EVENTOS de abajo. NUNCA inventes. Si no hay datos, di que aún no hay fechas confirmadas. Empuja a comprar en Elite Events.\n\n3. RRPP/EMPRESA (rrpp, trabajar, cómo funciona, normas, rangos, sueldo, vestimenta, beneficios, puntos, ser rrpp, quiero ser rrpp) → Usa los datos de INFO EMPRESA. Prioridad: primero explica BENEFICIOS y CÓMO FUNCIONA (sistema de puntos, rangos, cómo se venden entradas, qué ganas). Los requisitos NO los sueltes de primeras, al final menciona \"si quieres saber los requisitos pregúntame\". El objetivo es que el usuario QUIERA ser RRPP, no asustarle con requisitos.\n\n4. CHARLA (transporte, ligar, consejos, qué ponerme) → Responde con colegueo usando tu conocimiento general.\n\n5. FUERA DE TEMA (cocina, deberes, deportes, política) → \"Bua, ni idea yo solo sé de Fiestas y RRPP. Te miro algo de la próxima?\"\n\nIMPORTANTE: Responde SOLO sobre lo que pregunta el usuario. Si pregunta sobre RRPP, habla de RRPP, NO de fiestas. Si pregunta sobre fiestas, habla de fiestas, NO de RRPP. NO mezcles temas.\n\n--- EVENTOS ---\n${eventos}\nCampos: name (nombre), date (fecha), venue (sala), theme (temática), dj_info (DJs), entry_price (precio), entry_link (link compra).\n\n--- INFO EMPRESA ---\n${empresaDesc}\n${empresaInfo}\n\n--- ESTILO ---\n- Escribe como si fuera un WhatsApp a un colega. Nada de listas con viñetas ni formato de folleto.\n- NO uses formato tipo \"Requisitos:\", \"Beneficios:\", listas con -, \\\\n, ni bullet points. Eso parece un PDF corporativo.\n- Usa frases naturales con emojis sueltos entre medias, como en un chat real.\n- Puedes usar *negrita* para destacar algo importante (formato WhatsApp).\n- Tono: juvenil pero profesional. Como un community manager joven, no como un chaval de 15.\n- Sé concreto con datos reales pero metidos en frases naturales, no en listas\n- 6-10 líneas máximo. Si hay mucho que contar, da lo importante y pregunta si quiere saber más\n\n--- HISTORIAL ---\n${historial}`;\n\nreturn [{\n  json: {\n    systemPrompt,\n    userMessage,\n    phoneFrom,\n    userId,\n    userName,\n    waPhoneId\n  }\n}];"
+      },
+      "id": "wa-prompt",
+      "name": "Preparar Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1420, 300]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "={{ $json.systemPrompt }}"
+            },
+            {
+              "role": "user",
+              "content": "={{ $json.userMessage }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 1000,
+          "temperature": 0.7
+        }
+      },
+      "id": "wa-ai",
+      "name": "🤖 Agente IA",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [1660, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "final-response",
+              "name": "finalResponse",
+              "value": "={{ $json.message?.content || $json.choices?.[0]?.message?.content || $json.text || 'Lo siento, no he podido procesar tu mensaje' }}",
+              "type": "string"
+            },
+            {
+              "id": "final-phone",
+              "name": "phoneFrom",
+              "value": "={{ $('Preparar Prompt').item.json.phoneFrom }}",
+              "type": "string"
+            },
+            {
+              "id": "final-userid",
+              "name": "userId",
+              "value": "={{ $('Preparar Prompt').item.json.userId }}",
+              "type": "string"
+            },
+            {
+              "id": "final-waphoneid",
+              "name": "waPhoneId",
+              "value": "={{ $('Preparar Prompt').item.json.waPhoneId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "wa-prepare-response",
+      "name": "Preparar Respuesta",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $json.waPhoneId }}/messages",
+        "options": {},
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WHATSAPP_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "body": {
+          "bodyType": "json",
+          "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $json.phoneFrom }}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": {{ JSON.stringify($json.finalResponse) }}\n  }\n}"
+        }
+      },
+      "id": "wa-send-reply",
+      "name": "📤 Responder WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2140, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list"
+        },
+        "table": {
+          "__rl": true,
+          "value": "conversations",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "user_id": "={{ $json.userId }}",
+            "role": "user",
+            "content": "={{ $('Preparar Prompt').item.json.userMessage }}",
+            "created_at": "={{ new Date().toISOString() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "wa-save-user",
+      "name": "💾 Guardar Msg Usuario",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [2380, 180],
+      "credentials": {
+        "postgres": {
+          "id": "SUPABASE_POSTGRES_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list"
+        },
+        "table": {
+          "__rl": true,
+          "value": "conversations",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "user_id": "={{ $json.userId }}",
+            "role": "assistant",
+            "content": "={{ $json.finalResponse }}",
+            "created_at": "={{ new Date().toISOString() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "wa-save-bot",
+      "name": "💾 Guardar Msg Bot",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [2380, 420],
+      "credentials": {
+        "postgres": {
+          "id": "SUPABASE_POSTGRES_ID",
+          "name": "Supabase PostgreSQL"
+        }
+      }
+    },
+
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 3
+            }
+          ]
+        }
+      },
+      "id": "bday-schedule",
+      "name": "⏰ Cada 3 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 740]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst hour = now.getHours();\n\nif (hour < 8 || hour >= 23) {\n  return [];\n}\n\nreturn [{ json: { hour, timestamp: now.toISOString() } }];"
+      },
+      "id": "bday-hour-filter",
+      "name": "Filtro horario (8h-23h)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 740]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.MADNESS_API_URL }}/api/birthdays/today",
+        "options": {},
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $env.MADNESS_API_KEY }}"
+            }
+          ]
+        }
+      },
+      "id": "bday-today",
+      "name": "🎂 Cumpleaños hoy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 660]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.MADNESS_API_URL }}/api/birthdays/tomorrow",
+        "options": {},
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $env.MADNESS_API_KEY }}"
+            }
+          ]
+        }
+      },
+      "id": "bday-tomorrow",
+      "name": "🎂 Cumpleaños mañana",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 840]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.first().json;\nif (!Array.isArray(items) || items.length === 0) return [];\n\nreturn items.map(client => ({\n  json: {\n    id: client.id,\n    name: client.name,\n    phone: client.phone,\n    chat_id: client.chat_id\n  }\n}));"
+      },
+      "id": "bday-split-today",
+      "name": "Separar cumpleañeros hoy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 660]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.first().json;\nif (!Array.isArray(items) || items.length === 0) return [];\n\nreturn items.map(client => ({\n  json: {\n    id: client.id,\n    name: client.name,\n    phone: client.phone,\n    chat_id: client.chat_id\n  }\n}));"
+      },
+      "id": "bday-split-tomorrow",
+      "name": "Separar cumpleañeros mañana",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 840]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $env.WHATSAPP_PHONE_ID }}/messages",
+        "options": {},
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WHATSAPP_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "body": {
+          "bodyType": "json",
+          "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $json.phone.replace(/[^0-9]/g, '') }}\",\n  \"type\": \"template\",\n  \"template\": {\n    \"name\": \"birthday_greeting\",\n    \"language\": { \"code\": \"es\" },\n    \"components\": [\n      {\n        \"type\": \"body\",\n        \"parameters\": [\n          { \"type\": \"text\", \"text\": \"{{ $json.name }}\" }\n        ]\n      }\n    ]\n  }\n}"
+        }
+      },
+      "id": "bday-send-today",
+      "name": "🎂 Felicitación WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1180, 660]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MADNESS_API_URL }}/api/birthdays/greeted/{{ $json.id }}",
+        "options": {},
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $env.MADNESS_API_KEY }}"
+            }
+          ]
+        }
+      },
+      "id": "bday-mark-greeted",
+      "name": "✅ Marcar felicitado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1420, 660]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $env.WHATSAPP_PHONE_ID }}/messages",
+        "options": {},
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WHATSAPP_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "body": {
+          "bodyType": "json",
+          "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{ $json.phone.replace(/[^0-9]/g, '') }}\",\n  \"type\": \"template\",\n  \"template\": {\n    \"name\": \"birthday_prenotice\",\n    \"language\": { \"code\": \"es\" },\n    \"components\": [\n      {\n        \"type\": \"body\",\n        \"parameters\": [\n          { \"type\": \"text\", \"text\": \"{{ $json.name }}\" }\n        ]\n      }\n    ]\n  }\n}"
+        }
+      },
+      "id": "bday-send-tomorrow",
+      "name": "🎂 Pre-cumpleaños WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1180, 840]
+    }
+  ],
+  "connections": {
+    "📲 WhatsApp Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extraer Mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Mensaje": {
+      "main": [
+        [
+          {
+            "node": "Cargar Historial Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cargar Historial Chat": {
+      "main": [
+        [
+          {
+            "node": "Cargar Eventos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cargar Eventos": {
+      "main": [
+        [
+          {
+            "node": "Cargar Info Empresa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cargar Info Empresa": {
+      "main": [
+        [
+          {
+            "node": "Preparar Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Prompt": {
+      "main": [
+        [
+          {
+            "node": "🤖 Agente IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 Agente IA": {
+      "main": [
+        [
+          {
+            "node": "Preparar Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Respuesta": {
+      "main": [
+        [
+          {
+            "node": "📤 Responder WhatsApp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "💾 Guardar Msg Usuario",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "💾 Guardar Msg Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏰ Cada 3 minutos": {
+      "main": [
+        [
+          {
+            "node": "Filtro horario (8h-23h)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro horario (8h-23h)": {
+      "main": [
+        [
+          {
+            "node": "🎂 Cumpleaños hoy",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🎂 Cumpleaños mañana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎂 Cumpleaños hoy": {
+      "main": [
+        [
+          {
+            "node": "Separar cumpleañeros hoy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎂 Cumpleaños mañana": {
+      "main": [
+        [
+          {
+            "node": "Separar cumpleañeros mañana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separar cumpleañeros hoy": {
+      "main": [
+        [
+          {
+            "node": "🎂 Felicitación WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎂 Felicitación WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "✅ Marcar felicitado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separar cumpleañeros mañana": {
+      "main": [
+        [
+          {
+            "node": "🎂 Pre-cumpleaños WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "madness-whatsapp-v1",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "madness-light-whatsapp"
+  },
+  "tags": [
+    { "name": "WhatsApp" },
+    { "name": "AI" },
+    { "name": "Customer Service" },
+    { "name": "Cumpleaños" },
+    { "name": "Madness Light" }
+  ]
+}

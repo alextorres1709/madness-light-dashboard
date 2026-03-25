@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>NodexAI — Propuesta Madness Light</title>
+<style>
+    @page { margin: 2cm; size: A4; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #111; line-height: 1.5; padding: 40px; max-width: 800px; margin: 0 auto; }
+
+    .header { text-align: center; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 2px solid #111; }
+    .header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .header p { font-size: 13px; color: #555; }
+    .logo { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 8px; }
+
+    h2 { font-size: 18px; font-weight: 700; margin: 32px 0 16px; padding-bottom: 6px; border-bottom: 1px solid #ddd; }
+    h3 { font-size: 14px; font-weight: 700; margin: 20px 0 8px; }
+
+    p, li { font-size: 13px; }
+    p { margin-bottom: 10px; }
+
+    ul { padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 4px; }
+
+    .price-table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; }
+    .price-table th, .price-table td { padding: 10px 14px; text-align: left; border: 1px solid #ddd; font-size: 13px; }
+    .price-table th { background: #111; color: #fff; font-weight: 600; }
+    .price-table td:last-child { text-align: right; font-weight: 700; white-space: nowrap; }
+    .price-table tr:nth-child(even) { background: #f9f9f9; }
+
+    .highlight-row td { background: #f0f0f0 !important; font-weight: 700; }
+
+    .section { margin-bottom: 24px; }
+
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .feature-item { padding: 12px 14px; border: 1px solid #ddd; border-radius: 4px; }
+    .feature-item strong { display: block; font-size: 13px; margin-bottom: 2px; }
+    .feature-item span { font-size: 11px; color: #666; }
+
+    .footer { margin-top: 40px; padding-top: 16px; border-top: 2px solid #111; text-align: center; font-size: 11px; color: #888; }
+
+    .note { background: #f5f5f5; padding: 12px 16px; border-left: 3px solid #111; margin: 16px 0; font-size: 12px; }
+
+    @media print {
+        body { padding: 0; }
+        .no-print { display: none; }
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">NodexAI</div>
+    <h1>Plataforma de Gestión + Bot IA</h1>
+    <p>Propuesta para Madness Light — Marzo 2026</p>
+</div>
+
+<h2>1. Qué incluye la plataforma</h2>
+
+<div class="feature-grid">
+    <div class="feature-item">
+        <strong>Bot IA WhatsApp 24/7</strong>
+        <span>Atención automática con inteligencia artificial. Responde preguntas sobre fiestas, programa RRPP, horarios y más. Tono natural adaptado a vuestro público.</span>
+    </div>
+    <div class="feature-item">
+        <strong>Panel de Gestión Web</strong>
+        <span>Dashboard completo con KPIs, gráficas de actividad, estadísticas de conversaciones y métricas de eventos en tiempo real.</span>
+    </div>
+    <div class="feature-item">
+        <strong>Gestión de Eventos</strong>
+        <span>Crear, editar y gestionar fiestas. Calendario visual, exportación CSV, análisis de menciones por evento.</span>
+    </div>
+    <div class="feature-item">
+        <strong>Base de Datos de Clientes</strong>
+        <span>CRM con historial de asistencia, estado, teléfono, fecha de nacimiento. Búsqueda y filtros avanzados.</span>
+    </div>
+    <div class="feature-item">
+        <strong>Automatización de Cumpleaños</strong>
+        <span>Mensaje automático de felicitación por WhatsApp el día del cumpleaños y pre-aviso el día anterior.</span>
+    </div>
+    <div class="feature-item">
+        <strong>Mensajes Masivos WhatsApp</strong>
+        <span>Envío de mensajes a toda la base de clientes o segmentados por actividad (7 días, 30 días, todos).</span>
+    </div>
+    <div class="feature-item">
+        <strong>Estadísticas con IA</strong>
+        <span>Análisis automático de conversaciones: preguntas frecuentes, sentimiento, temas populares, interés en RRPP.</span>
+    </div>
+    <div class="feature-item">
+        <strong>Historial de Conversaciones</strong>
+        <span>Todas las conversaciones del bot almacenadas y consultables. Filtros por usuario y fecha.</span>
+    </div>
+    <div class="feature-item">
+        <strong>Gestión de Salas</strong>
+        <span>Registro de locales/salas con dirección, capacidad e imagen. Vinculación directa con eventos.</span>
+    </div>
+    <div class="feature-item">
+        <strong>Sistema de Tareas</strong>
+        <span>Tareas pendientes con recordatorios configurables por notificación del sistema.</span>
+    </div>
+    <div class="feature-item">
+        <strong>Registro de Actividad</strong>
+        <span>Auditoría completa de todas las acciones realizadas en el panel (quién hizo qué y cuándo).</span>
+    </div>
+    <div class="feature-item">
+        <strong>Gestión de Usuarios</strong>
+        <span>Múltiples usuarios con roles (administrador, editor, visor). Control de permisos por sección.</span>
+    </div>
+</div>
+
+<h2>2. Precios</h2>
+
+<table class="price-table">
+    <thead>
+        <tr>
+            <th>Concepto</th>
+            <th>Detalle</th>
+            <th>Precio</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="highlight-row">
+            <td>Instalación y configuración</td>
+            <td>Instalación de panel, deploy completo, configuración WhatsApp Business API, base de datos, automatizaciones, formación inicial</td>
+            <td>3.000 EUR</td>
+        </tr>
+        <tr class="highlight-row">
+            <td>Mensualidad</td>
+            <td>Hosting, mantenimiento, soporte técnico, actualizaciones</td>
+            <td>250 EUR/mes</td>
+        </tr>
+        <tr>
+            <td>Consumo de APIs</td>
+            <td>Coste variable según uso: tokens de IA (ChatGPT), servidor, WhatsApp Business API</td>
+            <td>Máx. 75 EUR/mes</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Qué incluye la mensualidad (250 EUR)</h3>
+<ul>
+    <li>Hosting y servidor web (disponibilidad 24/7)</li>
+    <li>Base de datos en la nube (backups automáticos)</li>
+    <li>Servidor de automatizaciones (n8n)</li>
+    <li>Mantenimiento preventivo y actualizaciones</li>
+    <li>Soporte técnico por email/WhatsApp</li>
+    <li>Cambios menores incluidos (textos, ajustes visuales, correcciones)</li>
+</ul>
+
+<h3>Consumo de APIs (variable, máx. 75 EUR/mes)</h3>
+<ul>
+    <li>Tokens de inteligencia artificial (ChatGPT/OpenAI)</li>
+    <li>API de WhatsApp Business (Meta)</li>
+    <li>Costes de servidor adicionales según tráfico</li>
+</ul>
+<div class="note">
+    El consumo se factura aparte según el uso real del mes. En la mayoría de casos será significativamente menor que el máximo. Proporcionamos un desglose mensual transparente.
+</div>
+
+<h3>Servicios adicionales</h3>
+<table class="price-table">
+    <thead>
+        <tr>
+            <th>Servicio</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Cambios pequeños</td>
+            <td>Ajustes de texto, colores, pequeñas mejoras de interfaz</td>
+            <td>Incluido</td>
+        </tr>
+        <tr>
+            <td>Sección nueva</td>
+            <td>Página o módulo completamente nuevo en el panel</td>
+            <td>200 — 400 EUR</td>
+        </tr>
+        <tr>
+            <td>Integración nueva</td>
+            <td>Conexión con servicio externo (Instagram, Stripe, etc.)</td>
+            <td>400 — 800 EUR</td>
+        </tr>
+        <tr>
+            <td>Desarrollo a medida</td>
+            <td>Funcionalidades complejas, rediseño, apps</td>
+            <td>Presupuesto</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3. Forma de pago</h2>
+
+<div class="note">
+    <strong>Sin permanencia.</strong> Pago mes a mes. Puedes cancelar en cualquier momento con 30 días de preaviso. Sin compromisos de larga duración.
+</div>
+
+<p><strong>Ejemplo de coste mensual:</strong></p>
+<table class="price-table">
+    <tbody>
+        <tr>
+            <td>Mensualidad fija</td>
+            <td></td>
+            <td>250 EUR</td>
+        </tr>
+        <tr>
+            <td>Consumo APIs (variable)</td>
+            <td></td>
+            <td>0 — 75 EUR</td>
+        </tr>
+        <tr class="highlight-row">
+            <td><strong>Total mensual</strong></td>
+            <td></td>
+            <td><strong>250 — 325 EUR</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<p><strong>Resumen primer año (estimación):</strong></p>
+<table class="price-table">
+    <tbody>
+        <tr>
+            <td>Instalación (pago único)</td>
+            <td></td>
+            <td>3.000 EUR</td>
+        </tr>
+        <tr>
+            <td>12 meses x 250 EUR</td>
+            <td></td>
+            <td>3.000 EUR</td>
+        </tr>
+        <tr>
+            <td>Consumo APIs (estimado)</td>
+            <td></td>
+            <td>~400 — 900 EUR</td>
+        </tr>
+        <tr class="highlight-row">
+            <td><strong>Total primer año</strong></td>
+            <td></td>
+            <td><strong>6.400 — 6.900 EUR</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>4. Garantías</h2>
+
+<ul>
+    <li><strong>Uptime 99.5%</strong> — Disponibilidad garantizada del panel y del bot</li>
+    <li><strong>Backups diarios</strong> — Copias de seguridad automáticas de toda la información</li>
+    <li><strong>Soporte prioritario</strong> — Respuesta en menos de 24h laborables</li>
+    <li><strong>Propiedad de datos</strong> — Todos los datos son propiedad de Madness Light. En caso de baja, se entrega una copia completa</li>
+    <li><strong>Confidencialidad</strong> — La base de datos de clientes y conversaciones es estrictamente privada</li>
+</ul>
+
+<div class="footer">
+    <p>NodexAI — nodexai.es</p>
+    <p>Documento generado en marzo 2026. Precios válidos durante 30 días.</p>
+</div>
+
+</body>
+</html>

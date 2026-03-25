@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>NodexAI — Normas WhatsApp Business para Madness Light</title>
+<style>
+    @page { margin: 2cm; size: A4; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #111; line-height: 1.5; padding: 40px; max-width: 800px; margin: 0 auto; }
+
+    .header { text-align: center; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 2px solid #111; }
+    .header h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .header p { font-size: 13px; color: #555; }
+    .logo { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 8px; }
+
+    h2 { font-size: 18px; font-weight: 700; margin: 32px 0 16px; padding-bottom: 6px; border-bottom: 1px solid #ddd; }
+    h3 { font-size: 14px; font-weight: 700; margin: 20px 0 8px; }
+
+    p, li { font-size: 13px; }
+    p { margin-bottom: 10px; }
+    ul { padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 4px; }
+
+    .info-table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; }
+    .info-table th, .info-table td { padding: 10px 14px; text-align: left; border: 1px solid #ddd; font-size: 13px; vertical-align: top; }
+    .info-table th { background: #111; color: #fff; font-weight: 600; }
+    .info-table tr:nth-child(even) { background: #f9f9f9; }
+
+    .ok { color: #16a34a; font-weight: 700; }
+    .required { color: #dc2626; font-weight: 700; }
+
+    .note { background: #f5f5f5; padding: 12px 16px; border-left: 3px solid #111; margin: 16px 0; font-size: 12px; }
+    .note-warning { background: #fef3c7; border-left-color: #d97706; }
+    .note-ok { background: #f0fdf4; border-left-color: #16a34a; }
+
+    .section-desc { font-size: 12px; color: #666; margin-bottom: 16px; }
+
+    .footer { margin-top: 40px; padding-top: 16px; border-top: 2px solid #111; text-align: center; font-size: 11px; color: #888; }
+
+    @media print {
+        body { padding: 0; }
+        .no-print { display: none; }
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">NodexAI</div>
+    <h1>Normas de WhatsApp Business</h1>
+    <p>Guía para Madness Light — Cómo funciona el sistema de mensajes</p>
+</div>
+
+<div class="note note-ok">
+    <strong>El bot ya está configurado para cumplir todas las normas de WhatsApp Business.</strong> No hace falta hacer nada extra — el sistema ya distingue automáticamente entre mensajes que necesitan plantilla y los que no. Este documento explica cómo funciona para que lo tengáis claro.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>1. La regla principal: la ventana de 24 horas</h2>
+
+<p>WhatsApp divide todos los mensajes en dos categorías:</p>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Tipo</th>
+            <th>Quién escribe primero</th>
+            <th>Qué se puede enviar</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Mensaje del cliente</strong></td>
+            <td>El cliente escribe al bot</td>
+            <td><span class="ok">Texto libre</span> — el bot puede responder lo que quiera durante 24h</td>
+        </tr>
+        <tr>
+            <td><strong>Mensaje de la empresa</strong></td>
+            <td>La empresa escribe al cliente sin que este haya escrito antes</td>
+            <td><span class="required">Solo plantillas aprobadas por Meta</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Cada vez que un cliente envía un mensaje, la ventana de 24 horas se reinicia. Mientras haya conversación activa, el bot puede hablar con total libertad.</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>2. Cómo afecta esto a Madness Light</h2>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Función</th>
+            <th>Quién inicia</th>
+            <th>¿Necesita plantilla?</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Bot de IA (chat)</strong></td>
+            <td>El cliente</td>
+            <td><span class="ok">No</span></td>
+            <td>El bot responde con texto libre, tono personalizado, emojis, etc. Totalmente legal dentro de la ventana de 24h.</td>
+        </tr>
+        <tr>
+            <td><strong>Mensajes masivos</strong><br>(promoción de fiestas)</td>
+            <td>La empresa</td>
+            <td><span class="required">Sí, obligatoria</span></td>
+            <td>Se selecciona una plantilla aprobada desde el panel. Solo se envía a clientes con opt-in.</td>
+        </tr>
+        <tr>
+            <td><strong>Felicitación de cumpleaños</strong></td>
+            <td>La empresa</td>
+            <td><span class="required">Sí, obligatoria</span></td>
+            <td>Usa la plantilla <code>birthday_greeting</code> con el nombre del cliente como variable.</td>
+        </tr>
+        <tr>
+            <td><strong>Pre-aviso de cumpleaños</strong><br>(día anterior)</td>
+            <td>La empresa</td>
+            <td><span class="required">Sí, obligatoria</span></td>
+            <td>Usa la plantilla <code>birthday_prenotice</code> con el nombre del cliente como variable.</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note note-ok">
+    <strong>El bot de IA sigue funcionando exactamente igual.</strong> Responde con su personalidad, su tono colega, información de fiestas, RRPP, etc. Todo con texto libre. Esto no cambia porque el cliente es quien inicia la conversación.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>3. Qué son las plantillas de WhatsApp</h2>
+
+<p>Las plantillas son mensajes pre-escritos que Meta revisa y aprueba antes de poder usarlos. Tienen partes fijas y variables (datos que cambian por cada cliente).</p>
+
+<h3>Ejemplo de plantilla de cumpleaños:</h3>
+<div class="note">
+    <strong>Nombre:</strong> birthday_greeting<br>
+    <strong>Categoría:</strong> Utility<br>
+    <strong>Texto:</strong> "Feliz cumpleaños, <strong>{{1}}</strong>! Desde Madness Light te deseamos un día increíble. Que lo pases genial!"<br><br>
+    <em>{{1}} se reemplaza automáticamente por el nombre del cliente.</em>
+</div>
+
+<h3>Ejemplo de plantilla de evento:</h3>
+<div class="note">
+    <strong>Nombre:</strong> event_promotion<br>
+    <strong>Categoría:</strong> Marketing<br>
+    <strong>Texto:</strong> "Ey! Este <strong>{{1}}</strong> tenemos <strong>{{2}}</strong> en <strong>{{3}}</strong>. Entradas disponibles en el link de nuestra bio. No te lo pierdas!"<br><br>
+    <em>{{1}} = fecha, {{2}} = nombre del evento, {{3}} = sala</em>
+</div>
+
+<p>Las plantillas se crean en el <strong>Meta Business Manager</strong> y tardan entre minutos y 24h en aprobarse.</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>4. Opt-in: consentimiento del cliente</h2>
+
+<p>WhatsApp exige que los clientes den su consentimiento explícito para recibir mensajes de la empresa. Sin opt-in, no se puede enviar mensajes masivos ni cumpleaños.</p>
+
+<h3>Cómo se consigue el opt-in:</h3>
+<ul>
+    <li><strong>Cuando el cliente escribe al bot por primera vez</strong> — el bot puede preguntar si quiere recibir novedades y promos</li>
+    <li><strong>Al apuntarse como RRPP</strong> — en el proceso de registro</li>
+    <li><strong>En la entrada de un evento</strong> — al registrar su asistencia</li>
+    <li><strong>Vía formulario web o QR</strong> — con un enlace tipo "Únete a nuestro WhatsApp"</li>
+</ul>
+
+<div class="note note-warning">
+    <strong>Importante:</strong> No se pueden usar listas de contactos compradas, copiadas de grupos de WhatsApp, o scraped de Instagram. Solo contactos que hayan dado su permiso explícito. Hacerlo es la forma más rápida de que Meta bane la cuenta.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>5. Límites de envío</h2>
+
+<p>WhatsApp limita cuántos mensajes puede enviar una empresa por día, según su reputación:</p>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Nivel</th>
+            <th>Mensajes / 24h</th>
+            <th>Cómo se llega</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Sin verificar</td>
+            <td>250</td>
+            <td>Cuenta nueva sin verificar</td>
+        </tr>
+        <tr>
+            <td>Nivel 1</td>
+            <td>1.000</td>
+            <td>Verificar la empresa en Meta Business Manager</td>
+        </tr>
+        <tr>
+            <td>Nivel 2</td>
+            <td>10.000</td>
+            <td>Usar >50% del límite actual durante 7 días con buena calidad</td>
+        </tr>
+        <tr>
+            <td>Nivel 3</td>
+            <td>100.000</td>
+            <td>Uso sostenido con alta calidad</td>
+        </tr>
+    </tbody>
+</table>
+
+<p><strong>Para Madness Light:</strong> Con la base de datos actual, el Nivel 1 (1.000/día) es más que suficiente. Se alcanza verificando la empresa en Meta Business Manager.</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>6. Qué pasa si se incumplen las reglas</h2>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Infracción</th>
+            <th>Consecuencia</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Enviar texto libre como mensaje de empresa</td>
+            <td>Mensaje rechazado + bajada de calidad</td>
+        </tr>
+        <tr>
+            <td>Enviar sin opt-in (contactos no autorizados)</td>
+            <td>Reportes de spam → restricción de cuenta</td>
+        </tr>
+        <tr>
+            <td>Tasa de spam >2%</td>
+            <td>Bajada de nivel + restricción temporal</td>
+        </tr>
+        <tr>
+            <td>Usar listas compradas o scraped</td>
+            <td><strong>Ban permanente de la cuenta</strong></td>
+        </tr>
+        <tr>
+            <td>Enviar contenido prohibido</td>
+            <td><strong>Ban permanente de la cuenta</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>7. Plantillas que hay que crear antes del lanzamiento</h2>
+
+<p class="section-desc">Estas plantillas deben crearse y aprobarse en Meta Business Manager antes de activar el sistema:</p>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Plantilla</th>
+            <th>Categoría</th>
+            <th>Para qué</th>
+            <th>Variables</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>birthday_greeting</code></td>
+            <td>Utility</td>
+            <td>Felicitación el día del cumpleaños</td>
+            <td>{{1}} = nombre</td>
+        </tr>
+        <tr>
+            <td><code>birthday_prenotice</code></td>
+            <td>Utility</td>
+            <td>Pre-aviso el día antes del cumpleaños</td>
+            <td>{{1}} = nombre</td>
+        </tr>
+        <tr>
+            <td><code>event_promotion</code></td>
+            <td>Marketing</td>
+            <td>Promocionar próximos eventos</td>
+            <td>{{1}} = fecha, {{2}} = evento, {{3}} = sala</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note">
+    <strong>Nosotros nos encargamos</strong> de crear y enviar las plantillas a aprobación. Solo necesitamos que Madness Light nos dé acceso al Meta Business Manager y nos confirme el texto exacto que quieren usar.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>8. Resumen rápido</h2>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Bot de IA (chat)</th>
+            <th>Mensajes masivos</th>
+            <th>Cumpleaños</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Quién inicia</strong></td>
+            <td>El cliente</td>
+            <td>La empresa</td>
+            <td>La empresa</td>
+        </tr>
+        <tr>
+            <td><strong>Tipo de mensaje</strong></td>
+            <td>Texto libre</td>
+            <td>Plantilla aprobada</td>
+            <td>Plantilla aprobada</td>
+        </tr>
+        <tr>
+            <td><strong>Necesita opt-in</strong></td>
+            <td>No</td>
+            <td>Sí</td>
+            <td>Sí</td>
+        </tr>
+        <tr>
+            <td><strong>Personalizable</strong></td>
+            <td>Totalmente (IA)</td>
+            <td>Variables de plantilla</td>
+            <td>Nombre del cliente</td>
+        </tr>
+        <tr>
+            <td><strong>Límite</strong></td>
+            <td>Sin límite (respuestas)</td>
+            <td>Según nivel (1.000+/día)</td>
+            <td>Según nivel</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="footer">
+    <p>NodexAI — nodexai.es</p>
+    <p>Documento generado en marzo 2026</p>
+</div>
+
+</body>
+</html>
