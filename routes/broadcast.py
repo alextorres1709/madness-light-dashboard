@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from models import db, Conversation
 from routes.auth import admin_required
 from services.activity import log_activity
+from services.notifications import notify_broadcast_sent
 
 broadcast_bp = Blueprint("broadcast", __name__)
 
@@ -102,6 +103,7 @@ def send():
         "broadcast", "broadcast", None,
         f"Sent to {sent}/{len(chat_ids)} users (audience={audience}). Failed: {failed}"
     )
+    notify_broadcast_sent(sent)
     db.session.commit()
 
     msg = f"Mensaje enviado a {sent} usuarios"

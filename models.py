@@ -214,6 +214,38 @@ class Conversation(db.Model):
         }
 
 
+class Client(db.Model):
+    """Client registered via Telegram bot."""
+    __tablename__ = "clients"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    phone = db.Column(db.String(50), default="")
+    dob = db.Column(db.String(20), default="")  # dd/mm/yyyy
+    chat_id = db.Column(db.String(100), nullable=False, unique=True, index=True)
+    events_attended = db.Column(db.Integer, default=0)
+    last_seen = db.Column(db.String(20), default="")
+    status = db.Column(db.String(20), default="active", index=True)
+    birthday_greeted_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "phone": self.phone,
+            "dob": self.dob,
+            "chat_id": self.chat_id,
+            "events_attended": self.events_attended,
+            "last_seen": self.last_seen,
+            "status": self.status,
+            "birthday_greeted_at": self.birthday_greeted_at.isoformat() if self.birthday_greeted_at else None,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
 class ActivityLog(db.Model):
     """Audit trail for admin-visible actions."""
     __tablename__ = "activity_log"
@@ -229,4 +261,76 @@ class ActivityLog(db.Model):
     )
 
     user = db.relationship("User", backref=db.backref("activity_logs", lazy="dynamic"))
+
+
+# Notification categories
+NOTIF_EVENT = "event"
+NOTIF_CLIENT = "client"
+NOTIF_BIRTHDAY = "birthday"
+NOTIF_BROADCAST = "broadcast"
+NOTIF_SYSTEM = "system"
+
+
+class Notification(db.Model):
+    """Mac-style notifications for the dashboard."""
+    __tablename__ = "notifications"
+
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(30), nullable=False, default=NOTIF_SYSTEM, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    body = db.Column(db.Text, default="")
+    icon = db.Column(db.String(30), default="info")  # info, party, user, heart, send
+    read = db.Column(db.Boolean, default=False, index=True)
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc), index=True
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "category": self.category,
+            "title": self.title,
+            "body": self.body,
+            "icon": self.icon,
+            "read": self.read,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+# Reminder interval presets (minutes)
+REMINDER_CHOICES = [
+    (0, "Sin recordatorio"),
+    (30, "Cada 30 min"),
+    (60, "Cada hora"),
+    (120, "Cada 2 horas"),
+    (240, "Cada 4 horas"),
+    (480, "Cada 8 horas"),
+    (1440, "Cada dia"),
+]
+
+
+class Task(db.Model):
+    """Dashboard task with configurable OS notification reminders."""
+    __tablename__ = "tasks"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(300), nullable=False)
+    description = db.Column(db.Text, default="")
+    done = db.Column(db.Boolean, default=False, index=True)
+    reminder_minutes = db.Column(db.Integer, default=60)  # 0 = no reminder
+    last_notified_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc), index=True
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "done": self.done,
+            "reminder_minutes": self.reminder_minutes,
+            "last_notified_at": self.last_notified_at.isoformat() if self.last_notified_at else None,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
 

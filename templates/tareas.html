@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Tareas{% endblock %}
+{% block header_title %}Tareas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Tareas</h1>
+        <p class="page-subtitle">Gestiona tareas pendientes con recordatorios por notificacion</p>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('createTaskModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva tarea
+    </button>
+</div>
+
+<!-- Tabs -->
+<div class="toolbar" style="gap:8px">
+    <a href="{{ url_for('tasks.index', status='pending') }}" class="btn {% if status=='pending' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        Pendientes <span class="badge badge-active" style="margin-left:4px">{{ pending_count }}</span>
+    </a>
+    <a href="{{ url_for('tasks.index', status='done') }}" class="btn {% if status=='done' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        Completadas <span class="badge badge-category" style="margin-left:4px">{{ done_count }}</span>
+    </a>
+</div>
+
+<div class="card">
+    {% if tasks %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40px"></th>
+                    <th>Tarea</th>
+                    <th class="hide-mobile">Descripcion</th>
+                    <th>Recordatorio</th>
+                    <th style="width:100px">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>
+                        {% if not task.done %}
+                        <form method="POST" action="{{ url_for('tasks.mark_done', task_id=task.id) }}" style="display:inline">
+                            <button type="submit" class="task-check" title="Completar">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <circle cx="12" cy="12" r="10"/>
+                                </svg>
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="task-check done">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span style="{% if task.done %}text-decoration:line-through;color:var(--text-tertiary){% else %}font-weight:600{% endif %}">
+                            {{ task.title }}
+                        </span>
+                        <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">
+                            {{ task.created_at.strftime('%d/%m/%Y %H:%M') if task.created_at else '' }}
+                        </div>
+                    </td>
+                    <td class="hide-mobile" style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:13px">
+                        {{ task.description or '—' }}
+                    </td>
+                    <td>
+                        {% if not task.done %}
+                        <form method="POST" action="{{ url_for('tasks.update_reminder', task_id=task.id) }}" style="display:inline">
+                            <select name="reminder_minutes" class="filter-select" style="min-width:130px" onchange="this.form.submit()">
+                                {% for val, label in reminder_choices %}
+                                <option value="{{ val }}" {% if task.reminder_minutes == val %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                        {% else %}
+                        <span style="color:var(--text-tertiary);font-size:13px">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:4px">
+                            {% if task.done %}
+                            <form method="POST" action="{{ url_for('tasks.reopen', task_id=task.id) }}" style="display:inline">
+                                <button type="submit" class="btn btn-secondary btn-sm" title="Reabrir">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                                </button>
+                            </form>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('tasks.delete', task_id=task.id) }}" style="display:inline" onsubmit="return confirm('Eliminar esta tarea?')">
+                                <button type="submit" class="btn btn-secondary btn-sm" title="Eliminar" style="color:var(--danger)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+        </svg>
+        <h3>{% if status == 'done' %}Sin tareas completadas{% else %}Sin tareas pendientes{% endif %}</h3>
+        <p>{% if status == 'pending' %}Crea una tarea para empezar{% else %}Completa tareas para verlas aqui{% endif %}</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Create Task Modal -->
+<div class="modal-overlay" id="createTaskModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Nueva Tarea</h3>
+            <button class="modal-close" onclick="closeModal('createTaskModal')">&times;</button>
+        </div>
+        <form method="POST" action="{{ url_for('tasks.create') }}">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Titulo *</label>
+                    <input type="text" name="title" class="form-input" required placeholder="Ej: Preparar cartel para fiesta Neon" autofocus>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripcion</label>
+                    <textarea name="description" class="form-input" rows="3" placeholder="Detalles opcionales..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Recordatorio</label>
+                    <select name="reminder_minutes" class="form-input">
+                        {% for val, label in reminder_choices %}
+                        <option value="{{ val }}" {% if val == 60 %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <small style="color:var(--text-tertiary);font-size:11px;margin-top:4px;display:block">
+                        Recibiras una notificacion del sistema cada vez que se cumpla el intervalo
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('createTaskModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Crear tarea</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

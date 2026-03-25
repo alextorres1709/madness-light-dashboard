@@ -6,6 +6,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from models import db, Event, Venue, Conversation, VENUES, THEMES
 from routes.auth import login_required, editor_required
 from services.activity import log_activity
+from services.notifications import notify_event_created, notify_event_updated, notify_event_deleted
 
 events_bp = Blueprint("events", __name__)
 
@@ -77,6 +78,7 @@ def create():
         )
         db.session.add(event)
         log_activity("create", "event", details=f"Created event: {event.name}")
+        notify_event_created(event.name, event.venue)
         db.session.commit()
         flash("Fiesta creada correctamente", "success")
     except Exception as e:
@@ -103,6 +105,7 @@ def update(event_id):
         event.image_url = request.form.get("image_url", event.image_url).strip()
         event.active = request.form.get("active") == "on"
         log_activity("update", "event", event.id, f"Updated event: {event.name}")
+        notify_event_updated(event.name)
         db.session.commit()
         flash("Fiesta actualizada correctamente", "success")
     except Exception as e:
@@ -118,6 +121,7 @@ def delete(event_id):
     event = Event.query.get_or_404(event_id)
     try:
         log_activity("delete", "event", event_id, f"Deleted event: {event.name}")
+        notify_event_deleted(event.name)
         db.session.delete(event)
         db.session.commit()
         flash("Fiesta eliminada", "success")

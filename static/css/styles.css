@@ -2326,3 +2326,190 @@ select.form-input {
 [data-theme="dark"] thead th {
     background: var(--bg-secondary);
 }
+
+/* ═══════════════════════════════════════════════════
+   Notification Bell + Panel
+   ═══════════════════════════════════════════════════ */
+
+.notif-wrapper {
+    position: relative;
+}
+
+.notif-bell {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 7px 8px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    transition: var(--transition-fast);
+    position: relative;
+}
+
+.notif-bell:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+}
+
+.notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.notif-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 340px;
+    max-height: 420px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 400;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.notif-panel.open {
+    display: flex;
+}
+
+.notif-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 13px;
+}
+
+.notif-mark-all {
+    background: none;
+    border: none;
+    color: var(--brand-primary);
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.notif-mark-all:hover {
+    text-decoration: underline;
+}
+
+.notif-panel-list {
+    overflow-y: auto;
+    flex: 1;
+    max-height: 360px;
+}
+
+.notif-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    align-items: flex-start;
+}
+
+.notif-item:hover {
+    background: var(--bg-card-hover);
+}
+
+.notif-item.unread {
+    background: rgba(79, 70, 229, 0.04);
+}
+
+[data-theme="dark"] .notif-item.unread {
+    background: rgba(137, 233, 0, 0.04);
+}
+
+.notif-item-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+.notif-item-icon.party { background: #f59e0b18; color: #f59e0b; }
+.notif-item-icon.user { background: #3b82f618; color: #3b82f6; }
+.notif-item-icon.heart { background: #ec489918; color: #ec4899; }
+.notif-item-icon.send { background: #06b6d418; color: #06b6d4; }
+.notif-item-icon.task { background: #8b5cf618; color: #8b5cf6; }
+.notif-item-icon.info { background: #64748b18; color: #64748b; }
+
+.notif-item-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notif-item-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.notif-item-text {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notif-item-time {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 3px;
+}
+
+.notif-empty {
+    padding: 32px 16px;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 13px;
+}
+
+/* ─── Task page extras ─────────────────────────── */
+
+.task-check {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-tertiary);
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    transition: var(--transition-fast);
+}
+
+.task-check:hover {
+    color: var(--success);
+}
+
+.task-check.done {
+    color: var(--success);
+}

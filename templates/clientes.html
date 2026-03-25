@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes{% endblock %}
+{% block header_title %}Clientes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Clientes</h1>
+        <p class="page-subtitle">Base de datos de clientes conectados al bot de Telegram</p>
+    </div>
+</div>
+
+<!-- Stats row -->
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 24px;">
+    <div class="stat-card">
+        <div class="stat-label">Total clientes</div>
+        <div class="stat-value">{{ total }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Activos</div>
+        <div class="stat-value" style="color: var(--kiwi)">{{ active }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Inactivos</div>
+        <div class="stat-value">{{ total - active }}</div>
+    </div>
+</div>
+
+<!-- Filters -->
+<form method="GET" action="{{ url_for('clients.index') }}" class="toolbar">
+    <div class="search-input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" name="search" placeholder="Buscar por nombre, teléfono o chat ID..." value="{{ search }}">
+    </div>
+    <select name="status" onchange="this.form.submit()">
+        <option value="">Todos</option>
+        <option value="active" {% if selected_status == 'active' %}selected{% endif %}>Activos</option>
+        <option value="inactive" {% if selected_status == 'inactive' %}selected{% endif %}>Inactivos</option>
+    </select>
+</form>
+
+<!-- Table -->
+<div class="card">
+    {% if clients %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Fecha de nacimiento</th>
+                    <th>Chat ID</th>
+                    <th>Fiestas</th>
+                    <th>Última vez</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                <tr>
+                    <td style="font-weight:600">{{ client.name }}</td>
+                    <td>{{ client.phone }}</td>
+                    <td>{{ client.dob }}</td>
+                    <td><code style="font-size:12px;opacity:.7">{{ client.chat_id }}</code></td>
+                    <td><span class="badge badge-platform">{{ client.events_attended }}</span></td>
+                    <td>{{ client.last_seen }}</td>
+                    <td>
+                        {% if client.status == 'active' %}
+                        <span class="badge badge-active" style="background:rgba(137,233,0,.12);color:var(--kiwi)">Activo</span>
+                        {% else %}
+                        <span class="badge" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.45)">Inactivo</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 00-3-3.87" />
+            <path d="M16 3.13a4 4 0 010 7.75" />
+        </svg>
+        <h3>Sin resultados</h3>
+        <p>No se encontraron clientes con esos filtros</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

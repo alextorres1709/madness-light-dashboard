@@ -4,127 +4,161 @@
 
 ## 1. Resumen Ejecutivo
 
-Madness Light gestiona cada semana un volumen considerable de consultas repetitivas por parte de su audiencia: precios, ubicaciones, horarios, dress code, información sobre el programa de RRPP. Este volumen crece con cada evento y el equipo no puede atenderlo todo a tiempo. Pero el problema real no es solo la carga de trabajo: es que todas esas conversaciones contienen información valiosa sobre lo que los clientes quieren, lo que les frena y lo que les interesa — y esa información se pierde.
+Cada semana, decenas de personas le escriben a Madness Light con las mismas preguntas: cuándo es la próxima fiesta, cuánto cuesta la entrada, dónde es, cómo funciona lo de RRPP. El equipo hace lo que puede, pero no da abasto — y mientras tanto, toda esa información sobre qué quieren los clientes, qué les frena o qué les interesa se pierde.
 
-Esta propuesta documenta la solución implementada: un agente de IA en Telegram que atiende a los clientes 24/7 y, al mismo tiempo, extrae estadísticas de cada conversación. El sistema genera automáticamente rankings de dudas frecuentes, análisis de objeciones sobre RRPP, métricas de interés por evento, sentimiento de los usuarios y sugerencias de mejora. Todo acompañado de un panel de control web completo con 10 módulos de gestión.
+Lo que hemos montado es un sistema que resuelve todo eso de golpe: un agente de IA que atiende en Telegram y en WhatsApp las 24 horas, un panel de control donde se gestiona todo (eventos, clientes, estadísticas, mensajes) y automatizaciones inteligentes como felicitaciones de cumpleaños por WhatsApp. Todo conectado a una misma base de datos, todo funcionando solo.
 
 ---
 
-## 2. Problemas que resuelve
+## 2. Qué problemas resuelve
 
-El equipo de Madness Light se enfrentaba a cuatro problemas concretos:
+**Nadie puede contestar a todo, todo el rato.** Hay preguntas que llegan a las 2 de la madrugada un viernes. Para cuando alguien las ve el sábado por la mañana, esa persona ya perdió el interés o compró en otro lado. Ahora hay un bot que responde al instante, con la info correcta, a cualquier hora.
 
-**Sobrecarga de mensajes repetitivos.** Decenas de personas preguntaban cada semana lo mismo: dónde es la fiesta, cuánto cuesta, si se puede entrar con deportivas, cómo funciona lo de los RRPP. El equipo respondía a mano, lo que consumía tiempo y generaba inconsistencias.
+**Las mismas preguntas una y otra vez.** Dónde es, cuánto cuesta, puedo entrar con deportivas, cómo funciona lo de RRPP. El bot se encarga de eso para que el equipo pueda centrarse en lo que importa.
 
-**Retrasos en la atención.** Un usuario que pregunta a las 2 de la madrugada del viernes no recibe respuesta hasta el sábado por la mañana. Para entonces, el momento de intención de compra ya pasó.
+**No había datos de nada.** Antes no se sabía qué preguntan los clientes, qué eventos generan más interés ni qué objeciones tienen con el programa de RRPP. Ahora cada conversación se analiza y se convierte en datos útiles: rankings de dudas, sentimiento, sugerencias de mejora.
 
-**Decisiones a ciegas.** No había forma de saber qué preguntan los clientes, qué dudas les frenan, qué eventos generan más interés ni qué objeciones tienen sobre el programa RRPP. Cada conversación era información valiosa que se perdía sin generar ningún dato útil.
+**Captar RRPP era lento.** Explicar el programa entero a cada persona que pregunta lleva tiempo. El bot lo hace solo, adaptándose a lo que pregunta cada uno, y lo hace bien.
 
-**Captación de RRPP manual y lenta.** Explicar el programa a cada interesado consume tiempo del equipo. Sin automatización, el proceso no escala.
+**No había una base de datos de clientes.** No existía un sitio donde ver quién ha venido a las fiestas, cuántas veces, cuándo cumple años o cómo contactarle. Ahora sí, y además esa base de datos alimenta las automatizaciones.
 
 ---
 
 ## 3. Qué se ha construido
 
-La solución tiene tres componentes principales:
-
 ### 3.1. Bot de Telegram con IA
 
-Un agente conversacional que atiende a los usuarios de Madness Light en Telegram, las 24 horas del día. No usa menús ni respuestas predefinidas: genera respuestas dinámicas interpretando la intención y el contexto de cada conversación.
+Un agente que habla con los usuarios de Madness Light en Telegram como si fuera un colega del equipo. No es un menú con botones: entiende lo que le dicen y responde de forma natural.
 
-Funcionalidades principales:
+Qué hace:
 - Informa sobre fiestas, precios, salas y horarios con datos actualizados en tiempo real
 - Envía los pósters oficiales de cada evento directamente al chat
 - Comparte enlaces de compra en Elite Events
-- Explica el programa de RRPP con todos los rangos y beneficios (Base, Embajador, Elite)
-- Mantiene el contexto de conversaciones anteriores del mismo usuario
-- Responde consultas sobre normativa, dress code y políticas de acceso
+- Explica el programa de RRPP con rangos, beneficios y sistema de puntos
+- Recuerda conversaciones anteriores del mismo usuario
+- Responde consultas sobre normativa, dress code y acceso
 - Filtra preguntas fuera de tema para no comprometer la imagen de marca
 
-El agente está construido sobre GPT-4o de OpenAI y se conecta en tiempo real a la base de datos de eventos de Madness Light. Cuando se crea o modifica un evento en el panel, el bot ya tiene esa información disponible al instante.
+Funciona con GPT-4o de OpenAI y se conecta en tiempo real a la base de datos. Si se crea un evento nuevo en el panel, el bot ya lo sabe al instante.
 
-### 3.2. Panel de control web (Dashboard)
+### 3.2. Bot de WhatsApp con IA + Cumpleaños
 
-Una aplicación web accesible desde cualquier navegador, sin necesidad de instalar nada. Tiene diez módulos de gestión:
+El mismo agente, pero en WhatsApp. Misma inteligencia, misma base de datos, misma calidad de respuesta. Esto cubre los dos canales de mensajería principales en España.
 
-- **Dashboard principal:** KPIs en tiempo real (mensajes, usuarios únicos, retención), resumen RRPP con tasa de interés, funnel de conversión (usuarios → recurrentes → interesados RRPP), gráficos de tendencia diaria y distribución por horas.
-- **Fiestas:** CRUD completo de eventos. Calendario visual mensual. Analytics por fiesta (menciones, usuarios interesados). Exportación a CSV.
-- **Estadísticas:** Métricas de retención, usuarios nuevos vs recurrentes, horas pico, análisis de dudas frecuentes, objeciones RRPP, sentimiento general y sugerencias de mejora por IA. Exportación a CSV.
-- **Agente de IA:** Estado del agente, fuentes de datos que consulta, análisis automático de conversaciones con sugerencias de mejora.
-- **Conversaciones:** Historial completo de todos los usuarios que han interactuado con el bot. Búsqueda por nombre o ID. Vista del chat completo con filtros por fecha.
-- **Usuarios:** Gestión de accesos al panel con tres roles (Admin, Editor, Viewer). Crear, editar, activar o desactivar cuentas.
-- **Actividad:** Log de auditoría de todo lo que ocurre en el panel. Quién hizo qué y cuándo.
-- **Salas:** Gestión de los locales donde se celebran las fiestas. Alta, edición y activación de salas.
-- **Mensajes:** Envío de mensajes masivos a la audiencia vía Telegram. Segmentación por actividad reciente (todos, activos en 7 días, activos en 30 días). Vista previa antes de enviar.
-- **Ajustes:** Configuración de la información de empresa que el bot usa como contexto.
+Además de atender consultas, el canal de WhatsApp tiene automatizaciones propias:
 
-### 3.3. Estadísticas de dudas y tendencias (Motor de análisis con IA)
+- **Felicitaciones de cumpleaños:** Cada día a partir de las 8 de la mañana, el sistema revisa la base de datos de clientes. Si hoy es el cumpleaños de alguien, le manda una felicitación personalizada por WhatsApp. El día de antes, le manda un pre-aviso para generar expectativa. Cada persona solo recibe un mensaje al año, sin duplicados.
+- **Preparado para más:** Sobre esta misma base se pueden montar recordatorios de eventos, ofertas especiales, notificaciones segmentadas o cualquier otra cosa que se necesite.
 
-Además de atender clientes, el sistema convierte cada conversación en datos accionables. Cada vez que un usuario pregunta algo, esa duda queda registrada, clasificada y cuantificada. El análisis se genera automáticamente y se actualiza cada hora:
+### 3.3. Panel de control web
 
-- **Ranking de dudas frecuentes:** qué preguntan más los clientes (precios, ubicación, dress code, RRPP) con porcentajes exactos
-- **Interés por evento:** cuántas veces se menciona cada fiesta en el chat, cuántos usuarios distintos preguntan y evolución temporal
-- **Análisis RRPP completo:** dudas principales sobre el programa, objeciones frecuentes (comisiones, compromiso, requisitos), nivel de interés y sugerencias de conversión
-- **Sentimiento general:** cómo se sienten los usuarios respecto a la marca y los eventos
-- **Métricas de retención:** cuántos usuarios vuelven a hablar con el bot, cuántos son nuevos, tasa de retención semanal
-- **Funnel de conversión:** usuarios totales → recurrentes → interesados en RRPP
-- **Sugerencias de mejora:** recomendaciones concretas generadas por IA basadas en el histórico real de conversaciones
+Una aplicación web a la que se accede desde el navegador, sin instalar nada. Tiene once secciones:
+
+- **Dashboard:** Números clave en tiempo real — mensajes, usuarios, retención, interés en RRPP, gráficos de tendencia.
+- **Fiestas:** Crear, editar y gestionar eventos. Calendario visual. Analytics por fiesta. Exportación a CSV.
+- **Estadísticas:** Retención, usuarios nuevos vs recurrentes, horas pico, dudas frecuentes, objeciones RRPP, sentimiento y sugerencias de mejora generadas por IA.
+- **Agente de IA:** Estado del agente, qué datos consulta, análisis automático de conversaciones.
+- **Conversaciones:** Todo el historial de chat con usuarios de Telegram y WhatsApp. Búsqueda y filtros por fecha.
+- **Clientes:** Base de datos completa — nombre, fecha de nacimiento, teléfono, chat ID, fiestas asistidas, estado activo/inactivo. Buscador, filtros y estadísticas. Es la base que alimenta las automatizaciones de cumpleaños y futuras campañas.
+- **Usuarios:** Gestión de quién puede acceder al panel, con tres niveles de permisos.
+- **Actividad:** Registro de todo lo que pasa en el panel — quién hizo qué y cuándo.
+- **Salas:** Alta y gestión de los locales donde se hacen las fiestas.
+- **Mensajes:** Envío de mensajes masivos por Telegram, con segmentación por actividad.
+- **Ajustes:** Configuración de la información de empresa que usan los bots.
+
+### 3.4. Base de datos de clientes
+
+Un registro centralizado de todos los asistentes y contactos de Madness Light. Es el núcleo de todo el sistema:
+
+- Los bots registran automáticamente a las personas que interactúan
+- Desde el panel se puede buscar, filtrar y consultar cualquier cliente
+- Las automatizaciones (cumpleaños, campañas) tiran de estos datos en tiempo real
+- Cada cliente tiene su ficha: nombre, fecha de nacimiento, teléfono, ID de chat, historial y estado
+
+### 3.5. Motor de análisis con IA
+
+Cada conversación que tiene el bot se convierte en datos útiles de forma automática:
+
+- **Ranking de dudas:** qué preguntan más y con qué frecuencia
+- **Interés por evento:** cuánta gente pregunta por cada fiesta, evolución en el tiempo
+- **Análisis de RRPP:** dudas, objeciones y nivel de interés en el programa
+- **Sentimiento:** cómo se sienten los usuarios respecto a la marca
+- **Retención:** cuántos vuelven, cuántos son nuevos, tasa semanal
+- **Sugerencias:** recomendaciones generadas por IA a partir de las conversaciones reales
 
 ---
 
-## 4. Sistema de usuarios y control de acceso
+## 4. Roles y permisos
 
-El panel implementa un sistema de roles para que distintas personas del equipo puedan acceder con los permisos que les corresponden:
+El panel tiene tres niveles de acceso:
 
-- **Admin:** Acceso completo a todos los módulos, incluyendo gestión de usuarios, salas, mensajes masivos y ajustes.
-- **Editor:** Puede gestionar eventos, ver conversaciones y estadísticas. No accede a la configuración ni a la gestión de usuarios.
-- **Viewer:** Solo puede consultar información. No puede crear, editar ni eliminar nada.
+- **Admin:** Todo. Gestión de usuarios, clientes, salas, mensajes masivos, ajustes.
+- **Editor:** Gestión de eventos, acceso a conversaciones, clientes y estadísticas.
+- **Viewer:** Solo consulta. No puede modificar nada.
 
-Cada acción realizada en el panel queda registrada en el log de actividad con el usuario responsable, la fecha y el detalle de lo que se hizo.
+Todo queda registrado en el log de actividad.
 
 ---
 
-## 5. Infraestructura y tecnología
+## 5. Tecnología
 
 | Componente | Tecnología |
 |---|---|
-| Bot de IA | OpenAI GPT-4o |
-| Base de datos | Supabase PostgreSQL |
-| Automatización de flujos | n8n |
-| Mensajería | Telegram Bot API |
+| Inteligencia artificial | OpenAI GPT-4o |
+| Base de datos | Supabase (PostgreSQL) |
+| Automatizaciones | n8n |
+| Canal Telegram | Telegram Bot API |
+| Canal WhatsApp | WhatsApp Business Cloud API (Meta) |
 | Panel web | Flask + Chart.js |
-| Hosting | Vercel (cloud serverless) |
+| Hosting | Vercel (serverless) |
 
-La arquitectura es serverless, lo que elimina los costes de servidor dedicado y garantiza disponibilidad superior al 99,9%. Las actualizaciones del panel no requieren tiempo de inactividad.
-
----
-
-## 6. Seguridad
-
-- Todas las comunicaciones van cifradas por SSL.
-- El bot solo tiene acceso de lectura a los datos que necesita para responder.
-- El sistema de roles garantiza que cada usuario ve únicamente lo que le corresponde.
-- El log de auditoría registra cada acción en el panel de forma permanente.
-- El agente incluye filtros de contenido que impiden que sea manipulado para generar respuestas fuera del guion de Madness Light.
+Todo está en la nube, sin servidores dedicados. Disponibilidad superior al 99,9%. Las actualizaciones no requieren tiempo de inactividad. Telegram y WhatsApp comparten la misma base de datos, así que la información es siempre consistente.
 
 ---
 
-## 7. Impacto estimado
+## 6. Automatizaciones
 
-Los datos proyectados parten del volumen de consultas observado y los tiempos de respuesta habituales del equipo:
+| Qué hace | Canal | Cuándo | Detalle |
+|---|---|---|---|
+| Atención al cliente con IA | Telegram | 24/7, tiempo real | Responde al instante con datos actualizados |
+| Atención al cliente con IA | WhatsApp | 24/7, tiempo real | Mismo agente, mismo nivel de calidad |
+| Felicitación de cumpleaños | WhatsApp | Día del cumpleaños, desde las 8:00h | Mensaje personalizado automático |
+| Pre-aviso de cumpleaños | WhatsApp | Día anterior al cumpleaños | Genera expectativa con un mensaje previo |
+| Mensajes masivos | Telegram | Cuando se necesite | Envío segmentado desde el panel |
 
-- **+40% en conversión de entradas:** Responder al instante cuando el usuario está activo y con intención de compra mejora la tasa de conversión de forma directa.
-- **-80% en carga de soporte:** El bot resuelve el 80% de las consultas recurrentes sin intervención humana.
-- **100% visibilidad de datos:** Por primera vez, estadísticas completas de lo que preguntan los clientes, qué les frena, qué eventos generan más interés y cómo evoluciona el sentimiento. Cada decisión se toma con datos reales, no con intuición.
+Todo orquestado desde n8n y conectado a Supabase en tiempo real.
 
 ---
 
-## 8. Estado actual y próximos pasos
+## 7. Seguridad
 
-La plataforma está desplegada en producción. El bot está operativo en Telegram y el panel de control es accesible por el equipo de Madness Light.
+- Comunicaciones cifradas por SSL
+- Los bots solo acceden a los datos que necesitan para responder
+- APIs protegidas por clave de acceso
+- Sistema de roles para que cada persona vea solo lo que le corresponde
+- Log de auditoría permanente de todas las acciones en el panel
+- Filtros de contenido para que los bots no se salgan del guion de Madness Light
+- Datos de clientes almacenados conforme a la normativa de protección de datos
 
-El siguiente paso es la fase de ajuste y expansión:
-- Calibración del tono conversacional según el manual de identidad de Madness Light
-- Formación del equipo en el uso del panel (gestión de eventos, lectura de métricas, envío de mensajes)
-- Monitorización activa durante las primeras fiestas con el sistema en marcha
-- Incorporación de nuevas funcionalidades según las necesidades que vayan surgiendo
+---
+
+## 8. Impacto esperado
+
+- **Más ventas de entradas:** Responder al instante cuando alguien está interesado cambia completamente la tasa de conversión. No se pierde el momento.
+- **El equipo se libera:** El bot se encarga de las preguntas repetitivas en dos canales. El equipo puede dedicar su tiempo a lo que realmente mueve el negocio.
+- **Más alcance:** Estar en WhatsApp además de Telegram cubre prácticamente a toda la audiencia joven en España.
+- **Datos reales para decidir:** Por primera vez hay visibilidad total de lo que preguntan los clientes, qué les frena, qué eventos generan más interés y cómo evoluciona el sentimiento.
+- **Los clientes se sienten cuidados:** Una felicitación de cumpleaños personalizada por WhatsApp es un detalle pequeño que genera un vínculo real con la marca. Y es completamente automático.
+
+---
+
+## 9. Estado actual y próximos pasos
+
+La plataforma está en producción. Los bots funcionan en Telegram y WhatsApp, el panel de control está operativo, la base de datos de clientes está conectada y las automatizaciones de cumpleaños están activas.
+
+Lo que viene ahora:
+- Ajustar el tono del bot según el estilo de Madness Light
+- Formar al equipo en el uso del panel
+- Monitorizar el sistema durante las primeras fiestas
+- Ampliar automatizaciones: recordatorios de eventos, ofertas personalizadas, campañas por perfil de cliente
+- Lo que vaya surgiendo sobre la marcha

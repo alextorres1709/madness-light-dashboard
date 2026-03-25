@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from flask import Blueprint, request, jsonify, current_app
-from models import db, Event, Message, CompanyInfo
+from models import db, Event, Message, CompanyInfo, Client
+from services.notifications import notify_birthday_greeted, notify_new_client
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 
@@ -160,3 +161,53 @@ def update_company_info():
 
     db.session.commit()
     return jsonify(company.to_dict())
+
+
+# ─── Birthdays (n8n automation) ─────────────────────
+
+@api_bp.route("/birthdays/today", methods=["GET"])
+@require_api_key
+def birthdays_today():
+    """Returns active clients whose birthday is today and haven't been greeted this year."""
+    now = datetime.now(timezone.utc)
+    today_str = now.strftime("%d/%m")  # matches dob format "dd/mm/yyyy"
+
+    clients = Client.query.filter(
+        Client.status == "active",
+        Client.dob.ilike(f"{today_str}%"),
+    ).all()
+
+    # Filter out already greeted this year
+    ungreeted = [
+        c for c in clients
+        if not c.birthday_greeted_at or c.birthday_greeted_at.year < now.year
+    ]
+
+    return jsonify([c.to_dict() for c in ungreeted])
+
+
+@api_bp.route("/birthdays/tomorrow", methods=["GET"])
+@require_api_key
+def birthdays_tomorrow():
+    """Returns active clients whose birthday is tomorrow (for pre-notification)."""
+    now = datetime.now(timezone.utc)
+    tomorrow = now + timedelta(days=1)
+    tomorrow_str = tomorrow.strftime("%d/%m")
+
+    clients = Client.query.filter(
+        Client.status == "active",
+        Client.dob.ilike(f"{tomorrow_str}%"),
+    ).all()
+
+    return jsonify([c.to_dict() for c in clients])
+
+
+@api_bp.route("/birthdays/greeted/<int:client_id>", methods=["POST"])
+@require_api_key
+def mark_greeted(client_id):
+    """Marks a client as birthday-greeted for this year."""
+    client = Client.query.get_or_404(client_id)
+    client.birthday_greeted_at = datetime.now(timezone.utc)
+    notify_birthday_greeted(client.name)
+    db.session.commit()
+    return jsonify({"ok": True, "client": client.to_dict()})

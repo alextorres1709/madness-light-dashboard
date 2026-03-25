@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, g
 from config import Config
-from models import db, CompanyInfo, User, Venue, VENUES
+from models import db, CompanyInfo, User, Venue, Client, Notification, Task, VENUES
 
 
 def create_app():
@@ -67,6 +67,21 @@ def create_app():
                 for v_name in VENUES:
                     db.session.add(Venue(name=v_name, active=True))
                 db.session.commit()
+
+            # Seed demo clients if empty
+            if not Client.query.first():
+                demo_clients = [
+                    Client(name="Carlos Martínez", phone="+34 612 345 678", dob="15/03/2008", chat_id="tg_892174531", events_attended=12, last_seen="22/03/2026", status="active"),
+                    Client(name="Lucía Fernández", phone="+34 634 567 890", dob="28/07/2007", chat_id="tg_710382946", events_attended=8, last_seen="20/03/2026", status="active"),
+                    Client(name="Pablo García", phone="+34 655 123 456", dob="02/11/2008", chat_id="tg_503928174", events_attended=5, last_seen="15/03/2026", status="active"),
+                    Client(name="Elena Ruiz", phone="+34 678 901 234", dob="19/01/2009", chat_id="tg_629481057", events_attended=3, last_seen="10/03/2026", status="inactive"),
+                    Client(name="Marcos López", phone="+34 691 234 567", dob="08/09/2007", chat_id="tg_384720196", events_attended=15, last_seen="23/03/2026", status="active"),
+                    Client(name="Sara Jiménez", phone="+34 623 456 789", dob="14/05/2008", chat_id="tg_917305842", events_attended=7, last_seen="18/03/2026", status="active"),
+                    Client(name="Alejandro Moreno", phone="+34 645 678 901", dob="30/12/2007", chat_id="tg_205839461", events_attended=1, last_seen="05/02/2026", status="inactive"),
+                    Client(name="Marta Navarro", phone="+34 667 890 123", dob="22/06/2008", chat_id="tg_748291035", events_attended=10, last_seen="21/03/2026", status="active"),
+                ]
+                db.session.add_all(demo_clients)
+                db.session.commit()
         except Exception as e:
             print(f"[WARNING] Database init skipped: {e}")
 
@@ -94,6 +109,9 @@ def create_app():
     from routes.venues import venues_bp
     from routes.conversations import conversations_bp
     from routes.broadcast import broadcast_bp
+    from routes.clients import clients_bp
+    from routes.notifications import notifications_bp
+    from routes.tasks import tasks_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -107,6 +125,9 @@ def create_app():
     app.register_blueprint(venues_bp)
     app.register_blueprint(conversations_bp)
     app.register_blueprint(broadcast_bp)
+    app.register_blueprint(clients_bp)
+    app.register_blueprint(notifications_bp)
+    app.register_blueprint(tasks_bp)
 
     return app
 
