@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>NodexAI — Protección de Datos para Madness Light</title>
+<style>
+    @page { margin: 2cm; size: A4; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #111; line-height: 1.5; padding: 40px; max-width: 800px; margin: 0 auto; }
+
+    .header { text-align: center; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 2px solid #111; }
+    .header h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .header p { font-size: 13px; color: #555; }
+    .logo { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 8px; }
+
+    h2 { font-size: 18px; font-weight: 700; margin: 32px 0 16px; padding-bottom: 6px; border-bottom: 1px solid #ddd; }
+    h3 { font-size: 14px; font-weight: 700; margin: 20px 0 8px; }
+
+    p, li { font-size: 13px; }
+    p { margin-bottom: 10px; }
+    ul { padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 4px; }
+
+    .info-table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; }
+    .info-table th, .info-table td { padding: 10px 14px; text-align: left; border: 1px solid #ddd; font-size: 13px; vertical-align: top; }
+    .info-table th { background: #111; color: #fff; font-weight: 600; }
+    .info-table tr:nth-child(even) { background: #f9f9f9; }
+
+    .ok { color: #16a34a; font-weight: 700; }
+    .no { color: #dc2626; font-weight: 700; }
+
+    .note { background: #f5f5f5; padding: 12px 16px; border-left: 3px solid #111; margin: 16px 0; font-size: 12px; }
+    .note-warning { background: #fef3c7; border-left-color: #d97706; }
+    .note-ok { background: #f0fdf4; border-left-color: #16a34a; }
+
+    .section-desc { font-size: 12px; color: #666; margin-bottom: 16px; }
+
+    .footer { margin-top: 40px; padding-top: 16px; border-top: 2px solid #111; text-align: center; font-size: 11px; color: #888; }
+
+    @media print {
+        body { padding: 0; }
+        .no-print { display: none; }
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">NodexAI</div>
+    <h1>Protección de Datos y Privacidad</h1>
+    <p>Documento para Madness Light — Cómo tratamos y protegemos la información</p>
+</div>
+
+<div class="note note-ok">
+    <strong>NodexAI no vende, comparte ni cede datos a terceros bajo ningún concepto.</strong> Toda la información de vuestros clientes es estrictamente privada, de vuestra propiedad, y se utiliza exclusivamente para el funcionamiento de la plataforma contratada.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>1. Principio fundamental</h2>
+
+<p>La relación entre NodexAI y Madness Light se basa en un principio claro:</p>
+
+<div class="note">
+    <strong>Los datos son vuestros. Nosotros solo los custodiamos.</strong><br>
+    NodexAI actúa como <strong>encargado del tratamiento</strong> de los datos — los almacenamos y procesamos siguiendo vuestras instrucciones, pero no tenemos ningún derecho sobre ellos. En caso de baja del servicio, se entrega una copia completa y se eliminan de nuestros servidores.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>2. Qué datos recogemos y para qué</h2>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Dato</th>
+            <th>Para qué se usa</th>
+            <th>¿Se comparte?</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Nombre del cliente</strong></td>
+            <td>Identificación en el panel, personalización de mensajes del bot y felicitaciones de cumpleaños</td>
+            <td><span class="no">No</span></td>
+        </tr>
+        <tr>
+            <td><strong>Número de teléfono</strong></td>
+            <td>Envío de mensajes por WhatsApp (bot, cumpleaños, campañas)</td>
+            <td><span class="no">No</span> — solo se envía a la API de WhatsApp/Meta para el envío del mensaje</td>
+        </tr>
+        <tr>
+            <td><strong>Fecha de nacimiento</strong></td>
+            <td>Automatización de felicitaciones de cumpleaños</td>
+            <td><span class="no">No</span></td>
+        </tr>
+        <tr>
+            <td><strong>Historial de conversaciones</strong></td>
+            <td>Consulta desde el panel, estadísticas de actividad, análisis de preguntas frecuentes con IA</td>
+            <td><span class="no">No</span></td>
+        </tr>
+        <tr>
+            <td><strong>Estadísticas de uso</strong></td>
+            <td>Gráficas del panel, KPIs, análisis de tendencias</td>
+            <td><span class="no">No</span> — son datos agregados, no individuales</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>3. Lo que nunca hacemos</h2>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Práctica</th>
+            <th>¿Lo hacemos?</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Vender datos de clientes a terceros</td>
+            <td><span class="no">Nunca</span></td>
+        </tr>
+        <tr>
+            <td>Compartir la base de datos con otras empresas</td>
+            <td><span class="no">Nunca</span></td>
+        </tr>
+        <tr>
+            <td>Usar los datos para publicidad propia de NodexAI</td>
+            <td><span class="no">Nunca</span></td>
+        </tr>
+        <tr>
+            <td>Ceder datos a partners, colaboradores o afiliados</td>
+            <td><span class="no">Nunca</span></td>
+        </tr>
+        <tr>
+            <td>Acceder a los datos para fines distintos al mantenimiento de la plataforma</td>
+            <td><span class="no">Nunca</span></td>
+        </tr>
+        <tr>
+            <td>Conservar datos tras la baja del servicio</td>
+            <td><span class="no">Nunca</span> — se eliminan en un plazo de 30 días tras la baja</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>4. Dónde se almacenan los datos</h2>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Componente</th>
+            <th>Ubicación</th>
+            <th>Proveedor</th>
+            <th>Seguridad</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Base de datos principal</strong></td>
+            <td>Servidores en la UE</td>
+            <td>Railway (PostgreSQL)</td>
+            <td>Cifrado en reposo y en tránsito (SSL/TLS)</td>
+        </tr>
+        <tr>
+            <td><strong>Copia local</strong></td>
+            <td>Equipo del administrador</td>
+            <td>SQLite (dentro de la app)</td>
+            <td>Cifrado del disco del equipo</td>
+        </tr>
+        <tr>
+            <td><strong>Backups</strong></td>
+            <td>Servidores en la UE</td>
+            <td>Railway (automáticos)</td>
+            <td>Copias diarias con retención de 7 días</td>
+        </tr>
+        <tr>
+            <td><strong>API de WhatsApp</strong></td>
+            <td>Servidores de Meta</td>
+            <td>Meta (WhatsApp Business API)</td>
+            <td>Cifrado end-to-end (protocolo Signal)</td>
+        </tr>
+        <tr>
+            <td><strong>IA (ChatGPT)</strong></td>
+            <td>Servidores de OpenAI</td>
+            <td>OpenAI</td>
+            <td>Los mensajes NO se usan para entrenar modelos (API de pago)</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note note-ok">
+    <strong>Todos los proveedores utilizados cumplen con el RGPD</strong> (Reglamento General de Protección de Datos) y tienen sus servidores principales en la Unión Europea o cuentan con las cláusulas contractuales tipo (SCCs) para transferencias internacionales.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>5. Medidas de seguridad</h2>
+
+<h3>Técnicas</h3>
+<ul>
+    <li><strong>Cifrado SSL/TLS</strong> en todas las comunicaciones entre la app, el servidor y las APIs</li>
+    <li><strong>Contraseñas hasheadas</strong> — las contraseñas de los usuarios del panel se almacenan con hash (bcrypt), incluso nosotros no podemos verlas</li>
+    <li><strong>Acceso restringido</strong> — solo el administrador de Madness Light puede acceder al panel completo. Los empleados pueden tener permisos limitados</li>
+    <li><strong>Tokens de API rotativos</strong> — las claves de acceso a WhatsApp y OpenAI se rotan periódicamente</li>
+    <li><strong>Backups automáticos</strong> — copias de seguridad diarias de la base de datos con retención de 7 días</li>
+</ul>
+
+<h3>Organizativas</h3>
+<ul>
+    <li><strong>Acceso mínimo necesario</strong> — solo el personal técnico de NodexAI accede a los servidores, y exclusivamente para mantenimiento</li>
+    <li><strong>Sin acceso a contenido</strong> — el equipo técnico de NodexAI no lee las conversaciones ni los datos personales de los clientes salvo que Madness Light lo solicite expresamente para resolver una incidencia</li>
+    <li><strong>Confidencialidad</strong> — todo el equipo de NodexAI está sujeto a obligaciones de confidencialidad</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>6. Servicios de terceros utilizados</h2>
+
+<p class="section-desc">La plataforma utiliza los siguientes servicios externos. Ninguno de ellos recibe, almacena ni tiene acceso a la base de datos de clientes de Madness Light:</p>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Servicio</th>
+            <th>Para qué se usa</th>
+            <th>¿Recibe datos de clientes?</th>
+            <th>Cumple RGPD</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>WhatsApp Business API (Meta)</strong></td>
+            <td>Envío/recepción de mensajes</td>
+            <td>Solo el número de teléfono y el contenido del mensaje (cifrado E2E)</td>
+            <td><span class="ok">Sí</span></td>
+        </tr>
+        <tr>
+            <td><strong>OpenAI (ChatGPT)</strong></td>
+            <td>Respuestas del bot IA</td>
+            <td>El texto de la conversación (sin nombre ni teléfono). No se usa para entrenar modelos.</td>
+            <td><span class="ok">Sí</span></td>
+        </tr>
+        <tr>
+            <td><strong>Railway</strong></td>
+            <td>Hosting del servidor y base de datos</td>
+            <td>Almacena la BBDD (como encargado del tratamiento)</td>
+            <td><span class="ok">Sí</span></td>
+        </tr>
+        <tr>
+            <td><strong>n8n (self-hosted)</strong></td>
+            <td>Automatizaciones (cumpleaños, campañas)</td>
+            <td>Se ejecuta en nuestros servidores, no envía datos fuera</td>
+            <td><span class="ok">Sí</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>7. Derechos del cliente final</h2>
+
+<p>Los clientes de Madness Light (las personas cuyos datos se almacenan) tienen los siguientes derechos según el RGPD:</p>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Derecho</th>
+            <th>Qué significa</th>
+            <th>Cómo se ejerce</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Acceso</strong></td>
+            <td>Saber qué datos suyos tenemos almacenados</td>
+            <td>Solicitud a Madness Light → exportamos los datos del cliente desde el panel</td>
+        </tr>
+        <tr>
+            <td><strong>Rectificación</strong></td>
+            <td>Corregir datos incorrectos</td>
+            <td>Se editan directamente desde el panel</td>
+        </tr>
+        <tr>
+            <td><strong>Supresión</strong></td>
+            <td>Eliminar todos sus datos (derecho al olvido)</td>
+            <td>Se eliminan del panel y de la base de datos. Irreversible.</td>
+        </tr>
+        <tr>
+            <td><strong>Oposición</strong></td>
+            <td>Dejar de recibir mensajes</td>
+            <td>Se marca como opt-out en el panel. No recibirá más campañas ni cumpleaños.</td>
+        </tr>
+        <tr>
+            <td><strong>Portabilidad</strong></td>
+            <td>Recibir sus datos en formato legible</td>
+            <td>Exportación CSV desde el panel</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note">
+    <strong>Responsabilidad:</strong> Madness Light es el <strong>responsable del tratamiento</strong> de los datos de sus clientes. NodexAI es el <strong>encargado del tratamiento</strong>. Madness Light decide qué datos se recogen y para qué se usan; NodexAI los almacena y procesa siguiendo sus instrucciones.
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>8. ¿Qué pasa si Madness Light deja de usar NodexAI?</h2>
+
+<ul>
+    <li><strong>Exportación completa</strong> — Se entrega toda la base de datos en formato CSV (clientes, conversaciones, eventos, estadísticas)</li>
+    <li><strong>Eliminación total</strong> — En un plazo máximo de 30 días tras la baja, se eliminan todos los datos de nuestros servidores y copias de seguridad</li>
+    <li><strong>Certificado de destrucción</strong> — Si se solicita, emitimos un certificado confirmando que los datos han sido eliminados</li>
+    <li><strong>Sin permanencia</strong> — No retenemos datos como "penalización" ni por ningún otro motivo</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>9. Resumen</h2>
+
+<table class="info-table">
+    <thead>
+        <tr>
+            <th>Pregunta</th>
+            <th>Respuesta</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>¿Vendéis datos a terceros?</td>
+            <td><span class="no">No, nunca</span></td>
+        </tr>
+        <tr>
+            <td>¿Compartís datos con otras empresas?</td>
+            <td><span class="no">No, nunca</span></td>
+        </tr>
+        <tr>
+            <td>¿Los datos son nuestros?</td>
+            <td><span class="ok">Sí, 100% propiedad de Madness Light</span></td>
+        </tr>
+        <tr>
+            <td>¿Cumplís con el RGPD?</td>
+            <td><span class="ok">Sí, completamente</span></td>
+        </tr>
+        <tr>
+            <td>¿Dónde se almacenan los datos?</td>
+            <td><span class="ok">Servidores en la UE (Railway) + copia local</span></td>
+        </tr>
+        <tr>
+            <td>¿Puedo borrar datos de un cliente?</td>
+            <td><span class="ok">Sí, desde el panel en cualquier momento</span></td>
+        </tr>
+        <tr>
+            <td>¿Qué pasa si dejo el servicio?</td>
+            <td><span class="ok">Exportación completa + eliminación total en 30 días</span></td>
+        </tr>
+        <tr>
+            <td>¿OpenAI usa mis datos para entrenar?</td>
+            <td><span class="no">No</span> — usamos la API de pago, que no utiliza datos para entrenamiento</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note note-ok">
+    <strong>Compromiso de NodexAI:</strong> Tratamos los datos de vuestros clientes como si fueran los nuestros propios. La confianza es la base de nuestra relación comercial, y la protección de datos es una prioridad absoluta.
+</div>
+
+<div class="footer">
+    <p>NodexAI — nodexai.es</p>
+    <p>Documento generado en marzo 2026. Sujeto a la legislación española y al RGPD (UE) 2016/679.</p>
+</div>
+
+</body>
+</html>
