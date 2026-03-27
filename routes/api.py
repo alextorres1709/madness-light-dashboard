@@ -81,7 +81,7 @@ def log_message():
             user_name=data.get("user_name", "Unknown"),
             message=data.get("message", ""),
             response=data.get("response", ""),
-            platform=data.get("platform", "telegram"),
+            platform=data.get("platform", "whatsapp"),
             timestamp=datetime.fromisoformat(data["timestamp"])
             if data.get("timestamp")
             else datetime.now(timezone.utc),

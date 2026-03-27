@@ -92,7 +92,7 @@ def _generate_insights():
                 "role": "system",
                 "content": (
                     "Eres un analista de datos para Madness Light, empresa de fiestas light para jóvenes en Madrid. "
-                    "Analiza los mensajes de usuarios del bot de Telegram y genera un informe conciso.\n\n"
+                    "Analiza los mensajes de usuarios del bot de WhatsApp y genera un informe conciso.\n\n"
                     "Responde SOLO con JSON válido (sin markdown, sin ```), con estas 4 claves:\n"
                     '- "preguntas_frecuentes": resumen de 2-4 líneas sobre qué preguntan más los usuarios\n'
                     '- "salas_populares": qué salas o locales generan más interés\n'

@@ -120,7 +120,7 @@ class Message(db.Model):
     user_name = db.Column(db.String(200), default="Unknown")
     message = db.Column(db.Text, nullable=False)
     response = db.Column(db.Text, default="")
-    platform = db.Column(db.String(50), default="telegram")
+    platform = db.Column(db.String(50), default="whatsapp")
     timestamp = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc), index=True
     )
@@ -192,7 +192,7 @@ class Venue(db.Model):
 
 
 class Conversation(db.Model):
-    """Bot chat history — shared with Telegram bot (n8n)."""
+    """Bot chat history — shared with WhatsApp bot (n8n)."""
 
     __tablename__ = "conversations"
 
