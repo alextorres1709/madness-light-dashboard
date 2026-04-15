@@ -12,18 +12,22 @@
 </div>
 
 <!-- Stats row -->
-<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 24px;">
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 24px;">
     <div class="stat-card">
         <div class="stat-label">Total clientes</div>
         <div class="stat-value">{{ total }}</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">Activos</div>
-        <div class="stat-value" style="color: var(--kiwi)">{{ active }}</div>
+        <div class="stat-value" style="color: var(--success)">{{ active }}</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">Inactivos</div>
         <div class="stat-value">{{ total - active }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">WhatsApp Opt-in</div>
+        <div class="stat-value" style="color: var(--brand-primary)">{{ opted_in }}</div>
     </div>
 </div>
 
@@ -52,11 +56,12 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Teléfono</th>
-                    <th>Fecha de nacimiento</th>
-                    <th>Chat ID</th>
+                    <th>Nacimiento</th>
                     <th>Fiestas</th>
                     <th>Última vez</th>
                     <th>Estado</th>
+                    <th>WhatsApp</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,15 +70,32 @@
                     <td style="font-weight:600">{{ client.name }}</td>
                     <td>{{ client.phone }}</td>
                     <td>{{ client.dob }}</td>
-                    <td><code style="font-size:12px;opacity:.7">{{ client.chat_id }}</code></td>
                     <td><span class="badge badge-platform">{{ client.events_attended }}</span></td>
                     <td>{{ client.last_seen }}</td>
                     <td>
                         {% if client.status == 'active' %}
-                        <span class="badge badge-active" style="background:rgba(137,233,0,.12);color:var(--kiwi)">Activo</span>
+                        <span class="badge badge-active">Activo</span>
                         {% else %}
-                        <span class="badge" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.45)">Inactivo</span>
+                        <span class="badge badge-inactive">Inactivo</span>
                         {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('clients.toggle_optin', client_id=client.id) }}" style="display:inline">
+                            <button type="submit" class="toggle-btn {{ 'toggle-on' if client.whatsapp_opt_in else 'toggle-off' }}" title="{{ 'Opt-in activo' if client.whatsapp_opt_in else 'Opt-in inactivo' }}">
+                                {% if client.whatsapp_opt_in %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                {% else %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                {% endif %}
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('clients.toggle_status', client_id=client.id) }}" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-outline" title="{{ 'Desactivar' if client.status == 'active' else 'Activar' }}">
+                                {{ 'Desactivar' if client.status == 'active' else 'Activar' }}
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}

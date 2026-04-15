@@ -5,12 +5,12 @@
     <script>(function(){var t=localStorage.getItem('ml-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark')})()</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Dashboard{% endblock %} — Madness Light</title>
+    <title>{% block title %}Dashboard{% endblock %} — Elite Events</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=12">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=16">
 </head>
 
 <body>
@@ -44,8 +44,17 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <div class="logo-icon">ML</div>
-                <div class="logo-text"><span>Madness</span> Light</div>
+                <div class="logo-icon">
+                    <svg viewBox="0 0 48 48" fill="currentColor" width="20" height="20">
+                        <!-- Graduation cap -->
+                        <path d="M24 6 L4 16 L24 22 L44 16 Z"/>
+                        <path d="M38 19v9c0 4-6.27 8-14 8s-14-4-14-8v-9l14 5 14-5z" opacity="0.85"/>
+                        <rect x="40" y="16" width="2.5" height="10" rx="1"/>
+                        <circle cx="41.25" cy="27" r="2"/>
+                        <!-- EE letters hint via blocks -->
+                    </svg>
+                </div>
+                <div class="logo-text"><span>Elite</span> Events</div>
             </div>
 
             <nav class="sidebar-nav">
@@ -124,7 +133,7 @@
                 <a href="{{ url_for('users.index') }}"
                     class="nav-link {% if '/usuarios' in request.path %}active{% endif %}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" />
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
                         <path d="M23 21v-2a4 4 0 00-3-3.87" />
                         <path d="M16 3.13a4 4 0 010 7.75" />
@@ -186,7 +195,7 @@
 
             <div class="sidebar-brand">
                 <a href="https://nodexai.es" target="_blank">
-                    Powered by <span class="nodex-logo">NodexAI</span>
+                    Panel by <span class="nodex-logo">NodexAI</span>
                 </a>
             </div>
         </aside>
@@ -240,7 +249,7 @@
 
     <!-- Powered by NodexAI — fixed bottom-right -->
     <a href="https://nodexai.es" target="_blank" class="powered-footer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
             <path d="M12 2L2 7l10 5 10-5-10-5z" />
             <path d="M2 17l10 5 10-5" />
             <path d="M2 12l10 5 10-5" />
@@ -248,7 +257,7 @@
         <span class="nodex">NodexAI</span>
     </a>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}?v=12"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=16"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     {% block scripts %}{% endblock %}
 </body>

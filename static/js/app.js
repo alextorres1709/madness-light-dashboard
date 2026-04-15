@@ -11,19 +11,33 @@ function toggleTheme() {
 function getChartTheme() {
     var d = isDark();
     return {
-        primary: d ? '#89E900' : '#4F46E5',
-        primaryA: function(a) { return d ? 'rgba(137,233,0,'+a+')' : 'rgba(79,70,229,'+a+')'; },
-        secondary: d ? '#00f0ff' : '#14b8a6',
-        secondaryA: function(a) { return d ? 'rgba(0,240,255,'+a+')' : 'rgba(20,184,166,'+a+')'; },
-        indigoA: function(a) { return d ? 'rgba(167,139,250,'+a+')' : 'rgba(99,102,241,'+a+')'; },
-        amberA: function(a) { return 'rgba(245,158,11,'+a+')'; },
-        text: d ? '#a0aec0' : '#94a3b8',
-        grid: d ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-        tip: { bg: d?'#111118':'#fafbfc', title: d?'#e2e8f0':'#0f172a', body: d?'#a0aec0':'#334155', border: d?'#2a2a3e':'#e0e4ea' },
-        card: d ? '#0e0e16' : '#fafbfc',
+        primary: d ? '#3B82F6' : '#2563EB',
+        primaryA: function(a) { return d ? 'rgba(59,130,246,'+a+')' : 'rgba(37,99,235,'+a+')'; },
+        secondary: d ? '#22D3EE' : '#0891B2',
+        secondaryA: function(a) { return d ? 'rgba(34,211,238,'+a+')' : 'rgba(8,145,178,'+a+')'; },
+        blueA: function(a) { return d ? 'rgba(96,165,250,'+a+')' : 'rgba(59,130,246,'+a+')'; },
+        purpleA: function(a) { return d ? 'rgba(167,139,250,'+a+')' : 'rgba(124,58,237,'+a+')'; },
+        amberA: function(a) { return d ? 'rgba(251,191,36,'+a+')' : 'rgba(217,119,6,'+a+')'; },
+        text: d ? '#6B7280' : '#64748B',
+        grid: d ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.05)',
+        tip: {
+            bg: d ? '#141414' : '#fff',
+            title: d ? '#F1F5F9' : '#0f172a',
+            body: d ? '#94A3B8' : '#475569',
+            border: d ? 'rgba(255,255,255,0.08)' : '#e2e8f0'
+        },
+        card: d ? '#0d0d0d' : '#ffffff',
         palette: d
-            ? ['#89E900','#00f0ff','#f59e0b','#ef4444','#a78bfa','#ec4899','#34d399','#64748b']
-            : ['#4F46E5','#14b8a6','#f59e0b','#ef4444','#6366f1','#ec4899','#8b5cf6','#64748b']
+            ? ['#3B82F6','#22D3EE','#FBBF24','#F87171','#A78BFA','#34D399','#FB7185','#9CA3AF']
+            : ['#2563EB','#0891B2','#D97706','#dc2626','#7C3AED','#059669','#E11D48','#64748b'],
+        // Build vertical gradient for area/bar fill
+        makeGradient: function(ctx, colorTop, alpha) {
+            var h = ctx.canvas.offsetHeight || 280;
+            var g = ctx.createLinearGradient(0, 0, 0, h);
+            g.addColorStop(0, colorTop.replace('1)', alpha+')'));
+            g.addColorStop(1, colorTop.replace('1)', '0)'));
+            return g;
+        }
     };
 }
 

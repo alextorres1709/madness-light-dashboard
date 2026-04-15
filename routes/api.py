@@ -168,12 +168,14 @@ def update_company_info():
 @api_bp.route("/birthdays/today", methods=["GET"])
 @require_api_key
 def birthdays_today():
-    """Returns active clients whose birthday is today and haven't been greeted this year."""
+    """Returns active, opted-in clients whose birthday is today and haven't been greeted this year."""
     now = datetime.now(timezone.utc)
     today_str = now.strftime("%d/%m")  # matches dob format "dd/mm/yyyy"
 
+    # WhatsApp Business compliance: only contact opted-in users for marketing/birthday templates
     clients = Client.query.filter(
         Client.status == "active",
+        Client.whatsapp_opt_in == True,
         Client.dob.ilike(f"{today_str}%"),
     ).all()
 
@@ -189,17 +191,29 @@ def birthdays_today():
 @api_bp.route("/birthdays/tomorrow", methods=["GET"])
 @require_api_key
 def birthdays_tomorrow():
-    """Returns active clients whose birthday is tomorrow (for pre-notification)."""
+    """Returns active, opted-in clients whose birthday is tomorrow and haven't been pre-greeted this year.
+
+    Re-uses ``birthday_greeted_at`` as a deduplication marker: if it was set in
+    the last 48h we assume the pre-notice (or full greeting) already went out,
+    avoiding double sends if the n8n schedule is more aggressive than daily.
+    """
     now = datetime.now(timezone.utc)
     tomorrow = now + timedelta(days=1)
     tomorrow_str = tomorrow.strftime("%d/%m")
 
     clients = Client.query.filter(
         Client.status == "active",
+        Client.whatsapp_opt_in == True,
         Client.dob.ilike(f"{tomorrow_str}%"),
     ).all()
 
-    return jsonify([c.to_dict() for c in clients])
+    cutoff = now - timedelta(hours=48)
+    pending = [
+        c for c in clients
+        if not c.birthday_greeted_at or c.birthday_greeted_at < cutoff
+    ]
+
+    return jsonify([c.to_dict() for c in pending])
 
 
 @api_bp.route("/birthdays/greeted/<int:client_id>", methods=["POST"])

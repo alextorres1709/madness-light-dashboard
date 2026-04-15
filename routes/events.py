@@ -3,7 +3,7 @@ import io
 import calendar as cal_module
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, Response
-from models import db, Event, Venue, Conversation, VENUES, THEMES
+from models import db, Event, Venue, Conversation, CustomTheme, VENUES, THEMES
 from routes.auth import login_required, editor_required
 from services.activity import log_activity
 from services.notifications import notify_event_created, notify_event_updated, notify_event_deleted
@@ -47,11 +47,17 @@ def index():
     db_venues = Venue.query.filter_by(active=True).order_by(Venue.name).all()
     venue_names = [v.name for v in db_venues] if db_venues else VENUES
 
+    # Merge default themes with custom ones
+    custom_theme_objs = CustomTheme.query.order_by(CustomTheme.name).all()
+    custom_names = [t.name for t in custom_theme_objs]
+    all_themes = THEMES + [t for t in custom_names if t not in THEMES]
+
     return render_template(
         "events.html",
         events=events,
         venues=venue_names,
-        themes=THEMES,
+        themes=all_themes,
+        custom_themes=custom_theme_objs,
         search=search,
         selected_venue=venue_filter,
         selected_theme=theme_filter,
@@ -267,3 +273,37 @@ def analytics(event_id):
         "unique_users": unique_users,
         "timeline": timeline,
     })
+
+
+@events_bp.route("/events/add-theme", methods=["POST"])
+@login_required
+@editor_required
+def add_theme():
+    name = request.form.get("name", "").strip()
+    if not name:
+        flash("Nombre de temática requerido.", "error")
+        return redirect(url_for("events.index"))
+    if name in THEMES:
+        flash(f"'{name}' ya existe como temática predeterminada.", "error")
+        return redirect(url_for("events.index"))
+    existing = CustomTheme.query.filter_by(name=name).first()
+    if existing:
+        flash(f"La temática '{name}' ya existe.", "error")
+        return redirect(url_for("events.index"))
+    db.session.add(CustomTheme(name=name))
+    db.session.commit()
+    log_activity("create", "theme", name, f"Temática '{name}' creada")
+    flash(f"Temática '{name}' creada correctamente.", "success")
+    return redirect(url_for("events.index"))
+
+
+@events_bp.route("/events/delete-theme/<int:theme_id>", methods=["POST"])
+@login_required
+@editor_required
+def delete_theme(theme_id):
+    theme = CustomTheme.query.get_or_404(theme_id)
+    name = theme.name
+    db.session.delete(theme)
+    db.session.commit()
+    flash(f"Temática '{name}' eliminada.", "success")
+    return redirect(url_for("events.index"))

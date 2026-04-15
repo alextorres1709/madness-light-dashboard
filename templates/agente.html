@@ -225,7 +225,7 @@
                                 {% for e in events_with_links %}
                                 <tr>
                                     <td>{{ e.name }}</td>
-                                    <td><a href="{{ e.entry_link }}" target="_blank" style="color:var(--accent-primary);word-break:break-all">{{ e.entry_link[:50] }}{% if e.entry_link|length > 50 %}...{% endif %}</a></td>
+                                    <td><a href="{{ e.entry_link }}" target="_blank" style="color:var(--brand-primary);word-break:break-all">{{ e.entry_link[:50] }}{% if e.entry_link|length > 50 %}...{% endif %}</a></td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>
@@ -275,15 +275,18 @@
                         </svg>
                     </span>
                     <div style="flex:1;min-width:0">
-                        <div class="capability-name">Programa RRPP <span class="capability-badge">3 rangos</span></div>
-                        <div class="capability-desc">Explica el programa de relaciones públicas cuando se pregunta</div>
+                        <div class="capability-name">Programa RRPP <span class="capability-badge">5 rangos</span></div>
+                        <div class="capability-desc">Sistema de puntos, red de ventas y rangos con beneficios exclusivos</div>
                         <div class="capability-detail">
                             <div class="capability-data-grid">
-                                <div class="capability-data-item"><span class="capability-data-label">Rango 1</span><span>RRPP Base — Comisiones por entrada vendida</span></div>
-                                <div class="capability-data-item"><span class="capability-data-label">Rango 2</span><span>Embajador — Beneficios extra + acceso VIP</span></div>
-                                <div class="capability-data-item"><span class="capability-data-label">Rango 3</span><span>Elite — Máximas comisiones + beneficios exclusivos</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Embajador</span><span>+10 entradas · Saltar cola · Colar acompañantes</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Líder</span><span>+25 ent. · Entrada gratis · 2 pulseras · 10 sin cola</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Elite</span><span>+50 ent. · Entrada + acompañante · 3 pulseras · 15 sin cola</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Director</span><span>+100 ent. · Entrada + acompañantes · 5 pulseras · 20 sin cola</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Veterano</span><span>Ex-Director +3 años · Beneficios internos exclusivos</span></div>
+                                <div class="capability-data-item"><span class="capability-data-label">Puntos</span><span>10 puntos = 1€ · Retirable en cualquier momento · Baremo por volumen</span></div>
                             </div>
-                            <p class="capability-hint">El bot explica automáticamente los requisitos, beneficios y cómo apuntarse a cada rango.</p>
+                            <p class="capability-hint">Premio rápido: 9+ entradas en una fiesta → 1 entrada gratis. Ningún asistente puede superar el 80% del total.</p>
                         </div>
                     </div>
                     <svg class="capability-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>

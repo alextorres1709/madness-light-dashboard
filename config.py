@@ -22,6 +22,6 @@ class Config:
     ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
     API_KEY = os.getenv("API_KEY", "ml-api-key-change-me")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
     WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN", "")
     WHATSAPP_PHONE_ID = os.getenv("WHATSAPP_PHONE_ID", "")
+    WHATSAPP_VERIFY_TOKEN = os.getenv("WHATSAPP_VERIFY_TOKEN", "")

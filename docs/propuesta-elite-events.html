@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>NodexAI — Propuesta para Elite Events</title>
+<style>
+    @page { margin: 0; size: A4; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #0a0a0a; color: #fff; line-height: 1.5; max-width: 800px; margin: 0 auto; }
+
+    /* ── Páginas ── */
+    .page { width: 100%; min-height: 1120px; padding: 48px 40px; position: relative; page-break-after: always; display: flex; flex-direction: column; }
+    .page:last-child { page-break-after: avoid; }
+
+    /* ── Tipografía ── */
+    .accent { color: #84cc16; }
+    .accent-cyan { color: #22d3ee; }
+    .accent-purple { color: #a78bfa; }
+    .accent-orange { color: #f59e0b; }
+    .accent-red { color: #ef4444; }
+    .muted { color: #888; }
+    .section-num { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #84cc16; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .section-num::before { content: ""; width: 32px; height: 2px; background: #84cc16; }
+    h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; margin-bottom: 16px; }
+    h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 12px; }
+    h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    p { font-size: 14px; color: #aaa; margin-bottom: 10px; }
+    p.lead { font-size: 15px; color: #ccc; max-width: 560px; }
+
+    /* ── Badge / pill ── */
+    .pill { display: inline-block; padding: 8px 24px; border: 1px solid #333; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #ccc; }
+    .pill .dot { display: inline-block; width: 8px; height: 8px; background: #84cc16; border-radius: 50%; margin-right: 8px; }
+
+    /* ── Cards ── */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+    .card { background: #141414; border: 1px solid #222; border-radius: 12px; padding: 28px 24px; }
+    .card .icon { width: 44px; height: 44px; border-radius: 10px; background: #1a1a1a; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; }
+    .card .tag { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+    .tag-green { background: rgba(132,204,22,0.15); color: #84cc16; }
+    .tag-cyan { background: rgba(34,211,238,0.15); color: #22d3ee; }
+    .tag-purple { background: rgba(167,139,250,0.15); color: #a78bfa; }
+    .tag-orange { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .card h3 { color: #fff; }
+    .card p { font-size: 13px; color: #777; margin: 0; }
+
+    /* ── Stats bar ── */
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: auto; padding-top: 32px; }
+    .stat-item { text-align: center; border: 1px solid #222; border-radius: 10px; padding: 20px 12px; }
+    .stat-item .value { font-size: 32px; font-weight: 800; color: #84cc16; }
+    .stat-item .label { font-size: 11px; color: #666; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+
+    /* ── Checklist ── */
+    .checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+    .check-item { display: flex; gap: 14px; align-items: flex-start; background: #141414; border: 1px solid #222; border-radius: 10px; padding: 20px; }
+    .check-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(132,204,22,0.15); color: #84cc16; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .check-item h3 { font-size: 14px; margin-bottom: 4px; }
+    .check-item p { font-size: 12px; color: #777; margin: 0; }
+
+    /* ── Bullet list (arrow style) ── */
+    .arrow-list { list-style: none; padding: 0; margin: 16px 0; }
+    .arrow-list li { padding: 6px 0; font-size: 13px; color: #ccc; display: flex; gap: 10px; align-items: flex-start; }
+    .arrow-list li::before { content: "→"; color: #84cc16; font-weight: 700; flex-shrink: 0; }
+
+    /* ── WhatsApp mockup ── */
+    .wa-mockup { background: #111; border-radius: 24px; padding: 16px; max-width: 360px; margin: 0 auto; border: 1px solid #222; }
+    .wa-header { display: flex; align-items: center; gap: 10px; padding: 8px 4px 16px; border-bottom: 1px solid #222; margin-bottom: 12px; }
+    .wa-header .avatar { width: 36px; height: 36px; border-radius: 50%; background: #84cc16; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #000; }
+    .wa-header .name { font-size: 14px; font-weight: 700; }
+    .wa-header .online { font-size: 11px; color: #84cc16; }
+    .wa-bubble { border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; font-size: 12px; max-width: 85%; line-height: 1.5; }
+    .wa-bubble.user { background: #1a3a1a; color: #ccc; margin-left: auto; border-bottom-right-radius: 4px; }
+    .wa-bubble.bot { background: #1e1e1e; color: #ccc; border-bottom-left-radius: 4px; }
+    .wa-bubble .sender { font-size: 11px; color: #84cc16; font-weight: 700; margin-bottom: 4px; }
+    .wa-divider { text-align: center; font-size: 10px; color: #555; letter-spacing: 1.5px; text-transform: uppercase; margin: 12px 0; }
+
+    /* ── Dashboard mockup ── */
+    .dash-mockup { background: #141414; border-radius: 16px; padding: 24px; border: 1px solid #222; max-width: 100%; margin: 0 auto; }
+    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .dash-header .title { font-size: 14px; font-weight: 700; }
+    .dash-header .live { font-size: 11px; color: #84cc16; }
+    .dash-header .live::before { content: ""; display: inline-block; width: 6px; height: 6px; background: #84cc16; border-radius: 50%; margin-right: 6px; }
+    .dash-kpis { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .dash-kpi { text-align: center; }
+    .dash-kpi .num { font-size: 24px; font-weight: 800; color: #84cc16; }
+    .dash-kpi .lbl { font-size: 10px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
+    .dash-bars { display: flex; gap: 6px; align-items: flex-end; height: 60px; margin-bottom: 16px; }
+    .dash-bars .bar { flex: 1; border-radius: 3px; min-height: 8px; }
+    .dash-insight { background: #1a2a1a; border: 1px solid #2a3a2a; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+    .dash-insight .tag { font-size: 10px; color: #84cc16; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+    .dash-insight p { font-size: 11px; color: #aaa; margin: 0; }
+    .dash-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dash-bottom .mini { background: #1a1a1a; border: 1px solid #222; border-radius: 8px; padding: 12px; }
+    .dash-bottom .mini .lbl { font-size: 10px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
+    .dash-bottom .mini .val { font-size: 13px; font-weight: 700; margin-top: 4px; }
+
+    /* ── Analytics mockup ── */
+    .analytics-mockup { background: #141414; border-radius: 16px; padding: 24px; border: 1px solid #222; max-width: 100%; margin: 0 auto; }
+    .analytics-mockup h4 { font-size: 11px; color: #aaa; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 16px; }
+    .freq-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 12px; color: #ccc; }
+    .freq-bar .bar-track { flex: 1; height: 8px; background: #222; border-radius: 4px; overflow: hidden; }
+    .freq-bar .bar-fill { height: 100%; border-radius: 4px; }
+    .analytics-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .analytics-stat { text-align: center; border: 1px solid #222; border-radius: 8px; padding: 14px; }
+    .analytics-stat .lbl { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+    .analytics-stat .num { font-size: 28px; font-weight: 800; }
+    .analytics-stat .sub { font-size: 11px; color: #666; margin-top: 2px; }
+    .analytics-card { border: 1px solid #222; border-radius: 8px; padding: 14px; margin-bottom: 10px; }
+    .analytics-card .tag { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+    .analytics-card p { font-size: 11px; color: #aaa; margin: 0; }
+
+    /* ── Impact stats ── */
+    .impact-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 24px 0; }
+    .impact-item { text-align: center; border: 1px solid #222; border-radius: 12px; padding: 32px 20px; }
+    .impact-item .value { font-size: 42px; font-weight: 800; font-style: italic; }
+    .impact-item h3 { font-size: 14px; font-weight: 700; margin: 8px 0 6px; }
+    .impact-item p { font-size: 12px; color: #666; margin: 0; }
+
+    /* ── Roadmap ── */
+    .roadmap { margin-top: 32px; padding-left: 32px; border-left: 2px solid #333; }
+    .roadmap-step { position: relative; padding: 0 0 32px 28px; }
+    .roadmap-step:last-child { padding-bottom: 0; }
+    .roadmap-dot { position: absolute; left: -39px; top: 2px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid; }
+    .roadmap-step .phase { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+    .roadmap-step h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .roadmap-step p { font-size: 12px; color: #777; margin: 0; }
+
+    /* ── Split layout (vertical para portrait) ── */
+    .split { display: flex; flex-direction: column; gap: 32px; flex: 1; }
+    .split-left { max-width: 100%; }
+
+    /* ── Footer de página ── */
+    .page-footer { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 24px; margin-top: auto; border-top: 1px solid #222; }
+    .page-footer .brand { font-size: 11px; font-weight: 800; letter-spacing: 1px; }
+    .page-footer .brand .accent { color: #84cc16; }
+    .page-footer .conf { font-size: 10px; color: #555; text-align: right; }
+    .page-footer .num { font-size: 11px; color: #555; }
+
+    /* ── Cover ── */
+    .cover { justify-content: center; align-items: center; text-align: center; }
+    .cover h1 { font-size: 40px; margin-bottom: 8px; }
+    .cover .subtitle { font-size: 14px; color: #888; max-width: 500px; margin: 0 auto; }
+    .cover-footer { position: absolute; bottom: 40px; left: 40px; right: 40px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #333; padding-top: 16px; }
+
+    /* ── CTA page ── */
+    .cta-page { justify-content: center; align-items: center; text-align: center; }
+    .cta-page h1 { font-size: 38px; }
+
+    /* ── Tech grid ── */
+    .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 24px 0; }
+    .tech-card { background: #141414; border: 1px solid #222; border-radius: 12px; padding: 24px 20px; }
+    .tech-card .icon { font-size: 24px; margin-bottom: 12px; }
+    .tech-card h3 { font-size: 14px; margin-bottom: 6px; }
+    .tech-card p { font-size: 12px; color: #777; margin: 0; }
+
+    .security-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+    .sec-card { display: flex; gap: 14px; align-items: flex-start; background: #141414; border: 1px solid #222; border-radius: 10px; padding: 18px; }
+    .sec-card .sec-icon { width: 36px; height: 36px; border-radius: 8px; background: #1a1a1a; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .sec-card h3 { font-size: 13px; margin-bottom: 4px; }
+    .sec-card p { font-size: 11px; color: #777; margin: 0; }
+
+    .divider { width: 32px; height: 2px; background: #333; margin: 24px 0; }
+
+    @media print {
+        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .page { padding: 40px 50px; }
+    }
+</style>
+</head>
+<body>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 1 — PORTADA
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page cover">
+    <div style="margin-bottom: 40px;">
+        <div class="pill"><span class="dot"></span>PROPUESTA DE SERVICIO — 2026</div>
+    </div>
+    <h1>Atención al Cliente<br>e <span class="accent">Inteligencia<br>de Negocio</span></h1>
+    <p class="subtitle">Un agente de IA que atiende a vuestros clientes en WhatsApp las 24 horas, un panel de control con 11 módulos, una base de datos de clientes y automatizaciones inteligentes como felicitaciones de cumpleaños personalizadas.</p>
+
+    <div class="cover-footer">
+        <div class="page-footer brand"><span style="font-weight: 800;">ELITE </span><span class="accent" style="font-weight: 800;">EVENTS</span></div>
+        <div class="page-footer conf" style="border:0; padding:0;">Documento confidencial<br>Abril 2026</div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 2 — EL PROBLEMA
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+    <div class="section-num">01 — EL PROBLEMA</div>
+
+    <h2>Respondéis lo mismo mil veces<br>y no sacáis nada de eso</h2>
+    <p class="lead">Hay preguntas que llegan a las 2 de la madrugada un viernes. Para cuando alguien las ve, esa persona ya perdió el interés. Y mientras tanto, toda esa información sobre qué quieren los clientes se pierde sin generar ningún dato útil.</p>
+
+    <div class="card-grid" style="margin-top: 32px;">
+        <div class="card">
+            <div class="icon">&#128339;</div>
+            <h3>A las 2AM no contesta nadie</h3>
+            <p>Un usuario pregunta un viernes de madrugada. Nadie contesta hasta el sábado. Para entonces ya ha perdido el interés o ha comprado en otro sitio.</p>
+        </div>
+        <div class="card">
+            <div class="icon">&#9888;</div>
+            <h3>Las mismas preguntas mil veces</h3>
+            <p>Dónde es, cuánto cuesta, puedo entrar con deportivas, cómo funciona lo de RRPP. El equipo repite las mismas respuestas una y otra vez.</p>
+        </div>
+        <div class="card">
+            <div class="icon">&#128200;</div>
+            <h3>Sin datos para decidir</h3>
+            <p>No sabéis qué preguntan los clientes, qué dudas les frenan ni qué eventos generan más interés. Cada conversación es información que se pierde.</p>
+        </div>
+        <div class="card">
+            <div class="icon">&#128101;</div>
+            <h3>Horas perdidas en trabajo manual</h3>
+            <p>Contestar mensajes uno a uno, buscar información de eventos, explicar RRPP a cada persona que pregunta. Todo eso es tiempo que el equipo podría dedicar a lo que realmente mueve el negocio.</p>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="value">24/7</div>
+            <div class="label">Disponibilidad</div>
+        </div>
+        <div class="stat-item">
+            <div class="value">&lt;5s</div>
+            <div class="label">Tiempo respuesta</div>
+        </div>
+        <div class="stat-item">
+            <div class="value">99.9%</div>
+            <div class="label">Uptime</div>
+        </div>
+        <div class="stat-item">
+            <div class="value">&infin;</div>
+            <div class="label">Usuarios</div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div class="brand">ELITE EVENTS <span class="muted">— CONFIDENCIAL</span></div>
+        <div class="num">02</div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 3 — QUÉ SE ENTREGA
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+    <div class="section-num">02 — QUÉ SE ENTREGA</div>
+
+    <h2>Atención automatizada por<br>WhatsApp + inteligencia de datos</h2>
+    <p class="lead">No es un simple chatbot. Es un sistema que atiende a los clientes por WhatsApp, gestiona una base de datos de clientes y os da visibilidad total sobre sus dudas, intereses y comportamiento.</p>
+
+    <div class="card-grid" style="margin-top: 32px;">
+        <div class="card">
+            <div class="tag tag-green">NÚCLEO DEL SISTEMA</div>
+            <div class="icon">&#129302;</div>
+            <h3>Bot de IA en WhatsApp</h3>
+            <p>Un agente que atiende por WhatsApp con lenguaje natural las 24 horas. Responde sobre fiestas, entradas, RRPP y normativa con datos en tiempo real y memoria de conversación.</p>
+        </div>
+        <div class="card">
+            <div class="tag tag-cyan">PANEL DE CONTROL</div>
+            <div class="icon">&#9783;</div>
+            <h3>Dashboard + Base de Clientes</h3>
+            <p>Panel con 11 módulos: eventos, clientes, estadísticas, conversaciones, calendario, analítica, usuarios, salas, mensajes masivos, log de actividad y ajustes.</p>
+        </div>
+        <div class="card">
+            <div class="tag tag-purple">INTELIGENCIA DE NEGOCIO</div>
+            <div class="icon">&#128200;</div>
+            <h3>Estadísticas y Tendencias</h3>
+            <p>Cada conversación genera datos: ranking de dudas frecuentes, qué eventos interesan más, objeciones sobre RRPP, sentimiento de los usuarios y sugerencias de mejora. Todo automático.</p>
+        </div>
+        <div class="card">
+            <div class="tag tag-orange">AUTOMATIZACIÓN</div>
+            <div class="icon">&#128155;</div>
+            <h3>Cumpleaños por WhatsApp</h3>
+            <p>Cada día el sistema revisa la base de datos. Si alguien cumple años, le manda una felicitación personalizada por WhatsApp. El día antes, un pre-aviso. Todo automático, sin duplicados.</p>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div class="brand">ELITE EVENTS <span class="muted">— CONFIDENCIAL</span></div>
+        <div class="num">03</div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 4 — WHATSAPP + CUMPLEAÑOS
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+    <div class="section-num">03 — WHATSAPP + CUMPLEAÑOS</div>
+
+    <div class="split">
+        <div class="split-left">
+            <div class="tag tag-green" style="margin-bottom: 20px;">WHATSAPP BUSINESS</div>
+            <h2>Atención inteligente 24/7<br>+ felicitaciones automáticas</h2>
+            <p class="lead">Un agente de IA que habla como vosotros por WhatsApp. Entiende lo que le dicen y responde de forma natural con datos actualizados. Además, automatizaciones propias de cumpleaños.</p>
+
+            <ul class="arrow-list">
+                <li>Atención al cliente con IA en WhatsApp, 24/7</li>
+                <li>Responde sobre fiestas, entradas, RRPP y normativa al instante</li>
+                <li>Felicitación de cumpleaños automática el día exacto</li>
+                <li>Pre-aviso el día antes para generar expectativa</li>
+                <li>Un mensaje al año por persona, sin duplicados</li>
+                <li>Preparado para recordatorios, ofertas y campañas futuras</li>
+                <li>Recuerda conversaciones anteriores para mantener el contexto</li>
+            </ul>
+        </div>
+
+        <div style="display: flex; justify-content: center;">
+            <div class="wa-mockup">
+                <div class="wa-header">
+                    <div class="avatar">E</div>
+                    <div>
+                        <div class="name">Elite Events</div>
+                        <div class="online">en línea</div>
+                    </div>
+                </div>
+                <div class="wa-bubble user">Buenas! Cuánto cuesta la entrada de mañana?</div>
+                <div class="wa-bubble bot">
+                    <div class="sender">Elite Events</div>
+                    Buenas! La fiesta de mañana en Shoko tiene entradas desde 8€ en preventa y 12€ en taquilla. Te paso el enlace de compra?
+                </div>
+                <div class="wa-bubble user">Si porfa!</div>
+                <div class="wa-bubble bot">
+                    <div class="sender">Elite Events</div>
+                    Aquí lo tienes: eliteevents.es/madness-neon. Puedes pagar con tarjeta o Bizum. Nos vemos mañana!
+                </div>
+                <div class="wa-divider">— al día siguiente —</div>
+                <div class="wa-bubble bot">
+                    <div class="sender">Elite Events</div>
+                    Feliz cumpleaños, Laura! De parte de todo el equipo de Elite Events. Que lo pases increíble hoy. Nos vemos pronto en la pista!
+                </div>
+                <p style="text-align: center; font-size: 10px; color: #555; margin-top: 12px; font-style: italic;">Ejemplo orientativo — las respuestas reales son aún mejores</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div class="brand">ELITE EVENTS <span class="muted">— CONFIDENCIAL</span></div>
+        <div class="num">04</div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 5 — DASHBOARD
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+    <div class="section-num">04 — DASHBOARD</div>
+
+    <div class="split">
+        <div class="split-left">
+            <div class="tag tag-cyan" style="margin-bottom: 20px;">PANEL DE CONTROL</div>
+            <h2>Eventos, clientes y datos<br>en un solo sitio</h2>
+            <p class="lead">Un panel donde gestionáis las fiestas, la base de datos de clientes y, al mismo tiempo, veis todo lo que pasa: qué preguntan, qué dudas tienen, qué eventos interesan más y cómo evoluciona el interés semana a semana.</p>
+
+            <ul class="arrow-list">
+                <li>KPIs en tiempo real: mensajes, usuarios únicos, retención</li>
+                <li>Base de datos de clientes: nombre, cumpleaños, teléfono, historial</li>
+                <li>Gestión de eventos con calendario visual y exportación CSV</li>
+                <li>Estadísticas de dudas frecuentes y objeciones RRPP</li>
+                <li>Historial completo de conversaciones con búsqueda</li>
+                <li>Campañas y mensajes segmentados a la base de clientes</li>
+                <li>11 módulos: dashboard, fiestas, estadísticas, IA, chats, clientes, usuarios, actividad, salas, mensajes, ajustes</li>
+            </ul>
+        </div>
+
+        <div style="display: flex; justify-content: center;">
+            <div class="dash-mockup">
+                <div class="dash-header">
+                    <div class="title">Elite Events Dashboard</div>
+                    <div class="live">En vivo</div>
+                </div>
+                <div class="dash-kpis">
+                    <div class="dash-kpi">
+                        <div class="num">147</div>
+                        <div class="lbl">Hoy</div>
+                    </div>
+                    <div class="dash-kpi">
+                        <div class="num" style="color: #a78bfa;">892</div>
+                        <div class="lbl">Semana</div>
+                    </div>
+                    <div class="dash-kpi">
+                        <div class="num" style="color: #22d3ee;">3.2K</div>
+                        <div class="lbl">Mes</div>
+                    </div>
+                </div>
+                <div class="dash-bars">
+                    <div class="bar" style="height: 40%; background: #84cc16;"></div>
+                    <div class="bar" style="height: 55%; background: #84cc16;"></div>
+                    <div class="bar" style="height: 30%; background: #a78bfa;"></div>
+                    <div class="bar" style="height: 70%; background: #84cc16;"></div>
+                    <div class="bar" style="height: 45%; background: #a78bfa;"></div>
+                    <div class="bar" style="height: 85%; background: #84cc16;"></div>
+                    <div class="bar" style="height: 60%; background: #84cc16;"></div>
+                    <div class="bar" style="height: 90%; background: #84cc16;"></div>
+                </div>
+                <div class="dash-insight">
+                    <div class="tag">AI INSIGHT</div>
+                    <p>El 68% de las consultas son sobre la fiesta Neon del sábado. Sentimiento: positivo. Sugerencia: publicar el cartel 48h antes genera más interacción.</p>
+                </div>
+                <div class="dash-bottom">
+                    <div class="mini">
+                        <div class="lbl">Clientes activos</div>
+                        <div class="val">234 esta semana</div>
+                    </div>
+                    <div class="mini">
+                        <div class="lbl">Evento activo</div>
+                        <div class="val">Fiesta Neon — Shoko</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div class="brand">ELITE EVENTS <span class="muted">— CONFIDENCIAL</span></div>
+        <div class="num">05</div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 6 — ESTADÍSTICAS / INTELIGENCIA DE NEGOCIO
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+    <div class="section-num">05 — ESTADÍSTICAS DE DUDAS</div>
+
+    <div class="split">
+        <div class="split-left">
+            <div class="tag tag-purple" style="margin-bottom: 20px;">INTELIGENCIA DE NEGOCIO</div>
+            <h2>Cada pregunta es un dato.<br>Cada duda, una oportunidad.</h2>
+            <p class="lead">El sistema no solo responde: registra y clasifica. Cada conversación genera estadísticas que os dicen exactamente qué necesitan vuestros clientes, qué les frena y donde está la oportunidad.</p>
+
+            <ul class="arrow-list">
+                <li>Ranking de dudas frecuentes: precios, ubicación, dress code, RRPP</li>
+                <li>Qué eventos generan más preguntas y de qué tipo</li>
+                <li>Objeciones sobre RRPP: qué les frena y cómo solucionarlo</li>
+                <li>Sentimiento de los usuarios hacia la marca y los eventos</li>
+                <li>Horarios pico: cuándo la gente pregunta más</li>
+                <li>Retención: cuántos vuelven a hablar y cuántos son nuevos</li>
+                <li>Sugerencias de mejora generadas por IA cada hora</li>
+            </ul>
+        </div>
+
+        <div style="display: flex; justify-content: center;">
+            <div class="analytics-mockup">
+                <h4>Dudas más frecuentes</h4>
+                <div class="freq-bar">
+                    <span style="min-width: 120px;">Precio entradas</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: 90%; background: #84cc16;"></div></div>
+                </div>
+                <div class="freq-bar">
+                    <span style="min-width: 120px;">Ubicación y sala</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: 72%; background: #a78bfa;"></div></div>
+                </div>
+                <div class="freq-bar">
+                    <span style="min-width: 120px;">Cómo ser RRPP</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: 55%; background: #f59e0b;"></div></div>
+                </div>
+                <div class="freq-bar">
+                    <span style="min-width: 120px;">Dress code</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: 40%; background: #22d3ee;"></div></div>
+                </div>
+                <div class="analytics-stats">
+                    <div class="analytics-stat">
+                        <div class="lbl accent-cyan">RETENCIÓN</div>
+                        <div class="num accent-cyan">64%</div>
+                        <div class="sub">vuelven a hablar</div>
+                    </div>
+                    <div class="analytics-stat">
+                        <div class="lbl accent-purple">INTERÉS RRPP</div>
+                        <div class="num accent-purple">23%</div>
+                        <div class="sub">preguntan por RRPP</div>
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <div class="tag accent-orange">OBJECIONES RRPP DETECTADAS</div>
+                    <p>El 45% pregunta por comisiones antes de unirse. Sugerencia: incluir un ejemplo concreto de ganancias en la primera respuesta aumentaría la conversión un 30%.</p>
+                </div>
+                <div class="analytics-card">
+                    <div class="tag accent">SUGERENCIA IA</div>
+                    <p>Publicar el cartel 48h antes del lanzamiento de entradas genera +35% de preguntas orgánicas sobre el evento.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div class="brand">ELITE EVENTS <span class="muted">— CONFIDENCIAL</span></div>
+        <div class="num">06</div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 7 — QUÉ RECIBÍS (CHECKLIST)
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+    <div class="section-num">06 — QUÉ RECIBÍS</div>
+
+    <h2>Todo lo incluido<br>en la plataforma</h2>
+    <p class="lead">Configurado, desplegado y listo para usar desde el primer día.</p>
+
+    <div class="checklist">
+        <div class="check-item">
+            <div class="check-icon">&#10003;</div>
+            <div><h3>Bot de WhatsApp con IA (GPT-4o)</h3><p>Agente 24/7 con memoria de conversación, datos en tiempo real de los eventos y un tono alineado con la marca Elite Events.</p></div>
+        </div>
+        <div class="check-item">
+            <div class="check-icon">&#10003;</div>
+            <div><h3>Felicitaciones de Cumpleaños</h3><p>Automatización por WhatsApp: felicitación el día exacto y pre-aviso el día anterior. Sin duplicados, todo automático.</p></div>
+        </div>
+        <div class="check-item">
+            <div class="check-icon">&#10003;</div>
+            <div><h3>Dashboard Web de 11 Módulos</h3><p>Panel de administración integrado: eventos, estadísticas, agente IA, conversaciones, clientes, usuarios, salas, mensajes, actividad y ajustes.</p></div>
+        </div>
+        <div class="check-item">
+            <div class="check-icon">&#10003;</div>
+            <div><h3>Base de Datos de Clientes</h3><p>Registro centralizado: nombre, cumpleaños, teléfono, chat ID, fiestas asistidas y estado. Alimenta las automatizaciones.</p></div>
+        </div>
+        <div class="check-item">
+            <div class="check-icon">&#10003;</div>
+            <div><h3>Motor de Eventos y Salas</h3><p>Catálogo visual de eventos, asignación de salas, calendario y exportación a CSV con un solo clic.</p></div>
+        </div>
+        <div class="check-item">
+            <div class="check-icon">&#10003;</div>
+            <div><h3>Sistema de Usuarios y Roles</h3><p>Tres niveles de acceso (Admin, Editor, Viewer) con log de auditoría completo de cada acción.</p></div>
+        </div>
+        <div class="check-item">
+            <div class="check-icon">&#10003;</div>
+            <div><h3>Mensajes y Campañas</h3><p>Envío de mensajes segmentados a vuestra base de clientes, con filtros por actividad y perfil.</p></div>
+        </div>
+        <div class="check-item">
+            <div class="check-icon">&#10003;</div>
+            <div><h3>Analytics e Insights IA</h3><p>Ranking de dudas, objeciones RRPP, embudo de retención, sentimiento y sugerencias generadas por IA.</p></div>
+        </div>
+        <div class="check-item" style="grid-column: span 2;">
+            <div class="check-icon">&#10003;</div>
+            <div><h3>Acompañamiento y Mejora Continua</h3><p>Formación del equipo, ajuste del tono del bot al estilo Elite Events y soporte tras el lanzamiento.</p></div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div class="brand">ELITE EVENTS <span class="muted">— CONFIDENCIAL</span></div>
+        <div class="num">07</div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 8 — TECNOLOGÍA Y SEGURIDAD
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+    <div class="section-num">07 — TECNOLOGÍA Y SEGURIDAD</div>
+
+    <h2>Construido sobre<br>tecnología probada</h2>
+    <p class="lead">Cada componente elegido por fiabilidad y rendimiento.</p>
+
+    <div class="tech-grid">
+        <div class="tech-card">
+            <div class="icon">&#129302;</div>
+            <h3>OpenAI GPT-4o</h3>
+            <p>Motor de IA para respuestas naturales, análisis de sentimiento y comprensión de imágenes.</p>
+        </div>
+        <div class="tech-card">
+            <div class="icon">&#128450;</div>
+            <h3>Supabase PostgreSQL</h3>
+            <p>Base de datos en la nube con sincronización en tiempo real y backups automáticos.</p>
+        </div>
+        <div class="tech-card">
+            <div class="icon">&#128260;</div>
+            <h3>n8n Workflows</h3>
+            <p>Orquestación de flujos entre WhatsApp, la IA y la base de datos.</p>
+        </div>
+        <div class="tech-card">
+            <div class="icon">&#128172;</div>
+            <h3>WhatsApp Cloud API</h3>
+            <p>API oficial de Meta para atención al cliente y automatizaciones por WhatsApp Business.</p>
+        </div>
+        <div class="tech-card">
+            <div class="icon">&#9881;</div>
+            <h3>Flask + Vercel</h3>
+            <p>Panel web serverless desplegado en la nube. Disponibilidad del 99.9% sin tiempo de inactividad.</p>
+        </div>
+        <div class="tech-card">
+            <div class="icon">&#128202;</div>
+            <h3>Chart.js</h3>
+            <p>Gráficos interactivos en el dashboard: tendencias, barras de actividad, embudos y KPIs visuales.</p>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-num" style="font-size: 11px;">SEGURIDAD Y PRIVACIDAD</div>
+
+    <div class="security-grid">
+        <div class="sec-card">
+            <div class="sec-icon">&#128274;</div>
+            <div><h3>Cifrado SSL end-to-end</h3><p>Todas las comunicaciones entre WhatsApp, servidor y base de datos van cifradas.</p></div>
+        </div>
+        <div class="sec-card">
+            <div class="sec-icon">&#128101;</div>
+            <div><h3>Roles y permisos por usuario</h3><p>Cada miembro del equipo accede solo a lo que necesita. Sin permisos de más.</p></div>
+        </div>
+        <div class="sec-card">
+            <div class="sec-icon">&#128203;</div>
+            <div><h3>Log de auditoría completo</h3><p>Registro de cada acción realizada en el panel: quién cambió qué y cuándo.</p></div>
+        </div>
+        <div class="sec-card">
+            <div class="sec-icon">&#128737;</div>
+            <div><h3>Filtros de contenido</h3><p>Los bots no pueden ser manipulados para generar respuestas inapropiadas ni salirse del guión.</p></div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div class="brand">ELITE EVENTS <span class="muted">— CONFIDENCIAL</span></div>
+        <div class="num">08</div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 9 — IMPACTO E IMPLEMENTACIÓN
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+    <div class="section-num">08 — IMPACTO E IMPLEMENTACIÓN</div>
+
+    <h2>Resultados desde<br>el primer día</h2>
+    <p class="lead">Todo esto ya esta en producción. Los bots funcionan, el panel está operativo y las automatizaciones de cumpleaños están activas.</p>
+
+    <div class="impact-grid">
+        <div class="impact-item">
+            <div class="value accent">24/7</div>
+            <h3>Respuesta al instante</h3>
+            <p>Responder en el momento de máxima intención de compra cambia completamente la conversión. No se pierde el momento.</p>
+        </div>
+        <div class="impact-item">
+            <div class="value accent-purple">0h</div>
+            <h3>Trabajo manual</h3>
+            <p>El bot se encarga de las preguntas repetitivas y las automatizaciones funcionan solas. El equipo se libera para lo que realmente importa.</p>
+        </div>
+        <div class="impact-item">
+            <div class="value accent-cyan">100%</div>
+            <h3>Visibilidad de datos</h3>
+            <p>Por primera vez hay datos reales de qué preguntan, qué les frena, qué eventos generan más interés y cómo evoluciona el sentimiento.</p>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-num" style="font-size: 11px;">PRÓXIMOS PASOS</div>
+
+    <div class="roadmap">
+        <div class="roadmap-step">
+            <div class="roadmap-dot" style="border-color: #84cc16; background: #84cc16;"></div>
+            <div class="phase accent">EN MARCHA</div>
+            <h3>Todo operativo</h3>
+            <p>El bot funciona en WhatsApp, el panel de control está desplegado, la base de datos de clientes está conectada y las automatizaciones de cumpleaños están activas.</p>
+        </div>
+        <div class="roadmap-step">
+            <div class="roadmap-dot" style="border-color: #84cc16;"></div>
+            <div class="phase accent">CORTO PLAZO</div>
+            <h3>Ajuste y formación</h3>
+            <p>Ajustar el tono del bot al estilo exacto de Elite Events. Formar al equipo en el uso del panel y monitorizar durante las primeras fiestas.</p>
+        </div>
+        <div class="roadmap-step">
+            <div class="roadmap-dot" style="border-color: #f59e0b;"></div>
+            <div class="phase accent-orange">MEDIO PLAZO</div>
+            <h3>Ampliar automatizaciones</h3>
+            <p>Recordatorios de eventos, ofertas personalizadas, campañas por perfil de cliente y cualquier otra automatización que vaya surgiendo.</p>
+        </div>
+        <div class="roadmap-step">
+            <div class="roadmap-dot" style="border-color: #ef4444;"></div>
+            <div class="phase accent-red">CONTINUO</div>
+            <h3>Mejora y soporte</h3>
+            <p>Lo que vaya surgiendo sobre la marcha. El sistema está preparado para crecer con Elite Events.</p>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div class="brand">ELITE EVENTS <span class="muted">— CONFIDENCIAL</span></div>
+        <div class="num">09</div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 10 — CTA / CIERRE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page cta-page">
+    <div style="margin-bottom: 40px;">
+        <div class="pill"><span class="dot"></span>SIGUIENTE PASO</div>
+    </div>
+    <h1>Vamos a hacer que<br><span class="accent">Elite Light</span><br>sea imparable</h1>
+    <p class="subtitle" style="margin-top: 16px;">Hablemos. Sin compromiso, sin presión.<br>Solo una conversación para dar el siguiente paso.</p>
+
+    <div class="cover-footer">
+        <div class="page-footer brand"><span style="font-weight: 800;">ELITE </span><span class="accent" style="font-weight: 800;">EVENTS</span></div>
+        <div class="page-footer conf" style="border:0; padding:0;">Documento confidencial<br>Abril 2026</div>
+    </div>
+</div>
+
+
+</body>
+</html>
