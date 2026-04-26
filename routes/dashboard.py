@@ -67,10 +67,16 @@ def index():
     ).filter(Conversation.role == "user").one()
     messages_today, messages_week, messages_month, messages_total = row
 
-    # Events: active count + upcoming + total — 2 queries (events table is small)
+    # Events: active count + upcoming + total
     all_active = Event.query.filter_by(active=True).order_by(Event.date.asc()).all()
     active_events = len(all_active)
-    upcoming_events = [e for e in all_active if e.date and e.date >= now.replace(tzinfo=None)][:5]
+    now_naive = now.replace(tzinfo=None)
+    upcoming_events = [
+        e for e in all_active
+        if e.date and (
+            (e.date.replace(tzinfo=None) if getattr(e.date, 'tzinfo', None) else e.date) >= now_naive
+        )
+    ][:5]
     total_events = Event.query.count()
 
     # Recent user messages for activity feed (fast, indexed)
