@@ -225,3 +225,99 @@ def mark_greeted(client_id):
     notify_birthday_greeted(client.name)
     db.session.commit()
     return jsonify({"ok": True, "client": client.to_dict()})
+
+
+# ─── WhatsApp Opt-in (n8n automation) ───────────────
+
+@api_bp.route("/clients/pending-optin", methods=["GET"])
+@require_api_key
+def clients_pending_optin():
+    """Active clients with a phone number that haven't opted in yet.
+
+    A client is 'pending' if:
+    - status = active
+    - whatsapp_opt_in = False
+    - phone is not empty
+    - optin_sent_at is null OR was sent more than 30 days ago (retry window)
+    """
+    now = datetime.now(timezone.utc)
+    retry_cutoff = now - timedelta(days=30)
+
+    clients = Client.query.filter(
+        Client.status == "active",
+        Client.whatsapp_opt_in == False,
+        Client.phone != "",
+        Client.phone.isnot(None),
+        db.or_(
+            Client.optin_sent_at.is_(None),
+            Client.optin_sent_at < retry_cutoff,
+        ),
+    ).all()
+
+    return jsonify([c.to_dict() for c in clients])
+
+
+@api_bp.route("/clients/<int:client_id>/optin-sent", methods=["POST"])
+@require_api_key
+def mark_optin_sent(client_id):
+    """Records that the opt-in request was sent to the client."""
+    client = Client.query.get_or_404(client_id)
+    client.optin_sent_at = datetime.now(timezone.utc)
+    db.session.commit()
+    return jsonify({"ok": True, "client": client.to_dict()})
+
+
+@api_bp.route("/clients/<int:client_id>/optin", methods=["POST"])
+@require_api_key
+def confirm_optin(client_id):
+    """Marks a client as opted in to WhatsApp marketing messages."""
+    from services.notifications import notify_optin_confirmed
+    client = Client.query.get_or_404(client_id)
+    client.whatsapp_opt_in = True
+    notify_optin_confirmed(client.name)
+    db.session.commit()
+    return jsonify({"ok": True, "client": client.to_dict()})
+
+
+@api_bp.route("/clients/<int:client_id>/optout", methods=["POST"])
+@require_api_key
+def confirm_optout(client_id):
+    """Marks a client as opted out — they replied NO to the opt-in request."""
+    client = Client.query.get_or_404(client_id)
+    client.whatsapp_opt_in = False
+    client.optin_sent_at = None  # reset so we don't retry this user
+    db.session.commit()
+    return jsonify({"ok": True, "client": client.to_dict()})
+
+
+@api_bp.route("/clients/optin-by-phone", methods=["POST"])
+@require_api_key
+def optin_by_phone():
+    """Opt in (or out) a client identified by phone number.
+
+    Used by the n8n WhatsApp webhook to process incoming YES/NO replies
+    without needing to know the client ID upfront.
+
+    Body: { "phone": "+34612345678", "action": "optin" | "optout" }
+    """
+    from services.notifications import notify_optin_confirmed
+    data = request.get_json() or {}
+    phone = (data.get("phone") or "").strip()
+    action = data.get("action", "optin")
+
+    if not phone:
+        return jsonify({"error": "phone required"}), 400
+
+    client = Client.query.filter(Client.phone == phone).first()
+    if not client:
+        return jsonify({"error": "client not found", "phone": phone}), 404
+
+    if action == "optin":
+        client.whatsapp_opt_in = True
+        notify_optin_confirmed(client.name)
+    else:
+        client.whatsapp_opt_in = False
+        client.optin_sent_at = None
+
+    db.session.commit()
+    return jsonify({"ok": True, "action": action, "client": client.to_dict()})

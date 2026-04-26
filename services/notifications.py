@@ -61,3 +61,12 @@ def notify_broadcast_sent(count):
         category=NOTIF_BROADCAST,
         icon="send",
     )
+
+
+def notify_optin_confirmed(client_name):
+    return push(
+        title="Opt-in WhatsApp confirmado",
+        body=f"{client_name} ha aceptado recibir mensajes",
+        category=NOTIF_CLIENT,
+        icon="heart",
+    )

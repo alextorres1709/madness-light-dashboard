@@ -235,6 +235,7 @@ class Client(db.Model):
     status = db.Column(db.String(20), default="active", index=True)
     whatsapp_opt_in = db.Column(db.Boolean, default=False, index=True)
     birthday_greeted_at = db.Column(db.DateTime, nullable=True)
+    optin_sent_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc)
     )
@@ -251,6 +252,7 @@ class Client(db.Model):
             "status": self.status,
             "whatsapp_opt_in": self.whatsapp_opt_in,
             "birthday_greeted_at": self.birthday_greeted_at.isoformat() if self.birthday_greeted_at else None,
+            "optin_sent_at": self.optin_sent_at.isoformat() if self.optin_sent_at else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
