@@ -33,7 +33,7 @@
     </button>
 </div>
 
-<form method="POST" action="{{ url_for('settings.update') }}" id="settingsForm" data-no-block="1" onsubmit="return checkDangerSubmit(event)">
+<form method="POST" action="{{ url_for('settings.update') }}" id="settingsForm" data-no-block="1">
     <div class="card">
         <h3 class="card-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
@@ -124,7 +124,7 @@
     </div>
 
     <div style="display:flex;justify-content:flex-end;margin-top:24px">
-        <button type="submit" class="btn btn-primary" id="saveBtn">
+        <button type="button" class="btn btn-primary" id="saveBtn" onclick="showSaveModal()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                 <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
                 <polyline points="17 21 17 13 7 13 7 21" />
@@ -318,20 +318,14 @@ function toggleTextarea(wrapId, btnId) {
         btn.textContent = 'Ampliar';
     } else {
         wrap.style.maxHeight = wrap.scrollHeight + 'px';
-        // After transition ends, set to none so textarea is fully scrollable
         setTimeout(function() { wrap.style.maxHeight = 'none'; }, 320);
         btn.textContent = 'Contraer';
     }
 }
 
-// ── Confirm submit ──
-var _allowSubmit = false;
-
-function checkDangerSubmit(e) {
-    if (_allowSubmit) { _allowSubmit = false; return true; }
-    e.preventDefault();
+// ── Confirm & submit ──
+function showSaveModal() {
     document.getElementById('confirmModal').style.display = 'flex';
-    return false;
 }
 
 function closeModal() {
@@ -339,12 +333,11 @@ function closeModal() {
 }
 
 function submitForm() {
-    _allowSubmit = true;
     closeModal();
-    document.getElementById('settingsForm').submit();
+    // Direct native submit — bypasses all JS handlers
+    HTMLFormElement.prototype.submit.call(document.getElementById('settingsForm'));
 }
 
-// Close on backdrop click
 document.getElementById('confirmModal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
 });
