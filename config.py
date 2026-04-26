@@ -13,9 +13,15 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", _default_db)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_size": 5,
-        "pool_recycle": 300,
-        "pool_pre_ping": True,
+        "pool_size": 2,          # keep few persistent conns
+        "max_overflow": 4,       # allow burst up to 6 total
+        "pool_recycle": 120,     # recycle connections every 2 min
+        "pool_pre_ping": True,   # detect stale connections
+        "pool_timeout": 10,      # fail fast instead of hanging
+        "connect_args": {
+            "prepare_threshold": None,  # disable prepared stmts (required for pgBouncer transaction mode)
+            "connect_timeout": 8,
+        },
     } if "postgresql" in os.getenv("DATABASE_URL", "") else {}
     SEND_FILE_MAX_AGE_DEFAULT = 3600  # 1h cache for static files
     ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@madnesslight.com")
