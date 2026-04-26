@@ -295,10 +295,10 @@
         </div>
     </div>
 
-    <!-- Info Extra -->
+    <!-- Base de Conocimiento — colapsada por defecto -->
     {% if company and company.extra_info %}
-    <div class="card" style="margin-top:20px">
-        <div class="card-header">
+    <div class="card" style="margin-top:20px" id="knowledgeCard">
+        <div class="card-header" style="cursor:pointer" onclick="toggleKnowledge()">
             <h3 class="card-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -308,21 +308,40 @@
                 </svg>
                 Base de Conocimiento del Agente
             </h3>
+            <button class="btn btn-secondary btn-sm" id="knowledgeToggleBtn" onclick="event.stopPropagation();toggleKnowledge()">
+                Ampliar
+            </button>
         </div>
-        <pre class="knowledge-base-content">{{ company.extra_info }}</pre>
+        <!-- Preview: primeras 4 líneas siempre visibles -->
+        <div style="padding:0 20px 16px">
+            <pre class="knowledge-base-content" id="knowledgePreview" style="max-height:5.8em;overflow:hidden;mask-image:linear-gradient(to bottom,#000 60%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 60%,transparent 100%)">{{ company.extra_info }}</pre>
+            <pre class="knowledge-base-content" id="knowledgeFull" style="display:none">{{ company.extra_info }}</pre>
+        </div>
     </div>
     {% endif %}
 
-    <!-- Recent Conversations — Chat View -->
+    <!-- Últimas Conversaciones — con selector de usuario -->
     <div class="card" style="margin-top:20px">
         <div class="card-header">
             <h3 class="card-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                 </svg>
-                Últimas Conversaciones
+                Conversación del Usuario
             </h3>
-            <span class="badge badge-platform">{{ messages_total }} mensajes de usuarios</span>
+            <div style="display:flex;align-items:center;gap:8px">
+                {% if user_ids %}
+                <form method="get" style="margin:0">
+                    <select name="user_id" class="filter-select" onchange="this.form.submit()" style="font-size:12px;padding:4px 8px;min-width:160px">
+                        {% for uid in user_ids %}
+                        <option value="{{ uid }}" {% if uid == selected_user %}selected{% endif %}>
+                            {{ uid[:30] }}{% if uid|length > 30 %}…{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </form>
+                {% endif %}
+            </div>
         </div>
 
         {% if recent_messages %}
@@ -330,7 +349,7 @@
             {% for msg in recent_messages %}
             <div class="chat-bubble {{ 'chat-user' if msg.role == 'user' else 'chat-bot' }}">
                 <div class="chat-bubble-header">
-                    <span class="chat-role">{{ 'Usuario ' + msg.user_id[-4:] if msg.role == 'user' else 'Bot Madness' }}</span>
+                    <span class="chat-role">{{ 'Usuario' if msg.role == 'user' else '🤖 Bot Madness' }}</span>
                     <span class="chat-time">{{ msg.created_at.strftime('%d/%m %H:%M') if msg.created_at else '' }}</span>
                 </div>
                 <div class="chat-bubble-text">{{ msg.content }}</div>
@@ -342,10 +361,20 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
             </svg>
-            <h3>Sin conversaciones todavía</h3>
-            <p>Las conversaciones del agente aparecerán aquí cuando empiece a funcionar</p>
+            <p>Sin conversaciones todavía — activa el bot de WhatsApp en n8n</p>
         </div>
         {% endif %}
     </div>
 
+    <script>
+    function toggleKnowledge() {
+        var preview = document.getElementById('knowledgePreview');
+        var full = document.getElementById('knowledgeFull');
+        var btn = document.getElementById('knowledgeToggleBtn');
+        var expanded = full.style.display !== 'none';
+        preview.style.display = expanded ? '' : 'none';
+        full.style.display = expanded ? 'none' : 'block';
+        btn.textContent = expanded ? 'Ampliar' : 'Contraer';
+    }
+    </script>
     {% endblock %}

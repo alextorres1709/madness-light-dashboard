@@ -112,6 +112,7 @@ def create_app():
     from routes.clients import clients_bp
     from routes.notifications import notifications_bp
     from routes.tasks import tasks_bp
+    from routes.consultas import consultas_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -128,6 +129,7 @@ def create_app():
     app.register_blueprint(clients_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(tasks_bp)
+    app.register_blueprint(consultas_bp)
 
     return app
 

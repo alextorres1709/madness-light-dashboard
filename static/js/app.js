@@ -15,22 +15,23 @@ function getChartTheme() {
         primaryA: function(a) { return d ? 'rgba(59,130,246,'+a+')' : 'rgba(37,99,235,'+a+')'; },
         secondary: d ? '#22D3EE' : '#0891B2',
         secondaryA: function(a) { return d ? 'rgba(34,211,238,'+a+')' : 'rgba(8,145,178,'+a+')'; },
+        indigoA: function(a) { return d ? 'rgba(99,102,241,'+a+')' : 'rgba(79,70,229,'+a+')'; },
         blueA: function(a) { return d ? 'rgba(96,165,250,'+a+')' : 'rgba(59,130,246,'+a+')'; },
         purpleA: function(a) { return d ? 'rgba(167,139,250,'+a+')' : 'rgba(124,58,237,'+a+')'; },
         amberA: function(a) { return d ? 'rgba(251,191,36,'+a+')' : 'rgba(217,119,6,'+a+')'; },
-        text: d ? '#6B7280' : '#64748B',
-        grid: d ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.05)',
+        text: d ? '#525252' : '#64748B',
+        grid: d ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.04)',
         tip: {
-            bg: d ? '#141414' : '#fff',
-            title: d ? '#F1F5F9' : '#0f172a',
-            body: d ? '#94A3B8' : '#475569',
-            border: d ? 'rgba(255,255,255,0.08)' : '#e2e8f0'
+            bg: d ? '#0a0a0a' : '#fff',
+            title: d ? '#f5f5f5' : '#0f172a',
+            body: d ? '#a3a3a3' : '#475569',
+            border: d ? 'rgba(255,255,255,0.07)' : '#e2e8f0'
         },
-        card: d ? '#0d0d0d' : '#ffffff',
+        card: d ? '#0a0a0a' : '#ffffff',
+        /* Muted palette — lower saturation, softer on the eyes */
         palette: d
-            ? ['#3B82F6','#22D3EE','#FBBF24','#F87171','#A78BFA','#34D399','#FB7185','#9CA3AF']
-            : ['#2563EB','#0891B2','#D97706','#dc2626','#7C3AED','#059669','#E11D48','#64748b'],
-        // Build vertical gradient for area/bar fill
+            ? ['rgba(59,130,246,0.7)','rgba(34,211,238,0.65)','rgba(251,191,36,0.65)','rgba(248,113,113,0.65)','rgba(167,139,250,0.65)','rgba(52,211,153,0.65)','rgba(251,113,133,0.65)','rgba(156,163,175,0.5)']
+            : ['rgba(37,99,235,0.55)','rgba(8,145,178,0.5)','rgba(217,119,6,0.5)','rgba(220,38,38,0.5)','rgba(124,58,237,0.5)','rgba(5,150,105,0.5)','rgba(225,29,72,0.5)','rgba(100,116,139,0.4)'],
         makeGradient: function(ctx, colorTop, alpha) {
             var h = ctx.canvas.offsetHeight || 280;
             var g = ctx.createLinearGradient(0, 0, 0, h);

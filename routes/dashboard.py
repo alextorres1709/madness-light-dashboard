@@ -109,6 +109,52 @@ def index():
     ).scalar() or 0
     retention_rate = round((returning_users / total_users) * 100, 1) if total_users else 0
 
+    def _time_ago(dt):
+        if not dt:
+            return ""
+        diff = (now - dt) if (dt.tzinfo) else (now.replace(tzinfo=None) - dt)
+        s = int(diff.total_seconds())
+        if s < 60:
+            return f"{s}s"
+        if s < 3600:
+            return f"{s // 60}m"
+        if s < 86400:
+            return f"{s // 3600}h"
+        return f"{diff.days}d"
+
+    # Activity feed: consultas resueltas + fiestas recientes
+    # Pair each user message with its bot reply
+    feed_items = []
+    seen_users = set()
+    for m in recent_messages:
+        # One activity item per unique user (most recent)
+        if m.user_id in seen_users:
+            continue
+        seen_users.add(m.user_id)
+        feed_items.append({
+            "type": "consulta",
+            "label": "Consulta resuelta",
+            "desc": m.content[:70] + ("…" if len(m.content) > 70 else ""),
+            "link": f"/conversaciones/{m.user_id}",
+            "ago": _time_ago(m.created_at),
+            "uid": m.user_id,
+        })
+
+    # Recent events (created or upcoming)
+    recent_events = Event.query.order_by(Event.id.desc()).limit(5).all()
+    for e in recent_events:
+        feed_items.append({
+            "type": "fiesta",
+            "label": "Fiesta asignada",
+            "desc": f"{e.name} — {e.venue} · {e.date.strftime('%d/%m/%Y') if e.date else ''}",
+            "link": "/fiestas",
+            "ago": "",
+            "uid": None,
+        })
+
+    # Sort: consultas first (have ago), then events; cap at 12
+    feed_items = feed_items[:12]
+
     return render_template(
         "dashboard.html",
         messages_today=messages_today,
@@ -118,7 +164,7 @@ def index():
         active_events=active_events,
         total_events=total_events,
         upcoming_events=upcoming_events,
-        recent_messages=recent_messages,
+        recent_activity=feed_items,
         daily_messages=daily_messages,
         hourly_messages=hourly_messages,
         total_users=total_users,

@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Consultas del Bot{% endblock %}
+{% block header_title %}Consultas del Bot{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Consultas del Bot</h1>
+        <p class="page-subtitle">Preguntas de usuarios y respuestas resueltas por el agente de IA — {{ total }} consultas en total</p>
+    </div>
+</div>
+
+<div class="table-card">
+    {% if pairs %}
+    {% for item in pairs %}
+    <div class="consulta-item">
+        <!-- Header: usuario + tiempo -->
+        <div class="consulta-header">
+            <div class="consulta-user">
+                <div class="consulta-avatar">{{ item.user_id[-2:] }}</div>
+                <span class="consulta-uid">{{ item.user_id[:28] }}{% if item.user_id|length > 28 %}…{% endif %}</span>
+            </div>
+            <span class="consulta-time">{{ item.ts }} · {{ item.ago }} ago</span>
+        </div>
+        <!-- Pregunta -->
+        <div class="consulta-row consulta-q">
+            <div class="consulta-icon consulta-icon-q">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            </div>
+            <p class="consulta-text">{{ item.question }}</p>
+        </div>
+        <!-- Respuesta -->
+        {% if item.answer %}
+        <div class="consulta-row consulta-a">
+            <div class="consulta-icon consulta-icon-a">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                    <path d="M20 6L9 17l-5-5"/>
+                </svg>
+            </div>
+            <p class="consulta-text consulta-answer">{{ item.answer[:300] }}{% if item.answer|length > 300 %}…{% endif %}</p>
+        </div>
+        {% else %}
+        <div class="consulta-row consulta-a" style="opacity:.4">
+            <div class="consulta-icon" style="background:var(--bg-tertiary)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                    <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+            </div>
+            <p class="consulta-text" style="font-style:italic">Sin respuesta registrada</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="empty-state" style="padding:60px 20px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="48" height="48" style="opacity:.2;margin-bottom:12px">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+        <p>Sin consultas todavía</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Paginación -->
+{% if total_pages > 1 %}
+<div class="pagination">
+    {% if page > 1 %}
+    <a href="?page={{ page - 1 }}" class="btn btn-secondary btn-sm">← Anterior</a>
+    {% endif %}
+    <span style="font-size:13px;color:var(--text-tertiary)">Página {{ page }} de {{ total_pages }}</span>
+    {% if page < total_pages %}
+    <a href="?page={{ page + 1 }}" class="btn btn-secondary btn-sm">Siguiente →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<style>
+.consulta-item {
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 20px;
+    transition: var(--transition-fast);
+}
+.consulta-item:hover { background: var(--bg-card-hover); }
+.consulta-item:last-child { border-bottom: none; }
+
+.consulta-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.consulta-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.consulta-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(59,130,246,0.1);
+    color: var(--brand-primary);
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.consulta-uid {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-primary);
+}
+.consulta-time {
+    font-size: 11px;
+    color: var(--text-tertiary);
+}
+.consulta-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+.consulta-row:last-child { margin-bottom: 0; }
+.consulta-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.consulta-icon-q {
+    background: rgba(59,130,246,0.1);
+    color: var(--brand-primary);
+}
+.consulta-icon-a {
+    background: rgba(5,150,105,0.1);
+    color: var(--success);
+}
+.consulta-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin: 0;
+    flex: 1;
+}
+.consulta-answer {
+    color: var(--text-primary);
+}
+.consulta-q .consulta-text {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 20px;
+}
+</style>
+{% endblock %}

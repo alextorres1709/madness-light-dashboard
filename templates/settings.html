@@ -7,13 +7,33 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Información de la Empresa</h1>
-        <p class="page-subtitle">Edita los datos de Madness Light que el agente de IA usa para responder a los clientes.
-            No se recomienda tocar los campos de "Información para el Agente de IA" a no ser que sepas lo que haces.
-        </p>
+        <p class="page-subtitle">Edita los datos de Madness Light que el agente de IA usa para responder a los clientes.</p>
     </div>
 </div>
 
-<form method="POST" action="{{ url_for('settings.update') }}">
+<!-- ⚠️ Admin warning banner -->
+<div class="danger-banner" id="dangerBanner">
+    <div class="danger-banner-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+    </div>
+    <div class="danger-banner-body">
+        <div class="danger-banner-title">Zona de administrador — Manejo cuidadoso</div>
+        <div class="danger-banner-text">
+            Esta página es solo accesible para administradores. Los cambios en la sección <strong>"Información para el Agente de IA"</strong> afectan directamente las respuestas del bot a los clientes. Un error aquí puede hacer que el agente dé información incorrecta o deje de responder bien. <strong>Revisa siempre antes de guardar.</strong>
+        </div>
+    </div>
+    <button class="danger-banner-close" onclick="document.getElementById('dangerBanner').style.display='none'" title="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+    </button>
+</div>
+
+<form method="POST" action="{{ url_for('settings.update') }}" id="settingsForm" data-no-block="1" onsubmit="return checkDangerSubmit(event)">
     <div class="card">
         <h3 class="card-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
@@ -48,36 +68,63 @@
         </div>
     </div>
 
-    <div class="card" style="margin-top: 24px">
-        <h3 class="card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" />
+    <!-- ⚠️ Danger zone: AI agent info -->
+    <div class="card danger-card" style="margin-top: 24px" id="agentInfoCard">
+        <div class="danger-card-header">
+            <h3 class="card-title" style="margin-bottom:0">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" />
+                </svg>
+                Información para el Agente de IA
+            </h3>
+            <span class="badge-danger-zone">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                Zona peligrosa
+            </span>
+        </div>
+        <div class="danger-inline-notice">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            Información para el Agente de IA
-        </h3>
-        <p style="color:var(--text-secondary);font-size:14px;margin-bottom:16px">
-            Esta información es la que el agente de IA usa para responder preguntas sobre Madness Light
-        </p>
+            <span>Cambiar esto modifica directamente el comportamiento del bot con los clientes. Solo edita si sabes exactamente qué haces.</span>
+        </div>
         <div class="form-grid">
             <div class="form-group full-width">
-                <label class="form-label">Descripción de la empresa</label>
-                <textarea name="description" class="form-input" rows="4"
-                    placeholder="Descripción de Madness Light...">{{ company.description }}</textarea>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                    <label class="form-label" style="margin:0">Descripción de la empresa</label>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleTextarea('descWrap','descBtn')" id="descBtn">Ampliar</button>
+                </div>
+                <div id="descWrap" style="max-height:6em;overflow:hidden;transition:max-height 0.3s ease">
+                    <textarea name="description" class="form-input" rows="4"
+                        style="resize:none"
+                        placeholder="Descripción de Madness Light...">{{ company.description }}</textarea>
+                </div>
             </div>
             <div class="form-group full-width">
-                <label class="form-label">Información adicional para el agente</label>
-                <textarea name="extra_info" class="form-input" rows="8"
-                    placeholder="Detalles sobre entradas, tipos de fiestas, salas, RRPP...">{{ company.extra_info }}</textarea>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                    <label class="form-label" style="margin:0">Información adicional para el agente</label>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleTextarea('extraWrap','extraBtn')" id="extraBtn">Ampliar</button>
+                </div>
+                <div id="extraWrap" style="max-height:6em;overflow:hidden;transition:max-height 0.3s ease">
+                    <textarea name="extra_info" class="form-input" rows="12"
+                        style="resize:none"
+                        placeholder="Detalles sobre entradas, tipos de fiestas, salas, RRPP...">{{ company.extra_info }}</textarea>
+                </div>
                 <small style="color:var(--text-secondary);margin-top:6px;display:block">
-                    Aquí puedes poner toda la info extra que quieras que el bot tenga: cómo comprar entradas, tipos de
-                    fiestas, programa RRPP, etc.
+                    Toda la info extra que el bot necesita: entradas, fiestas, programa RRPP, etc.
                 </small>
             </div>
         </div>
     </div>
 
     <div style="display:flex;justify-content:flex-end;margin-top:24px">
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary" id="saveBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                 <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
                 <polyline points="17 21 17 13 7 13 7 21" />
@@ -87,4 +134,219 @@
         </button>
     </div>
 </form>
+
+<!-- Confirmation modal -->
+<div class="modal-overlay" id="confirmModal" style="display:none">
+    <div class="confirm-modal-box">
+        <div class="confirm-modal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+        </div>
+        <h3 class="confirm-modal-title">¿Estás seguro?</h3>
+        <p class="confirm-modal-text">
+            Vas a modificar la <strong>información del agente de IA</strong>. Esto cambiará cómo el bot responde a los clientes de Madness Light en tiempo real.<br><br>
+            <strong>⚠️ Un error aquí puede afectar la experiencia de todos los usuarios del chat.</strong> Asegúrate de que la información es correcta antes de continuar.
+        </p>
+        <div class="confirm-modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn" style="background:#ef4444;color:#fff;border-color:#ef4444" onclick="submitForm()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Sí, guardar cambios
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ─── Danger Banner ─────────────────────────── */
+.danger-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-left: 4px solid #ef4444;
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    margin-bottom: 24px;
+    position: relative;
+}
+.danger-banner-icon {
+    flex-shrink: 0;
+    color: #ef4444;
+    margin-top: 1px;
+}
+.danger-banner-body { flex: 1; }
+.danger-banner-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ef4444;
+    margin-bottom: 4px;
+}
+.danger-banner-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+.danger-banner-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-tertiary);
+    padding: 2px;
+    flex-shrink: 0;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+}
+.danger-banner-close:hover { opacity: 1; }
+
+/* ─── Danger Card ───────────────────────────── */
+.danger-card {
+    border-color: rgba(239, 68, 68, 0.2) !important;
+    border-left: 4px solid #ef4444 !important;
+}
+.danger-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.badge-danger-zone {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 999px;
+    padding: 3px 10px;
+    letter-spacing: 0.02em;
+}
+.danger-inline-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: #b91c1c;
+    line-height: 1.5;
+}
+.danger-inline-notice svg { flex-shrink: 0; margin-top: 1px; color: #ef4444; }
+
+/* ─── Confirm Modal ─────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+    animation: fadeIn 0.15s ease;
+}
+@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+
+.confirm-modal-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-top: 4px solid #ef4444;
+    border-radius: var(--radius-lg);
+    padding: 28px 28px 24px;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: slideUp 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes slideUp { from { transform: translateY(16px); opacity:0 } to { transform: translateY(0); opacity:1 } }
+
+.confirm-modal-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ef4444;
+    margin: 0 auto 16px;
+}
+.confirm-modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 12px;
+}
+.confirm-modal-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: 24px;
+}
+.confirm-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.confirm-modal-actions .btn {
+    min-width: 130px;
+    justify-content: center;
+}
+</style>
+
+<script>
+// ── Textarea expand/collapse ──
+function toggleTextarea(wrapId, btnId) {
+    var wrap = document.getElementById(wrapId);
+    var btn  = document.getElementById(btnId);
+    var expanded = wrap.style.maxHeight === 'none' || parseInt(wrap.style.maxHeight) > 200;
+    if (expanded) {
+        wrap.style.maxHeight = '6em';
+        btn.textContent = 'Ampliar';
+    } else {
+        wrap.style.maxHeight = wrap.scrollHeight + 'px';
+        // After transition ends, set to none so textarea is fully scrollable
+        setTimeout(function() { wrap.style.maxHeight = 'none'; }, 320);
+        btn.textContent = 'Contraer';
+    }
+}
+
+// ── Confirm submit ──
+var _allowSubmit = false;
+
+function checkDangerSubmit(e) {
+    if (_allowSubmit) { _allowSubmit = false; return true; }
+    e.preventDefault();
+    document.getElementById('confirmModal').style.display = 'flex';
+    return false;
+}
+
+function closeModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
+function submitForm() {
+    _allowSubmit = true;
+    closeModal();
+    document.getElementById('settingsForm').submit();
+}
+
+// Close on backdrop click
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+</script>
 {% endblock %}
