@@ -281,3 +281,76 @@ function checkTaskReminders() {
     // Check task reminders every 60 seconds
     setInterval(checkTaskReminders, 60000);
 })();
+
+// ═══ NAVIGATION PROGRESS BAR + PRELOAD ON HOVER ═════════════════════════════
+
+(function () {
+    // ── Progress bar ──────────────────────────────────────────────────────────
+    var bar = document.createElement('div');
+    bar.id = 'nav-progress';
+    bar.style.cssText = [
+        'position:fixed', 'top:0', 'left:0', 'height:2px', 'width:0',
+        'background:var(--brand-primary)', 'z-index:99999',
+        'transition:width 0.25s ease,opacity 0.4s ease',
+        'pointer-events:none', 'opacity:0'
+    ].join(';');
+    document.body.appendChild(bar);
+
+    var _barTimer = null;
+
+    function startBar() {
+        clearTimeout(_barTimer);
+        bar.style.opacity = '1';
+        bar.style.width = '0';
+        bar.style.transition = 'width 0.25s ease';
+        // Animate to 70% quickly then slow down
+        requestAnimationFrame(function () {
+            bar.style.transition = 'width 8s cubic-bezier(0.1,0.05,0,1)';
+            bar.style.width = '70%';
+        });
+    }
+
+    function finishBar() {
+        bar.style.transition = 'width 0.15s ease,opacity 0.3s ease 0.15s';
+        bar.style.width = '100%';
+        _barTimer = setTimeout(function () {
+            bar.style.opacity = '0';
+            setTimeout(function () { bar.style.width = '0'; }, 400);
+        }, 150);
+    }
+
+    // Show bar on any nav link click
+    document.querySelectorAll('.nav-link, .qab-btn').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            var href = this.getAttribute('href');
+            if (!href || href === '#' || href.startsWith('javascript')) return;
+            startBar();
+        });
+    });
+
+    // Finish bar when page finishes loading (handles browser back too)
+    window.addEventListener('pageshow', finishBar);
+    finishBar(); // complete on initial load
+
+    // ── Preload on hover ──────────────────────────────────────────────────────
+    var _prefetched = {};
+
+    function prefetch(url) {
+        if (_prefetched[url]) return;
+        _prefetched[url] = true;
+        var link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = url;
+        link.as = 'document';
+        document.head.appendChild(link);
+    }
+
+    document.querySelectorAll('.nav-link[href], .qab-btn[href]').forEach(function (el) {
+        el.addEventListener('mouseenter', function () {
+            var href = this.getAttribute('href');
+            if (href && href !== '#' && !href.startsWith('javascript')) {
+                prefetch(href);
+            }
+        });
+    });
+})();

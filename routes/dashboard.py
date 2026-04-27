@@ -3,7 +3,7 @@ from flask import Blueprint, render_template
 from sqlalchemy import or_
 from models import db, Event, Conversation
 from routes.auth import login_required
-import threading
+from services.cache import cached as _cached
 
 RRPP_KEYWORDS = [
     'rrpp', 'promotor', 'promotora', 'comision', 'comisiones',
@@ -13,23 +13,6 @@ RRPP_KEYWORDS = [
 ]
 
 dashboard_bp = Blueprint("dashboard", __name__)
-
-# ── Simple TTL cache for heavy analytics (5 min) ──────────────────────────────
-_cache: dict = {}
-_cache_lock = threading.Lock()
-_CACHE_TTL = 300  # seconds
-
-
-def _cached(key, fn):
-    """Run fn() and cache result for _CACHE_TTL seconds."""
-    with _cache_lock:
-        entry = _cache.get(key)
-        if entry and (datetime.now().timestamp() - entry["ts"]) < _CACHE_TTL:
-            return entry["val"]
-    val = fn()
-    with _cache_lock:
-        _cache[key] = {"val": val, "ts": datetime.now().timestamp()}
-    return val
 
 
 def _time_ago(dt, now):
@@ -146,7 +129,7 @@ def index():
 
         return total_u, rrpp_u, returning_u
 
-    total_users, rrpp_users, returning_users = _cached("user_stats", _get_user_stats)
+    total_users, rrpp_users, returning_users = _cached("user_stats", _get_user_stats, ttl=300)
     rrpp_interest_rate = round((rrpp_users / total_users) * 100, 1) if total_users else 0
     retention_rate = round((returning_users / total_users) * 100, 1) if total_users else 0
 
