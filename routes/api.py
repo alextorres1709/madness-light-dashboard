@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from functools import wraps
 from flask import Blueprint, request, jsonify, current_app
 from models import db, Event, Message, CompanyInfo, Client
-from services.notifications import notify_birthday_greeted, notify_new_client
+from services.notifications import notify_birthday_greeted
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 
@@ -208,9 +208,11 @@ def birthdays_tomorrow():
     ).all()
 
     cutoff = now - timedelta(hours=48)
+    cutoff_naive = cutoff.replace(tzinfo=None)
     pending = [
         c for c in clients
-        if not c.birthday_greeted_at or c.birthday_greeted_at < cutoff
+        if not c.birthday_greeted_at or 
+           (c.birthday_greeted_at.replace(tzinfo=None) if getattr(c.birthday_greeted_at, 'tzinfo', None) else c.birthday_greeted_at) < cutoff_naive
     ]
 
     return jsonify([c.to_dict() for c in pending])
