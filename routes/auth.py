@@ -75,8 +75,12 @@ def login():
             session["user_id"] = user.id
             g.user = user
             from services.activity import log_activity
-            log_activity("login", "session", user.id, f"{user.email} logged in")
-            db.session.commit()
+            try:
+                log_activity("login", "session", user.id, f"{user.email} logged in")
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                print(f"[ERROR] Failed to log activity during login: {e}")
             return redirect(url_for("dashboard.index"))
         else:
             flash("Credenciales incorrectas", "error")

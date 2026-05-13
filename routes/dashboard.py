@@ -80,7 +80,7 @@ def index():
         .group_by("day")
         .all()
     )
-    daily_map = {str(r[0]): r[1] for r in daily_rows}
+    daily_map = {str(r[0]): r[1] for r in daily_rows if r[0] is not None}
     daily_messages = [
         {"date": (thirty_days_ago + timedelta(days=i)).strftime("%d/%m"),
          "count": daily_map.get((thirty_days_ago + timedelta(days=i)).strftime("%Y-%m-%d"), 0)}
@@ -97,7 +97,7 @@ def index():
         .group_by("h")
         .all()
     )
-    hourly_map = {int(r[0]): r[1] for r in hourly_rows}
+    hourly_map = {int(r[0]): r[1] for r in hourly_rows if r[0] is not None}
     hourly_messages = [{"hour": f"{h:02d}:00", "count": hourly_map.get(h, 0)} for h in range(24)]
 
     # ── Slow/heavy analytics — cached 5 minutes ───────────────────────────────
