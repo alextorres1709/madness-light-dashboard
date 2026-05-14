@@ -33,34 +33,38 @@ def _time_ago(dt, now):
 @dashboard_bp.route("/dashboard")
 @login_required
 def index():
-    now = datetime.now(timezone.utc)
-    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    week_start = today_start - timedelta(days=now.weekday())
-    month_start = today_start.replace(day=1)
-    thirty_days_ago = today_start - timedelta(days=30)
+    try:
+        now = datetime.now(timezone.utc)
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        week_start = today_start - timedelta(days=now.weekday())
+        month_start = today_start.replace(day=1)
+        thirty_days_ago = today_start - timedelta(days=30)
 
-    # ── Fast queries (run every request) ──────────────────────────────────────
+        # ── Fast queries (run every request) ──────────────────────────────────────
 
-    # All message KPIs in ONE query
-    row = db.session.query(
-        db.func.count(Conversation.id).filter(Conversation.created_at >= today_start),
-        db.func.count(Conversation.id).filter(Conversation.created_at >= week_start),
-        db.func.count(Conversation.id).filter(Conversation.created_at >= month_start),
-        db.func.count(Conversation.id),
-    ).filter(Conversation.role == "user").one()
-    messages_today, messages_week, messages_month, messages_total = row
+        # All message KPIs in ONE query
+        row = db.session.query(
+            db.func.count(Conversation.id).filter(Conversation.created_at >= today_start),
+            db.func.count(Conversation.id).filter(Conversation.created_at >= week_start),
+            db.func.count(Conversation.id).filter(Conversation.created_at >= month_start),
+            db.func.count(Conversation.id),
+        ).filter(Conversation.role == "user").one()
+        messages_today, messages_week, messages_month, messages_total = row
 
-    # Events: active count + upcoming + total
-    all_active = Event.query.filter_by(active=True).order_by(Event.date.asc()).all()
-    active_events = len(all_active)
-    now_naive = now.replace(tzinfo=None)
-    upcoming_events = [
-        e for e in all_active
-        if e.date and (
-            (e.date.replace(tzinfo=None) if getattr(e.date, 'tzinfo', None) else e.date) >= now_naive
-        )
-    ][:5]
-    total_events = Event.query.count()
+        # Events: active count + upcoming + total
+        all_active = Event.query.filter_by(active=True).order_by(Event.date.asc()).all()
+        active_events = len(all_active)
+        now_naive = now.replace(tzinfo=None)
+        upcoming_events = [
+            e for e in all_active
+            if e.date and (
+                (e.date.replace(tzinfo=None) if getattr(e.date, 'tzinfo', None) else e.date) >= now_naive
+            )
+        ][:5]
+        total_events = Event.query.count()
+    except Exception as e:
+        import traceback
+        return f"Error interno en dashboard: {str(e)}<br><pre>{traceback.format_exc()}</pre>", 500
 
     # Recent user messages for activity feed (fast, indexed)
     recent_messages = (

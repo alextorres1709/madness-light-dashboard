@@ -19,8 +19,13 @@ def _load_current_user():
     g.user = None
     user_id = session.get("user_id")
     if user_id:
-        g.user = db.session.get(User, user_id)
-        if g.user and not g.user.active:
+        try:
+            g.user = db.session.get(User, user_id)
+            if g.user and not g.user.active:
+                session.clear()
+                g.user = None
+        except Exception as e:
+            print(f"[ERROR] Database error loading user in before_request: {e}")
             session.clear()
             g.user = None
 
@@ -70,20 +75,24 @@ def login():
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
 
-        user = User.query.filter_by(email=email).first()
-        if user and user.active and user.check_password(password):
-            session["user_id"] = user.id
-            g.user = user
-            from services.activity import log_activity
-            try:
-                log_activity("login", "session", user.id, f"{user.email} logged in")
-                db.session.commit()
-            except Exception as e:
-                db.session.rollback()
-                print(f"[ERROR] Failed to log activity during login: {e}")
-            return redirect(url_for("dashboard.index"))
-        else:
-            flash("Credenciales incorrectas", "error")
+        try:
+            user = User.query.filter_by(email=email).first()
+            if user and user.active and user.check_password(password):
+                session["user_id"] = user.id
+                g.user = user
+                from services.activity import log_activity
+                try:
+                    log_activity("login", "session", user.id, f"{user.email} logged in")
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+                    print(f"[ERROR] Failed to log activity during login: {e}")
+                return redirect(url_for("dashboard.index"))
+            else:
+                flash("Credenciales incorrectas", "error")
+        except Exception as e:
+            flash(f"Error interno de base de datos: {str(e)}", "error")
+            return redirect(url_for("auth.login"))
 
     return render_template("login.html")
 

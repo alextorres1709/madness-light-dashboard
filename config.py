@@ -14,18 +14,17 @@ elif _db_url.startswith("postgresql://") and not _db_url.startswith("postgresql+
     _db_url = _db_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
 
+from sqlalchemy.pool import NullPool
+
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
     SQLALCHEMY_DATABASE_URI = _db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_size": 2,          # keep few persistent conns
-        "max_overflow": 4,       # allow burst up to 6 total
-        "pool_recycle": 120,     # recycle connections every 2 min
-        "pool_pre_ping": True,   # detect stale connections
-        "pool_timeout": 10,      # fail fast instead of hanging
+        "poolclass": NullPool,
+        "pool_pre_ping": True,
         "connect_args": {
-            "prepare_threshold": None,  # disable prepared stmts (required for pgBouncer transaction mode)
+            "prepare_threshold": None,
             "connect_timeout": 8,
         },
     } if "postgresql" in _db_url else {}
